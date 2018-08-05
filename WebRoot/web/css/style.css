@@ -1,0 +1,240 @@
+li:focus,a:focus{
+	outline:none;
+}
+.m-manual .manual-head{
+	background:#398dee
+}
+.title{
+	color:white;
+}
+.caret{
+	margin-left:5px;
+	padding-bottom:5px;
+}
+#userInfoDiv .title:hover{
+	background:none;
+}
+.nav .open>a, .nav .open>a:hover, .nav .open>a:focus{
+	background:none;
+}
+#userInfoDiv .title{
+	padding-top:19px;
+}
+.dropdown-menu{
+	position: absolute;
+    z-index: 500;
+    background: #ffffff;
+    color: #999;
+    min-width: 120px;
+    border-radius: 2px;
+    box-shadow: 0px 1px 16px 0 rgba(90, 109, 122, 0.41);
+    cursor: default;
+}
+.dropdown-menu li:hover{
+	background:#76b0f3
+}
+
+.dropdown-menu li:hover{
+	color: #76b0f3;
+    background: #f4f9ff;
+}
+.dropdown-menu li>a{
+	font-size:12px;
+	color:#999
+}
+.m-manual .manual-tab .tab-item{
+	top:0
+}
+.dropdown-menu li > a:hover, .dropdown-menu li > a:focus, .dropdown-submenu:hover > a{
+	color:#999;
+	background:none;
+}
+.dropdown-submenu > a:after{
+	border-left-color:#909090;	
+}
+.ztree{
+	padding:0;
+}
+
+.ztree li span.button.switch{
+	height:25px;
+}
+.ztree li a:hover{
+	text-decoration:none;
+}
+.second-table{
+    position: absolute;
+    left: 282px;
+    top: 55px;
+    bottom: 0;
+    width: 379px;
+}
+.second-line{
+    position: absolute;
+    cursor: col-resize;
+    left: 658px;
+    top: 55px;
+    bottom: 0;
+    width: 3px;
+    background: #ddd;
+    z-index: 301;
+}
+.searchBox{
+    padding:10px 0;
+    border-bottom:1px solid #e0e1e5;
+}
+.backicon{
+	position: absolute;
+    left: 15px;
+    top: 22px;
+    color:gray;
+    cursor:pointer;
+}
+.selecticon{
+	position:absolute;
+	color:gray;
+	cursor:pointer;
+	top:22px;
+	right:15px;
+}
+.widget-menu {
+    position: absolute;
+    z-index: 200;
+    background: #ffffff;
+    color: #999;
+    min-width: 120px;
+    padding: 0px 0px;
+    border-radius: 2px;
+    box-shadow: 0px 1px 16px 0 rgba(90, 109, 122, 0.41);
+    cursor: default;
+    right:4px;
+    display:none;
+}
+.widget-menu-item {
+	height:26px;
+    line-height: 26px;
+    position: relative;
+    cursor: default;
+    font-style: normal;
+    white-space: nowrap;
+    padding: 0 20px;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    font-size:12px;
+}
+.widget-menu-item:hover {
+    color: #76b0f3;
+    background: #f4f9ff;
+    cursor: pointer;
+}
+.content{
+	position:relative;
+	margin: 0 40px 0 40px;
+    border: 1px solid rgba(148, 157, 166, 0.36);
+    border-radius: 40px;
+    line-height: 33px;
+    padding:0 30px;
+    height: 38px;
+}
+.content input{
+	color: #595959;
+    padding: 0;
+    line-height: 20px;
+    width: 100%;
+    background-color: transparent;
+    font-size: 12px;
+    font-family: '\5FAE\8F6F\96C5\9ED1', 'Microsoft Yahei', Helvetica Neue, Hiragino Sans GB;
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+    outline:none;
+}
+.icon{
+    top: 11px;
+    left: 11px;
+    color:rgba(148, 157, 166, 0.36);
+	position:absolute;
+}
+.second-table{
+	overflow:auto;
+}
+.second-list ul li {
+	position: relative;
+    padding: 18px 20px;
+    border-bottom: 1px solid #e0e1e5;
+    overflow: hidden;
+    cursor:pointer;
+}
+.second-listBox:hover{
+	background:#eaf0fb;
+	
+}
+.second-listBox:hover .handle{
+	display:block;
+}
+.second-listBox:hover .filedate{
+	display:none;
+}
+.handle .glyphicon{
+	margin-left: 10px;
+    display: inline-block;
+    color: #b2b2b2;
+}
+.handle .glyphicon:hover{
+	color: blue;
+}
+.second-listBox .handle{
+	display:none;
+}
+.second-list .fileTitle{
+	height: 22px;
+}
+.icons{
+	width: 16px;
+    height: 16px;
+    font-size:15px;
+    margin-right:5px;
+    color:#ffcc00;
+    text-align:center;
+}
+.icons.type1{
+	color:#FF6347;	
+}
+.filedate{
+    margin-left: 10px;
+    display: inline-block;
+    color: #c2c2c2;
+    white-space: nowrap;
+    font:12px '\5FAE\8F6F\96C5\9ED1', 'Microsoft Yahei', Helvetica Neue, Hiragino Sans GB, '\5B8B\4F53', 'simsun', '\9ED1\4F53', Arial, sans-serif;
+}
+.filename{
+	margin-left: 10px;
+	font:12px '\5FAE\8F6F\96C5\9ED1', 'Microsoft Yahei', Helvetica Neue, Hiragino Sans GB, '\5B8B\4F53', 'simsun', '\9ED1\4F53', Arial, sans-serif;
+    color: #393939;
+    line-height: 16px;
+}
+.filename .name{
+	white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow:hidden;
+}
+.manual-article{
+	height:100%;
+	overflow:auto;
+	padding-top:60px;
+}
+.filetitle{
+	padding:0 20px;
+	height:60px;
+	line-height:60px;
+	border-bottom:1px solid #ddd;
+    position: fixed;
+    top: 55px;
+    z-index: 999;
+    width: 100%;
+}
+.editormd{
+	border:none;
+}

@@ -21,13 +21,17 @@
     <link href="static/bootstrapQ/qiao.css" rel="stylesheet">
     <link href="static/markdown/css/editormd.min.css" rel="stylesheet">
 	<!-- context.js -->
-	<link rel="stylesheet" type="text/css" href="static/ContextJS/css/demo.css">
+	<!-- <link rel="stylesheet" type="text/css" href="static/ContextJS/css/demo.css"> -->
 	<link rel="stylesheet" type="text/css" href="static/ContextJS/css/context.standalone.css">
 	<link rel="stylesheet" type="text/css" href="css/zjp-css.css">
+	
 		<!-- FreeTeam CSS-->
-	<link rel="stylesheet" href="static/freeTeam/css/resetV2.css" type="text/css" media="screen" />
+	<!-- <link rel="stylesheet" href="static/freeTeam/css/resetV2.css" type="text/css" media="screen" /> -->
 	<link rel="stylesheet" href="static/freeTeam/css/boot-css/bootstrap.custom.css" type="text/css" media="screen" /> 
 	
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	
+	<link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_768133_1t0u55lw1ri.css">
     <style type="text/css">
         .editormd-preview{
             left: 0 !important;
@@ -97,11 +101,11 @@
     <header class="navbar navbar-static-top manual-head" role="banner">
         <div class="container-fluid">
             <div class="navbar-header pull-left manual-title">
-  				<a class="navbar-brand" href="/DocSystem/web/projects.html"><i class="fa fa-paper-plane"></i> DocSys</a>
+  				<a class="title navbar-brand" href="/DocSystem/web/projects.html"><i class="fa fa-paper-plane"></i> DocSys</a>
                 <span class="slidebar" id="slidebar">
                     <i class="fa fa-align-justify"></i>
                 </span>
-                <a  id="projectName" class="navbar-brand" href="#">仓库名</a>
+                <a  id="projectName" class="title navbar-brand" href="#">仓库名</a>
                 <span style="font-size: 12px;font-weight: 100;" class="projectVersion"></span>
             </div>
 
@@ -109,7 +113,7 @@
                 <ul class="nav navbar-nav navbar-right">
 				    <li id="userImgDiv" style="display:none"><img id="userImg" name="userImg" width="40px" height="40px" src="images/default/defaultHeadPic.png" onerror="UserImgErrHandler();" class="img-circle m5"/></li>
 					<li id="userInfoDiv" style="display:none">
-							<a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span>Rainy</span><span class="caret"></span></a>
+							<a href="" class="title" data-toggle="dropdown" role="button" aria-expanded="false"><span>Rainy</span><span class="caret"></span></a>
 							<ul class="dropdown-menu" role="menu">
 								<li><a href="/DocSystem/web/myHostPage.html">个人中心</a></li>
 								<li><a href="/DocSystem/web/reposManager.html">仓库管理</a></li>
@@ -136,10 +140,9 @@
     <article class="container-fluid manual-body">
         <div class="manual-left">
             <div class="manual-tab">
-                <div class="tab-navg">
+                <!-- <div class="tab-navg">
                     <span data-mode="view" class="navg-item main active"><i class="fa fa-align-justify"></i><b class="text">目录</b></span>
-                    <!-- <span data-mode="view" class="navg-item lookPro"><i class="el-icon-search"></i><b class="text">进度查看</b></span> -->
-                </div>
+                </div> -->
                 <div id="treeBody" class="tab-wrap">
                     <div class="tab-item manual-catalog" id="uuz">
 
@@ -162,12 +165,47 @@
              -->
         </div>
         <div id="line" class="manual-line" ></div>
-        <div class="manual-middle" style="display:none">
-        	<span>搜索框</span>
+        <div class="second-table">
+        	<div class="searchBox">
+        		<div class="back">
+        			<i class="backicon glyphicon glyphicon-arrow-left"></i>
+        		</div>
+        		<div class="content">
+        			<i class="glyphicon glyphicon-search icon"></i>
+        			<input placeholder="搜索..." type="text" />
+        		</div>
+        		<div class="select">
+        			<i class="selecticon glyphicon glyphicon-align-justify" onclick="selectMenuShow(event)"></i>
+        			<ul class="widget-menu" >
+		                    <li class="widget-menu-item">
+		                        摘要
+		                    </li>
+		                    <li class="widget-menu-item">
+		                        列表
+		                    </li>
+		                    <li class="widget-menu-item item-sort">
+		                        创建时间
+		                    </li>
+		                    <li class="widget-menu-item item-sort">
+		                        修改时间
+		                    </li>
+		                    <li class="widget-menu-item item-sort">
+		                        文件名称
+		                    </li>
+		                    <li class="widget-menu-item item-sort">
+		                        文件大小
+		                    </li>
+		                </ul>
+        		</div>
+        	</div>
+        	<div class="second-list">
+        		<ul id="secondList">
+        		</ul>
+        	</div>
         </div>
-        <div id="line2" class="manual-line" style="display:none"></div>
-        
+       	<div id="second-line" class="second-line" ></div>
         <div class="manual-right">
+        	<div class="filetitle"></div>
             <div class="manual-article">
                 <div class="article-body editor-content"  id="doc" style="min-height: 650px">
                 </div>
@@ -319,6 +357,13 @@
 <script type="text/javascript" src="js/fileReader.js"></script>
 <script type="text/javascript" src="static/js-spark-md5/spark-md5.min.js"></script>
 <script type="text/javascript">
+	function selectMenuShow(event){
+		$(".widget-menu").toggle()
+		event.stopPropagation();
+	}
+	document.onclick=function(){
+		$(".widget-menu").hide();
+	}
 	//初始化全局变量 //Repos Info
 	var gReposId;
 	var gReposInfo = [];
@@ -2557,6 +2602,7 @@
             },
             success : function (ret) {
                 if( "ok" == ret.status ){
+                	$('.filetitle').html(ret.data.name);
                     gDocId = ret.data.id;
                     gDocContent = JSON.parse(ret.data.content);
 		
@@ -4779,6 +4825,8 @@ function CompareObj(objA, objB, flag) {
 	    //var menu = JSON.parse(data);
 	    var menu = data;
 	    //遍历jason_arry
+	    
+	    var str="";
       	for(var i=0; i<menu.length; i++)
       	{
            var jsonObj = menu[i];
@@ -4787,8 +4835,49 @@ function CompareObj(objA, objB, flag) {
        }
 	   //console.log(menu);
 	   zTreeInit(menu);
+	   drawSecondMenu(menu);
 	}
-	
+	function drawSecondMenu(data){
+	 	var str="";
+      	for(var i=0; i<data.length; i++)
+	      	{
+	           var iconType =menu[i].type===2?'<i class="type2 icons glyphicon glyphicon-folder-close"></i>':'<i class="type1 icons glyphicon glyphicon glyphicon-file"></i>';
+	           str+='<li onclick="secondGetDoc(this)" dataId='+data[i].id+' datatype='+data[i].type+' class="second-listBox"><div class="filename pull-left">'+iconType+menu[i].name+'</div><div class="filedate pull-right">'+formatDate(menu[i].createTime)+'</div><div class="handle pull-right"><i class="glyphicon glyphicon-new-window" onclick="fx(this,event)"></i><i class="glyphicon glyphicon-download-alt" onclick="xz(this,event)"></i><i onclick="sc(this,event)" class="glyphicon glyphicon-trash"></i></div></li>';
+	       }
+      	$("#secondList").html(str);
+	}
+	function secondGetDoc(obj){
+		var id = $(obj).attr('dataId');
+		var type = $(obj).attr('dataType')
+		console.log(type);
+		if(type==1)getDoc(id,false);
+		else{
+			alert("获取文件夹内容")
+		}
+	}
+	function fx(obj,event){
+		var id = $(obj).parents('li').attr('dataId');
+		alert('分享'+id);
+		event.stopPropagation();
+	}
+	function xz(obj,event){
+		var id = $(obj).parents('li').attr('dataId');
+		
+		alert('下载'+id);
+		event.stopPropagation();
+	}
+	function sc(obj,event){
+		var id = $(obj).parents('li').attr('dataId');
+		alert('删除'+id);
+		event.stopPropagation();
+	}
+	function formatDate(date) {
+		var now = new Date(date);
+		var year=now.getFullYear(); 
+		var month=now.getMonth()+1; 
+		var date=now.getDate(); 
+		return year+"-"+month+"-"+date; 
+	} 
 	function showDoc()
 	{
 		console.log("showDoc gDocId:" + gDocId);
@@ -4927,35 +5016,32 @@ function CompareObj(objA, objB, flag) {
           var l=ev.clientX-disX;	//计算Line的位置
           oDiv.style.left=l+'px';	//设置Line的位置
      	  $(".manual-left")[0].style.width=ev.clientX+'px';
-       	  $(".manual-right")[0].style.left=ev.clientX+'px';
+       	  $(".manual-right")[0].style.left=$(".second-table").width()+3+ev.clientX+'px';
+       	  $(".second-table").css("left",$(".manual-left").width()+$("#line").width());
+       	  $(".second-line").css("left",$(".manual-left").width()+$(".second-table").width()+$("#line").width());
    	  };
-      
-      document.onmouseup=function(ev){
-   	  	//$(".manual-left")[0].style.width=ev.clientX+'px';
-   	 	//$(".manual-right")[0].style.left=ev.clientX+'px';
+   	  document.onmouseup=function(ev){
    	 	document.onmousemove=null;
    	  	document.onmouseup=null;
       };
     };
-    
-    /*var oDiv2=document.getElementById('line2')
+    var oDiv2=document.getElementById('second-line');
     oDiv2.onmousedown=function(ev){
       var disX=ev.clientX-oDiv2.offsetLeft;
       var disY=ev.clientY-oDiv2.offsetTop;
 
       document.onmousemove=function(ev){
-        var l=ev.clientX-disX;
-
-        oDiv2.style.left=l+'px'
+          var l=ev.clientX-disX;	//计算Line的位置
+          oDiv2.style.left=l+'px';	//设置Line的位置
+          $('.second-table').width($(".second-line").position().left-$('.manual-left').width());
+          $(".manual-right").css("left",$(".second-table").width()+$('.manual-left').width()+3);
+          return false;
+   	  };
+   	  document.onmouseup=function(ev){
+   	 	document.onmousemove=null;
+   	  	document.onmouseup=null;
       };
-      document.onmouseup=function(ev){
-    	var lw = $(".manual-left").width();
-   	  	$(".manual-middle")[0].style.width=(ev.clientX - lw )+'px';
-   	 	$(".manual-right")[0].style.left=ev.clientX+'px';
-        document.onmousemove=null;
-        document.onmouseup=null;
-      };
-    };*/
+    };
     
     //页面加载完成处理函数    
     $(document).ready(function(){
@@ -4991,12 +5077,20 @@ function CompareObj(objA, objB, flag) {
             e.preventDefault();  
         };  
         uuz.ondragover = function(e){  
+        	
             e.preventDefault();
+            
             //判断现在所在的zTree Node并选中它
             if(e.target.tagName=="SPAN"){
             	e.target.parentNode.click();
             }
-        };  
+        }; 
+		uuz.ondragleave = function(e){  
+        	
+            e.preventDefault();
+            
+        }; 
+        
         uuz.ondrop = function(e){   
             e.preventDefault();
             dragUploadConfirm(e);
@@ -5055,14 +5149,12 @@ function CompareObj(objA, objB, flag) {
 				},	
 				]
 			},
-			{divider: true},
 			{text: '粘贴', action: function(e){
 						e.preventDefault();
 						curRightClickedTreeNode = null; 
 						DoPaste(gCopiedNodes,null);
 					}
 			},
-			{divider: true},
 			{text: '其它', subMenu: [
 						{text: '查看仓库历史', action: function(e){
 									e.preventDefault();
@@ -5102,7 +5194,6 @@ function CompareObj(objA, objB, flag) {
 				},	
 				]
 			},
-			{divider: true},
 			{text: '复制', action: function(e){
 						e.preventDefault();
 						gCopiedNodes = getCopiedNodes();
@@ -5119,7 +5210,6 @@ function CompareObj(objA, objB, flag) {
 						DoPaste(gCopiedNodes,parentNode);
 					}
 			},
-			{divider: true},
 			{text: '重命名', action: function(e){
 						e.preventDefault();
 						 var treeObj = $.fn.zTree.getZTreeObj("doctree");
@@ -5137,13 +5227,11 @@ function CompareObj(objA, objB, flag) {
 						DoDelete(deleteNodes);
 					}
 			},
-			{divider: true},
 			{text: '下载', action: function(e){
 						e.preventDefault();
 	        			download();
 					}
 			},
-			{divider: true},
 			{text: '其它', subMenu: [
 			           	{text: '复制名字', action: function(e){
 									e.preventDefault();
@@ -5160,7 +5248,6 @@ function CompareObj(objA, objB, flag) {
 				        			copyUrl();
 								}
 						},	
-						{divider: true},
 						{text: '查看历史', action: function(e){
 									e.preventDefault();
 				        			showDocHistory();
