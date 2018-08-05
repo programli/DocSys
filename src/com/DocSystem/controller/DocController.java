@@ -151,9 +151,72 @@ public class DocController extends BaseController{
 	}
 	
 	/****************   Check a Document ******************/
+	@RequestMapping("/checkChunkUploaded.do")
+	public void checkChunkUploaded(String name,Integer docId,  Integer size, String checkSum,Integer chunkIndex,Integer chunkNum,Integer chunkSize,String chunkHash,Integer reposId,Integer parentId,String commitMsg,HttpSession session,HttpServletRequest request,HttpServletResponse response){
+		System.out.println("checkChunkUploaded name: " + name + " size: " + size + " chunkIndex: " + checkSum + " checkSum: " + chunkIndex + " chunkNum: " + chunkNum + " chunkSize: " + chunkSize+ " chunkHash: " + chunkHash+ " reposId: " + reposId + " parentId: " + parentId);
+		ReturnAjax rt = new ReturnAjax();
+
+		User login_user = (User) session.getAttribute("login_user");
+		if(login_user == null)
+		{
+			rt.setError("用户未登录，请先登录！");
+			writeJson(rt, response);			
+			return;
+		}
+		
+		if("".equals(checkSum))
+		{
+			//CheckSum is empty, mean no need 
+			writeJson(rt, response);
+			return;
+		}
+		
+
+		//判断tmp目录下是否有分片文件，并且checkSum和size是否相同 
+		rt.setMsgData("0");
+		if(true == isChunkMatched(name,chunkIndex,chunkSize,chunkHash))
+		{
+			rt.setMsgInfo("chunk: " + name + chunkIndex +" 已存在，且checkSum相同！");
+			rt.setMsgData("1");
+			
+			System.out.println("checkChunkUploaded() " + name + " 已存在，且checkSum相同！");
+			if(chunkIndex == chunkNum -1)	//It is the last chunk
+			{
+				//Do combine the chunkFiles to multipartFile
+				MultipartFile uploadFile = combineChunks();
+				
+				if(commitMsg == null)
+				{
+					commitMsg = "uploadDoc " + name;
+				}
+				String commitUser = login_user.getName();
+				if(-1 == docId)	//新建文件则新建记录，否则
+				{
+					addDoc(name,null, 1, uploadFile,size, checkSum,reposId, parentId, commitMsg, commitUser, login_user, rt);
+				}
+				else
+				{
+					updateDoc(docId, uploadFile, size,checkSum, reposId, parentId, commitMsg, commitUser, login_user, rt);
+				}	
+			}
+		}
+		writeJson(rt, response);
+	}
+	
+	private MultipartFile combineChunks() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private boolean isChunkMatched(String name, Integer chunkIndex, Integer chunkSize, String chunkHash) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/****************   Check a Document ******************/
 	@RequestMapping("/checkDocInfo.do")
 	public void checkDocInfo(String name,Integer type,Integer size,String checkSum,Integer reposId,Integer parentId,String commitMsg,HttpSession session,HttpServletRequest request,HttpServletResponse response){
-		System.out.println("addDoc name: " + name + " type: " + type + " size: " + size + " checkSum: " + checkSum+ " reposId: " + reposId + " parentId: " + parentId);
+		System.out.println("checkDocInfo name: " + name + " type: " + type + " size: " + size + " checkSum: " + checkSum+ " reposId: " + reposId + " parentId: " + parentId);
 		ReturnAjax rt = new ReturnAjax();
 
 		User login_user = (User) session.getAttribute("login_user");
@@ -195,22 +258,25 @@ public class DocController extends BaseController{
 		}
 		else
 		{
-			//Try to find the same Doc in the repos
-			Doc sameDoc = getSameDoc(size,checkSum,reposId);
-			if(null != sameDoc)
+			if(size > 1024)
 			{
-				System.out.println("checkDocInfo() " + sameDoc.getName() + " found！");
-				//Do copy the Doc
-				copyDoc(sameDoc.getId(),sameDoc.getName(),name,sameDoc.getType(),reposId,sameDoc.getPid(),parentId,commitMsg,login_user.getName(),login_user,rt);
-				Doc newDoc = getDocByName(name,parentId,reposId);
-				if(null != newDoc)
+				//Try to find the same Doc in the repos
+				Doc sameDoc = getSameDoc(size,checkSum,reposId);
+				if(null != sameDoc)
 				{
-					System.out.println("checkDocInfo() " + sameDoc.getName() + " was copied ok！");
-					rt.setData(newDoc.getId());
-					rt.setMsgInfo("SameDoc " + sameDoc.getName() +" found and do copy OK！");
-					rt.setMsgData("1");
-					writeJson(rt, response);
-					return;
+					System.out.println("checkDocInfo() " + sameDoc.getName() + " found！");
+					//Do copy the Doc
+					copyDoc(sameDoc.getId(),sameDoc.getName(),name,sameDoc.getType(),reposId,sameDoc.getPid(),parentId,commitMsg,login_user.getName(),login_user,rt);
+					Doc newDoc = getDocByName(name,parentId,reposId);
+					if(null != newDoc)
+					{
+						System.out.println("checkDocInfo() " + sameDoc.getName() + " was copied ok！");
+						rt.setData(newDoc.getId());
+						rt.setMsgInfo("SameDoc " + sameDoc.getName() +" found and do copy OK！");
+						rt.setMsgData("1");
+						writeJson(rt, response);
+						return;
+					}
 				}
 			}
 		}
@@ -256,6 +322,13 @@ public class DocController extends BaseController{
 		}
 		String commitUser = login_user.getName();
 		
+		if(null == docId)
+		{
+			rt.setError("异常请求，docId是空！");
+			writeJson(rt, response);			
+			return;
+		}
+		
 		//检查用户是否有权限新增文件
 		if(-1 == docId)
 		{
@@ -283,10 +356,10 @@ public class DocController extends BaseController{
 			return;
 		}
 		
-		//获取文件并保存文件
-		//MultipartHttpServletRequest multiRequest;
-		//multiRequest = (MultipartHttpServletRequest) request;
-		//MultipartFile uploadFile = multiRequest.getFile("uploadFile");
+		//如果是分片文件，则保存分片文件
+		//如果是最后一个分片则combineChunks
+		
+		//整个文件已经准备好
 		if (uploadFile != null) 
 		{
 			String fileName = uploadFile.getOriginalFilename();

@@ -58,7 +58,7 @@
         }
         .closeBtn{
         	position:absolute;
-        	top:15px;
+        	top:20px;
         	right:15px;
         	font-size:13px;
         	cursor: pointer;
@@ -851,6 +851,7 @@
         var reuploadSuccessNum = 0;
         var reuploadedNum = 0;
         var reuploadList = []; //重传列表，保存的是SubContext的index
+        var reuploadIndex = 0;	//This is for reupload, the index should be reuploadList[reuploadIndex]
         
         //标准Java成员操作接口
         function getUploadStatus()
@@ -1080,10 +1081,10 @@
       				return;
       			}
       			
-      			//Check if need to draw
-      			if((drawedNum - uploadedNum) > 100)
+      			//the drawedNum ahead of index less than 100, do draw the doc progress
+      			if((drawedNum - index) > 100)
       			{
-      			    console.log("druawUploadItems() drawedNum:" + drawedNum + " uploadedNum:" + uploadedNum);
+      			    console.log("druawUploadItems() drawedNum:" + drawedNum + " index:" + index);
       				return;
       			}
       			
@@ -1101,9 +1102,11 @@
 		    		var SubContext = SubContextList[i];
 		    		SubContext.showSize = getFileShowSize(SubContext.size);
 		    		//console.log(SubContext);
-		    		str+="<li class='el-upload-list__item file"+i+" is-uploading' value="+i+">"+
-		    				"<a class='el-upload-list__item-name uploadFileName'><i class='el-icon-document'></i><span class='uploadFileName' >"+SubContext.name+"</span></a>"+
-		    				"<a class='reuploadBtn reupload"+i+"' onclick='reuploadFailDocs("+i+")'>重传 </a>"+
+		    		str+="<li class='el-upload-list__item file"+i+" is-uploading' value='"+i+"'>"+
+		    				"<a class='el-upload-list__item-name uploadFileName'><i class='el-icon-document'></i>"+SubContext.name+"</a>"+
+		    				"<label class='label label-danger label-sm mr30'>失败</label>"+
+		    				"<label class='label label-success label-sm mr30'>成功</label>"+
+		    				"<a class='el-upload-list__item-reupload' onclick='reuploadFailDoc("+i+")'>重传 </a>"+
 		    				"<label class='el-upload-list__item-status-label'><i class='el-icon-upload-success el-icon-circle-check'></i></label>"+
 		    				"<i class='el-icon-close stopUpload'  value="+i+" onclick='stopUpload("+i+")'></i>"+
 		    				"<div class='el-progress el-progress--line'>"+
@@ -1465,16 +1468,16 @@
       		}
       		else 
       		{
-      			if(reuploadList.length)
+      			reuploadIndex ++;
+      			if(reuploadIndex < reuploadTotalNum)
       			{
-      				index = reuploadList.pop();
+      				index = reuploadList[reuploadIndex];
       				uploadDoc();
       			}
       			else
       			{
       				uploadEndHandler();
-      			}
-      				
+      			}      				
       		}
 		}
 
@@ -1597,96 +1600,159 @@
 			return true;
  		}
       	
-      	//由于FileReader是异步调用，因此该接口也是异步调用，结果会保存在SubContext.checkSum中
-      	function caculateFileCheckSum(SubContext)
-      	{
-      		if(1 == SubContext.checkSumState)
-          	{
-      			//console.log("caculateFileCheckSum() checkSum is caculating for:",SubContext);
-      			return;
-          	}
-      		else if(2 == SubContext.checkSumState)
-      		{
-      			console.log("caculateFileCheckSum() checkSum is ready for:",SubContext);
-      			return;
-      		}
-      		
-      		if(0 != SubContext.checkSumState)
-      		{
-      			console.log("caculateFileCheckSum() faile to caculate checkSum for:",SubContext);
-      			return;
-      		}
-      		
-      		//start to caculate the checkSum
-      		console.log("caculateFileCheckSum() start caculate checkSum for:",SubContext);
-      		var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
-            	file = SubContext.file,
-            	chunkSize = 2097152,                           // read in chunks of 2MB
-            	chunks = Math.ceil(file.size / chunkSize),
-            	currentChunk = 0,
-            	spark = new SparkMD5(),
-            	time,
-            	uniqueId = 'chunk_' + (new Date().getTime()),
-            	chunkStep = 1,
-            	fileReader = new FileReader();
+ 		var CheckSumCaculator = (function(){
+ 			var caculateIndex = 0;
+ 			var reuploadCaculateIndex = 0;
+ 			
+ 	      	//由于FileReader是异步调用，因此该接口也是异步调用，结果会保存在SubContext.checkSum中
+ 	      	function caculate()
+ 	      	{
+ 	      		//console.log("caculateFileCheckSum() caculateIndex:" + caculateIndex);
+ 	      		var SubContext = SubContextList[caculateIndex];
+ 	 			if(1 == SubContext.checkSumState)
+ 	          	{
+ 	      			console.log("caculateFileCheckSum() checkSum is caculating for: " + SubContext.name );
+ 	      			return;
+ 	          	}
+ 	      		else if(2 == SubContext.checkSumState)
+ 	      		{
+ 	      			//console.log("caculateFileCheckSum() checkSum is ready for:" + SubContext.name);
+ 	      			caculateNext();
+ 	      			return;
+ 	      		}
+ 	      		
+ 	      		//start to caculate the checkSum for SubContext
+ 	      		console.log("caculateFileCheckSum() start caculate checkSum for:" + SubContext.name);
+ 	      		var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
+ 	            	file = SubContext.file,
+ 	            	chunkSize = 2097152,                           // read in chunks of 2MB
+ 	            	chunks = Math.ceil(file.size / chunkSize),
+ 	            	currentChunk = 0,
+ 	            	spark = new SparkMD5(),
+ 	            	time,
+ 	            	uniqueId = 'chunk_' + (new Date().getTime()),
+ 	            	chunkStep = 1,
+ 	            	fileReader = new FileReader();
 
-      		//console.log("caculateFileCheckSum() blobSlice",blobSlice);
-      		
-	        fileReader.onload = function (e) {
-	            //console.log("currentChunk=" + currentChunk);
-	            if(stopUploadFlag == true || SubContext.stopUploadFlag == true)
-	            {
-	            	console.log("caculateFileCheckSum() upload was stoped, stop caculate");
-	                return;
-	            }
-	            
-	            if (currentChunk === 0) {
-	                console.log("Read chunk number id=" + uniqueId + " + currentChunk=" + (currentChunk + 1) + " chunks=" + chunks);
-	                if(chunks > 10)
-	                {
-	                	chunkStep = chunks / 10;
-	                }
-	                console.log("chunkStep=" + chunkStep);
-	            }
-	
-	            spark.appendBinary(e.target.result);                 // append array buffer
-	            currentChunk += chunkStep;
-	
-	            if (currentChunk < chunks) {
-	                loadNext();
-	            } else {
-	            	SubContext.checkSumState = 2;
-	            	SubContext.checkSum = spark.end();	            	
-	                console.log("Computed hash:" + SubContext.checkSum); // compute hash
-	            }
-	        };
-	
-	        fileReader.onerror = function () {
-	        	SubContext.checkSumState = 3;
-                console.log("Fail to Computed hash"); //fail to compute hash
-	        };
-	
-	        function loadNext() {
-	            var start = currentChunk * chunkSize,
-	                end = start + chunkSize >= file.size ? file.size : start + chunkSize;
-	
-	            fileReader.readAsBinaryString(blobSlice.call(file, start, end));
-	        }
-	
-      		//set the running state
-      		SubContext.checkSumState = 1;
-      		SubContext.checkSum = "";
-	        loadNext();
-      	}
+ 	      		//console.log("caculateFileCheckSum() blobSlice",blobSlice);
+ 	      		
+ 		        fileReader.onload = function (e) {
+ 		            //console.log("currentChunk=" + currentChunk);
+ 		            if(stopUploadFlag == true || SubContext.stopUploadFlag == true)
+ 		            {
+ 		            	console.log("caculateFileCheckSum() upload was stoped, stop caculate");
+ 		                return;
+ 		            }
+ 		            
+ 		            if (currentChunk === 0) {
+ 		                console.log("caculateFileCheckSum() Read chunk number id=" + uniqueId + " + currentChunk=" + (currentChunk + 1) + " chunks=" + chunks);
+ 		                if(chunks > 10)
+ 		                {
+ 		                	chunkStep = chunks / 10;
+ 		                }
+ 		                console.log("caculateFileCheckSum() chunkStep=" + chunkStep);
+ 		            }
+ 		
+ 		            spark.appendBinary(e.target.result);                 // append array buffer
+ 		            currentChunk += chunkStep;
+ 		
+ 		            if (currentChunk < chunks) {
+ 		                loadNext();
+ 		            } else {
+
+ 		            	SubContext.checkSum = spark.end();	            	
+ 		                console.log("caculateFileCheckSum() Computed hash:" + SubContext.checkSum); // computed hash
+ 		            	SubContext.checkSumState = 2; 		                
+ 		                
+ 		                //To caculateNext
+ 		                caculateNext();
+ 		            }
+ 		        };
+ 		
+ 		        //Fail to compute hash
+ 		        fileReader.onerror = function () {
+ 		        	SubContext.checkSumState = 3;
+ 	                console.log("caculateFileCheckSum() Fail to Computed hash"); //fail to compute hash
+ 	                
+		            //To caculateNext
+		            caculateNext();
+ 		        };
+ 		
+ 		        function loadNext() {
+ 		            var start = currentChunk * chunkSize;
+ 		            var end = start + chunkSize >= file.size ? file.size : start + chunkSize;
+ 		
+ 		            fileReader.readAsBinaryString(blobSlice.call(file, start, end));
+ 		        }
+ 		
+ 	      		//set the running state
+ 	      		SubContext.checkSumState = 1;
+ 	      		SubContext.checkSum = "";
+ 		        loadNext();
+ 	      	}
+ 	      	
+ 	   		function caculateNext()
+ 	   		{
+ 	         	if(false == reuploadFlag)
+ 	         	{
+ 	   	      		caculateIndex++;
+ 	   				if(caculateIndex < totalNum)
+ 	   				{
+ 	   					caculate(); 
+ 	   				}
+ 	   				else
+ 	   				{
+ 	   					console.log("caculateNext() all upload doc checkSum was computed");
+ 	   				}
+ 	         	}
+ 	         	else 
+ 	         	{
+ 	         		reuploadCaculateIndex ++;
+ 	         		if(reuploadCaculateIndex < reuploadTotalNum)
+ 	         		{
+ 	         			caculateIndex = reuploadList[reuploadCaculateIndex];
+ 	         			caculate();
+ 	         		}
+ 	         		else
+ 	         		{
+ 	         			console.log("caculateNext() for all reupload doc checkSum was computed");
+ 	         		}			
+ 	         	}
+ 	       }
+ 	   	   
+ 	   		//开放给外部的调用接口
+ 	        return {
+ 	            caculate : function(startId){
+ 	            	if(false == reuploadFlag)
+ 	            	{
+ 	            		caculateIndex = startId;
+ 	            	}
+ 	            	else
+ 	            	{
+ 	            		reuploadCaculateIndex = startId;
+ 	            		caculateIndex = reuploadList[reuploadCaculateIndex];
+ 	            	}
+ 	            	caculate();
+ 	            },
+ 	        };
+ 		})();
+      	
       	
 		function getFileCheckSum(SubContext)
 		{            
 			switch(SubContext.checkSumState)
 			{
 			case 0:
-				//Start Check Caculate Thread
-				 console.log("getFileCheckSum() call caculateFileCheckSum");
-				caculateFileCheckSum();
+				 //Start CheckSum Caculator: It will caculate for all upload or reupload Docs
+				 console.log("getFileCheckSum() checkSum not computed, start compute");
+				 if(false == reuploadFlag)
+			     {
+					 CheckSumCaculator.caculate(index);					 
+			     }
+				 else
+			     {
+					 CheckSumCaculator.caculate(reuploadIndex);					 
+			     }
 			case 1:
 				//Start timer to wait for result
 		        console.log("getFileCheckSum() checkSum not ready, wait for result 100 ms later"); 
@@ -1761,7 +1827,7 @@
 	             			return;
 	             		}
 	                }
-	                elsee
+	                else
 	                {
 					 	uploadErrorConfirmHandler(name,ret.msgInfo);
 			            return;
@@ -1804,6 +1870,7 @@
 
 				//开始重传
 				reuploadList = [];
+				reuploadIndex = 0;
 				reuploadTotalNum = 0;
 		        reuploadedNum = 0;
 		    	reuploadFailNum = 0;
@@ -1825,7 +1892,7 @@
 			else
 			{
 				//由于push会pop后进的id,会导致先上传还未绘制进度条的文件，因此反过来遍历
-				for(i=totalNum-1; i>=0 ;i--)
+				for(i=0; i<totalNum;i++)
 				{
 					setSubContextForReupload(i);
 				}
@@ -1846,7 +1913,8 @@
 				reuploadFlag = true;
 				isUploading = true;
 				//trigger uploadDoc
-				index = reuploadList.pop();
+				reuploadIndex = 0;
+				index = reuploadList[reuploadIndex];
 				console.log("reuploadFailDocs() 重传开始" + index);
 				uploadDoc();
 			}
@@ -1894,106 +1962,267 @@
 			reuploadList.push(id);
 		}
 		
-		//uploadDoc接口，该接口是个递归调用
-    	function uploadDoc()
-    	{
-    		//console.log("uploadDoc() index:" + index + " totalNum:" + totalNum);
-    		var SubContext = SubContextList[index];
-			
-    		//判断是否取消上传
-    		if(stopUploadFlag == true)
-    		{
-    			console.log("uploadDoc(): 结束上传");
-    			uploadEndHandler();
-    			return;
-    		}
-    		
-    		//取消当前文件上传
-			if(SubContext.stopUploadFlag == true)
+		//CutFile will cut file to dedicated size slice
+		function CutFile(SubContext)
+		{
+			console.log("CutFile() for", SubContext);
+			var chunkSize = 2097152;
+			var minCutSize = chunkSize * 10;
+			if(SubContext.size < minCutSize)	//< 20M do not cut
 			{
-				console.log("uploadDoc() 用户取消了上传 "+ name);
-    			uploadErrorHandler(name,"用户取消了上传！");
-				return;
+				console.log("CutFile() file size less than minCutSize " + minCutSize);
+				return true;
 			}
-    		
-    		//设置上传状态
-    		if(0 == SubContext.state)
-    		{   
-    			console.log("uploadDoc() 开始上传 fileName:" + SubContext.name,SubContext);
-				SubContext.state = 1;	//上传中
-    			if(false == reuploadFlag)
-    			{
-    				uploadedNum++;
-    			}
-    			else
-    			{
-    				reuploadedNum++;
-    			}
-				
-				showUploadingInfo();
-				
-				//get the file from the SubContextList
-    			var file = SubContext.file;
-				if(!file) 
+ 	      	
+			if(0 == SubContext.cutFileState)
+			{
+				console.log("CutFile() start to cut file");
+				SubContext.chunked = true;
+				SubContext.checkSumState = 1;
+				SubContext.chunkIndex = 0;
+				SubContext.chunkNum = Math.ceil(SubContext.size / chunkSize);
+				//Build ChunkList
+				var chunkList = [];
+				for(i=0; i< SubContext.chunkNum; i++)
 				{
-					uploadErrorHandler("未知","不是文件");
-					return; 
+					var chunk = [];
+					chunk.start=  i * chunkSize;
+					chunk.end =  start + chunkSize >= SubContext.size ? SubContext.size : start + chunkSize;
+					chunk.chunkSize = chunk.end - chunk.start;
+					chunk.checkSum = "";
+					chunk.checkSumState = 0;
+					chunkList.push(chunk);
 				}
-    		}
-    		
-    		//启动计算文件的校验码
-    		caculateFileCheckSum(SubContext);
-    		
-    		//每次上传前检查是否需要绘制，小于200个上传项目时绘制
-    		checkAndDrawUploadItems(SubContextList);
-			
-    		//文件父目录检查部分，uploadDoc每次进来都需要检查，return false表示内部有异步调用
-    		if(false == checkAddParentNode(SubContext))
-    		{
-    			console.log("uploadDoc() checkAddParentNode return false, addDoc have been called, callback will re-enter uploadDoc");
-    			return;
-    		}
-   			//console.log("uploadDoc() checkAddParentNode completed");
-   		 	
-   			if(getFileCheckSum(SubContext) == false)
-   			{
-   				//checkSum is not ready, timer be called, callback will re-enter uploadDoc 5 secnods later
-   				return;
-   			}
+				SubContext.chunkList = chunkList;
+				console.log("CutFile() cut ok",SubContext);
+			}
+			if(2 == SubContext.cutFileState)
+ 	      	{
+ 	      		console.log("CutFile() completed for:",SubContext);
+ 	      		return true;
+ 	      	}
+ 	      	else
+ 	      	{
+ 	      		console.log("CutFile() is in processing for: ",SubContext);
+	      		return false;
+ 	      	}
+ 	      		
+ 	      	//start to caculate the chunk checkSum
+ 	      	console.log("CutFile() start to caculate chunk checkSum for:" + SubContext.name);
+ 	      	var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
+ 	            	file = SubContext.file,
+ 	            	chunkSize = chunkSize,                           // read in chunks of 2MB
+ 	            	chunks = SubContext.chunkNum,
+ 	            	currentChunkIndex = 0,
+ 	            	spark = new SparkMD5(),
+ 	            	fileReader = new FileReader();
+ 	      		
+        	fileReader.onload = function (e) {
+            	if(stopUploadFlag == true || SubContext.stopUploadFlag == true)
+            	{
+            		console.log("CutFile() upload was stoped, stop caculate chunk checkSum");
+                	return;
+            	}
+    	      	var hash = spark.hashBinary(e.target.result);   //compute Data Hash
+    	      	SubContext.chunkList[currentChunk].checkSum = hash;
+    	      	SubContext.chunkList[currentChunk].checkSumState = 2;		            	
+            	console.log("CutFile() Chunk " + currentChunk + " data read ok, checkSum is " + hash);
+            	
+            	//Try to start read next chunk data
+            	currentChunk ++;
+            	if (currentChunk < chunks) {
+                	loadNext();
+            	}
+            	else
+            	{
+            		SubContext.cutFileState = 2;
+            		return;
+            	}
+            };
+		        
+		    function loadNext() {
+         		SubContext.chunkList[currentChunk].checkSumState = 1;
+		        var start = SubContext.chunkList[currentChunk].start;
+		        var end = SubContext.chunkList[currentChunk].end;
+		        fileReader.readAsBinaryString(blobSlice.call(file, start, end));
+		    }
+		    
+	      	//Trigger the fileRead
+		    loadNext();
+		    return false;
+		}
+		
+		
+		function getChunkCheckSum(SubContext)
+		{            
+			var chunk = SubContext.chunkList[SubContext.chunkIndex];
+			switch(chunk.checkSumState)
+			{
+			case 0:
+			case 1:
+				//Start timer to wait for result
+		        console.log("getChunkCheckSum() chunk checkSum not ready, wait for result 100 ms later"); 
+				setTimeout(function () {
+		            uploadDoc(); //reEnter uploadDoc
+		        },100);	//check it one minute later
+				return false;
+			case 2:
+				//CheckSum ok
+				return true;
+			default:
+				//CheckSum Error
+				SubContext.checkSum = "";
+				return true;
+			}
+		}
+		
+      	function checkChunkUploade(SubContext)
+      	{      		
+      		var name = SubContext.name;
+	  	 	console.log("checkChunkUploade() for file:"+ name);
+	  	 	
+   			var chunk = SubContext.chunkList[chunkIndex];
+	  	 	if(0 != chunk.uploadedState)
+	  	 	{
+	  	 		return true;
+	  	 	}
    			
-   			//检查文件是否存在且是否相同，return false 表示内部有异步调用
-   			if(false == checkDocInfo(SubContext))
-   			{
-    			console.log("uploadDoc() checkDocInfo be called, callback will re-enter uploadDoc");   				
-   				return;
-   			}
-   			//console.log("uploadDoc() checkDocInfo completed");  
-			
-   			startUpload(SubContext);
-    	}
+   			//检查服务器端是否存在分片文件（checkHash should same）
+   			//调用后台接口检查chunk，并设置chunk.state re-enter upload
+  			$.ajax({
+	             url : "/DocSystem/Doc/checkChunkUploaded.do",
+	             type : "post",
+	             dataType : "json",
+	             data : {
+	             	name : name,
+	             	chunkIndex: SubContext.chunkIndex,
+	             	chunkNum: SubContext.chunkNum,
+	             	chunkSize: chunk.chunkSize,
+	             	chunkHash: chunk.checkSum,
+	             	reposId : SubContext.vid, 
+	                parentId : SubContext.realParentId,
+	             },
+	             success : function (ret) {
+	             	if( "ok" == ret.status)
+	             	{		
+	             		console.log("checkChunkUploade() ret",ret);
+	             		if(ret.msgData == "0")	//分片文件不存在 
+	             		{
+	             			chunk.uploadedState = 1;
+	             			uploadDoc();
+	             			return;
+	             		}
+	             		else
+	             		{
+	             			chunk.uploadedState = 2;
+	             			uploadDoc();
+	             			return;
+	             		}
+	                }
+	                else
+	                {
+					 	uploadErrorConfirmHandler(name,ret.msgInfo);
+			            return;
+	                }
+	            },
+	            error : function () {
+				 	uploadErrorConfirmHandler(name,"checkChunkUploade "+nodeName+ " 异常");
+		            return;
+	            }
+	        });
+   			return false;
+      	}
+		
+		function startChunkUpload(SubContext)
+		{
+			while(chunkIndex <  SubContext.chunkNum)
+			{
+   	   			if(false == getChunkCheckSum(SubContext))
+   	   			{
+   	   				//checkSum for chunk is not ready, timer be called, callback will re-enter uploadDoc 100ms later
+   	   				return;
+   	   			}
+	   			
+   	   			//检查Chunk是否存在且是否相同，return false 表示内部有异步调用
+   	   			if(false == checkChunkUploaded(SubContext))
+   	   			{
+   	    			console.log("uploadDoc() checkChunkUploaded be called, callback will re-enter uploadDoc");   				
+   	   				return;
+   	   			}
+	   			
+   	   			//根据chunk.state决定是否上传
+   	   			var chunk = SubContext.chunkList[chunkIndex];
+   				if(1 == chunk.uploadedState)	//current chunk not uploaded
+   				{
+	   				startUpload(SubContext); //Do Upload the chunk
+	   				return;
+   				}
+   				else
+   				{
+   					chunkIndex++;
+   				}
+			}
+   			
+				//All Chunk Uploaded, means file upload ok
+        	if(SubContext.docId == -1) //文件新建成功
+            {	
+         		addTreeNode(name,false,ret.data.id,SubContext.realParentNode);
+         		//set the docId so that We can open it 
+         		SubContext.docId = ret.data.id;
+				
+            }
+			//update the uploadStatus
+			$('.file'+index).removeClass('is-uploading');
+			$('.file'+index).addClass('is-success');
+			uploadSuccessHandler(name,ret.msgInfo);
+			return;   	
+		}
 		
     	function startUpload(SubContext)
     	{
 
-			console.log("startUpload() docId:" + SubContext.docId);
+			console.log("startUpload() docId:" + SubContext.docId,SubContext);
 
 			//新建文件上传表单
 			var form = new FormData();
-			form.append("uploadFile", SubContext.file);
-			form.append("filePath", SubContext.filePath);
-			form.append("name", SubContext.name);
-			form.append("size", SubContext.size);
-			form.append("checkSum", SubContext.checkSum);
-			form.append("docId", SubContext.docId);
-			form.append("parentId", SubContext.realParentId);
-			form.append("reposId", SubContext.vid);
+			if(false == SubContext.chunked)
+			{
+				form.append("name", SubContext.name);
+				form.append("filePath", SubContext.filePath);
+				form.append("size", SubContext.size);
+				form.append("checkSum", SubContext.checkSum);
+				form.append("docId", SubContext.docId);
+				form.append("parentId", SubContext.realParentId);
+				form.append("reposId", SubContext.vid);
+				form.append("uploadFile", SubContext.file);
+			}
+			else
+			{
+				//根据chunkIndex上传
+				form.append("name", SubContext.name);
+				form.append("filePath", SubContext.filePath);
+				form.append("size", SubContext.size);
+				form.append("checkSum", SubContext.checkSum);
+				form.append("docId", SubContext.docId);
+				form.append("parentId", SubContext.realParentId);
+				form.append("reposId", SubContext.vid);
+				
+				var chunkIndex = SunContext.chunkIndex;
+				var chunkNum = SubContext.chunkNum;
+				var chunk = SubContext.chunkList[ckunkIndex];
+				var chunkData = SubContext.file.slice(chunk.start,chunk.end);
+				form.append("chunkIndex", chunkIndex);
+				form.append("chunkNum", chunkNum);
+				formappend("chunkSize",chunk.chunkSize);
+				form.append("chunkHash", chunk.checkSum);
+				form.append("uploadFile", chunkData);
+			}
 			
 			var name = SubContext.name;
-			
 			//新建http异步请求
 			var xhr = new XMLHttpRequest();
 			
-			//设置异步上传状态变化回调处理函数
+			//设置异步上传状态变化回调处a理函数
 			xhr.onreadystatechange = function() {				
 				//文件上传状态
 				console.log("xhr onreadystatechange() status:" + xhr.status + " readyState:" + xhr.readyState);
@@ -2008,6 +2237,13 @@
 					//上传成功！
 					var ret = JSON.parse(xhr.responseText);
 					if("ok" == ret.status){
+						if(true == SubContext.chunked && false == isLastChunk(SubContext))
+						{
+							//分片上传未结束,re-enter uploadDoc to upload next chunk
+							uploadDoc();
+							return;
+						}
+						
 	                	if(SubContext.docId == -1) //文件新建成功
 		                {	
 		             		addTreeNode(name,false,ret.data.id,SubContext.realParentNode);
@@ -2031,7 +2267,7 @@
 						$('.file'+index).addClass('is-fail');
 						uploadErrorConfirmHandler(name, ret.msgInfo);
 						return;
-		             };
+		             }
 				}else{
 					if(xhr.status < 300) 
 					{
@@ -2063,13 +2299,10 @@
 				}
 				
 				//文件上传进度
-				//侦查附件上传情况  
-				//通过事件对象侦查  
-				//该匿名函数表达式大概0.05-0.1秒执行一次  
-				//evt.total; //附件总大小  
-				var loaded = evt.loaded;	//已上传大小
-				var tot = evt.total;
-				//console.log("fileSize:" +   SubContext.size  + "evt.tot: " + tot + " evt.loaded: " + loaded);
+				var loaded = evt.loaded + SubContext.uploadedSize;	//已上传大小
+				SubContext.uploadedSize = loaded;
+				//var tot = evt.total;
+				var tot = SubContext.size;
 				
 				//计算当前文件上传百分比
 				var per = Math.floor(100 * loaded / tot); //已经上传的百分比
@@ -2077,7 +2310,7 @@
 				$('.file'+index+' .el-progress-bar__inner')[0].style.width=per+'%';
 				//console.log("上传中："+per+"%！"); 
 	
-				//统计已上传大小、百分比、上传速度、剩余上传时间
+				//统计总的已上传大小、百分比、上传速度、剩余上传时间
 				uploadTime = new Date().getTime();
 				if(per=="100")
 				{
@@ -2130,6 +2363,92 @@
 			uploadTime = new Date().getTime();	//上传时间初始化
     	}
     	
+		//uploadDoc接口，该接口是个递归调用
+    	function uploadDoc()
+    	{
+    		//console.log("uploadDoc() index:" + index + " totalNum:" + totalNum);
+    		var SubContext = SubContextList[index];
+			
+    		//判断是否取消上传
+    		if(stopUploadFlag == true)
+    		{
+    			console.log("uploadDoc(): 结束上传");
+    			uploadEndHandler();
+    			return;
+    		}
+    		
+    		//取消当前文件上传
+			if(SubContext.stopUploadFlag == true)
+			{
+				console.log("uploadDoc() 用户取消了上传 "+ name);
+    			uploadErrorHandler(name,"用户取消了上传！");
+				return;
+			}
+    		
+    		//设置上传状态
+    		if(0 == SubContext.state)
+    		{   
+    			console.log("uploadDoc() 开始上传 fileName:" + SubContext.name,SubContext);
+				SubContext.state = 1;	//上传中
+    			if(false == reuploadFlag)
+    			{
+    				uploadedNum++;
+    			}
+    			else
+    			{
+    				reuploadedNum++;
+    			}
+				
+				showUploadingInfo();
+				
+				//get the file from the SubContextList
+    			var file = SubContext.file;
+				if(!file) 
+				{
+					uploadErrorHandler("未知","不是文件");
+					return; 
+				}
+    		}
+    		
+    		//每次上传前检查是否需要绘制，小于200个上传项目时绘制
+    		checkAndDrawUploadItems(SubContextList);
+			
+    		//文件父目录检查部分，uploadDoc每次进来都需要检查，return false表示内部有异步调用
+    		if(false == checkAddParentNode(SubContext))
+    		{
+    			console.log("uploadDoc() checkAddParentNode return false, addDoc have been called, callback will re-enter uploadDoc");
+    			return;
+    		}
+   			//console.log("uploadDoc() checkAddParentNode completed");
+   		 	
+   			if(false == getFileCheckSum(SubContext))
+   			{
+   				//checkSum is not ready, timer be called, callback will re-enter uploadDoc 100ms later
+   				return;
+   			}
+   			
+   			//检查文件是否存在且是否相同，return false 表示内部有异步调用
+   			if(false == checkDocInfo(SubContext))
+   			{
+    			console.log("uploadDoc() checkDocInfo be called, callback will re-enter uploadDoc");   				
+   				return;
+   			}
+   			//console.log("uploadDoc() checkDocInfo completed"); 
+			
+   			//该接口只对大于50M的文件进行切片，设置chunked标记，生成chunkList（chunkHash或者叫chunkCheckSum并没有完全生成，所以后续getChunkedSum可能需要等待）
+   			CutFile(SubContext); 
+   			
+   			if(false == SubContext.chunked) 
+   			{
+   	   			startUpload(SubContext);
+   	   			return;
+   			}
+   			else
+   			{
+   				startChunkUpload(SubContext);	
+   			}
+    	}
+		
 		function stopUpload(index)
 		{
 			console.log("stopUpload() index:" + index ,SubContextList[index]);
@@ -2144,6 +2463,10 @@
 				SubContextList[i].stopUploadFlag = true;
 			}
 			stopUploadFlag = true;
+			
+  			//清除标记
+  			isUploading = false;
+  			reuploadFlag = false;
 		}
 				
 		//开放给外部的调用接口
