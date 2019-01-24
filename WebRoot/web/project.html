@@ -115,135 +115,136 @@
 </head>
 <body>
 <div class="m-manual manual-reader">
-
-    <header class="navbar navbar-static-top manual-head" role="banner">
-        <div class="container-fluid">
-            <div class="navbar-header pull-left manual-title">
-  				<a class="navbar-brand" href="/DocSystem/web/projects.html"><i class="fa fa-paper-plane"></i> DocSys</a>
-                <span class="slidebar" id="slidebar">
-                    <i class="fa fa-align-justify"></i>
-                </span>
-                <a  id="projectName" class="navbar-brand" href="#">仓库名</a>
-                <span style="font-size: 12px;font-weight: 100;" class="projectVersion"></span>
-            </div>
-
-            <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
-                <ul class="nav navbar-nav navbar-right">
-				    <li id="userImgDiv" style="display:none"><img id="userImg" name="userImg" width="40px" height="40px" src="images/default/defaultHeadPic.png" onerror="UserImgErrHandler();" class="img-circle m5"/></li>
-					<li id="userInfoDiv" style="display:none">
-							<a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span>Rainy</span><span class="caret"></span></a>
+	<div>
+	    <header class="navbar navbar-static-top manual-head" role="banner">
+	        <div class="container-fluid">
+	            <div class="navbar-header pull-left manual-title">
+	  				<a class="navbar-brand" href="/DocSystem/web/projects.html"><i class="fa fa-paper-plane"></i> DocSys</a>
+	                <span class="slidebar" id="slidebar">
+	                    <i class="fa fa-align-justify"></i>
+	                </span>
+	                <a  id="projectName" class="navbar-brand" href="#">仓库名</a>
+	                <span style="font-size: 12px;font-weight: 100;" class="projectVersion"></span>
+	            </div>
+	
+	            <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
+	                <ul class="nav navbar-nav navbar-right">
+					    <li id="userImgDiv" style="display:none"><img id="userImg" name="userImg" width="40px" height="40px" src="images/default/defaultHeadPic.png" onerror="UserImgErrHandler();" class="img-circle m5"/></li>
+						<li id="userInfoDiv" style="display:none">
+								<a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span>Rainy</span><span class="caret"></span></a>
+								<ul class="dropdown-menu" role="menu">
+									<li><a href="/DocSystem/web/myHostPage.html">个人中心</a></li>
+									<li><a href="/DocSystem/web/reposManager.html">仓库管理</a></li>
+									<li><a onclick="logout()">退出登录</a></li>
+								</ul>
+						</li>
+						<li id="loginBtn">
+	                        <a onclick="showLoginPanel()"  title="用户登录">登录</a>
+	                    </li>
+	                </ul>
+	            </nav>
+	        </div>      
+	    </header>
+	    <article class="container-fluid manual-body">
+	        <div class="manual-left">
+	            <div class="manual-tab">
+		            <div class="tab-navg" style="height:59px">
+		         		<div style="padding:20px 0;position: relative; cursor: pointer; margin: 0 auto; width: 100px; display: block;">
+		         			<a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+		         				<i class="glyphicon glyphicon-plus" style="zoom:1.2"></i>
+		         				<span>新文档</span>
+		         				<span class="caret"></span>
+		         			</a>
 							<ul class="dropdown-menu" role="menu">
-								<li><a href="/DocSystem/web/myHostPage.html">个人中心</a></li>
-								<li><a href="/DocSystem/web/reposManager.html">仓库管理</a></li>
-								<li><a onclick="logout()">退出登录</a></li>
+								<li><a onclick="newDocEx(1)">新建文件</a></li>
+								<li><a onclick="newDocEx(2)">新建文件夹</a></li>
+								
+								<li><a onclick="uploadFilesEx();">上传文件</a></li>
+								<li><a onclick="uploadDirEx()">上传文件夹</a></li>
 							</ul>
-					</li>
-					<li id="loginBtn">
-                        <a onclick="showLoginPanel()"  title="用户登录">登录</a>
-                    </li>
-                </ul>
-            </nav>
-        </div>      
-    </header>
-    <article class="container-fluid manual-body">
-        <div class="manual-left">
-            <div class="manual-tab">
-	            <div class="tab-navg" style="height:59px">
-	         		<div style="padding:20px 0;position: relative; cursor: pointer; margin: 0 auto; width: 100px; display: block;">
-	         			<a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-	         				<i class="glyphicon glyphicon-plus" style="zoom:1.2"></i>
-	         				<span>新文档</span>
-	         				<span class="caret"></span>
-	         			</a>
-						<ul class="dropdown-menu" role="menu">
-							<li><a onclick="newDocEx(1)">新建文件</a></li>
-							<li><a onclick="newDocEx(2)">新建文件夹</a></li>
-							
-							<li><a onclick="uploadFilesEx();">上传文件</a></li>
-							<li><a onclick="uploadDirEx()">上传文件夹</a></li>
+		         		</div>
+		         	</div>
+	                <div id="treeBody" class="tab-wrap">
+	                    <div class="tab-item manual-catalog" id="uuz">
+	
+	                        <div class="catalog-list read-book-preview" id="tree">
+	                            <ul id="doctree" class="ztree"></ul>
+	                        </div>
+	
+	                    </div>
+	                </div>
+	                <div  class="uploadBox ">
+			            <ul style="display:none" class="el-upload-list el-upload-list--text">
 						</ul>
+					</div>
+	            </div>
+	
+				<!-- 
+	            <div id="container" class="m-copyright">
+	                <p id="editTime">2017.7.7</p>   
+	            </div>
+	             -->
+	        </div>
+	        <div id="line" class="manual-line" ></div>
+	        <div class="second-table"  id="secondDropZone">
+	         	<div class="searchBox">
+	         		<div class="back" onclick="backToParentDoc();"> 
+	         			<i class="backicon glyphicon glyphicon-arrow-left"></i>
+	         		</div>
+	         		<div class="content">
+	         			<i class="glyphicon glyphicon-search icon" onclick="searchDoc();"></i>
+	         			<input placeholder="搜索..." type="text" id="searchWord"/>
+	         		</div>
+	         		<div class="dropdown">
+	         			<a class="selecticon glyphicon glyphicon-align-justify dropdown-toggle" data-toggle="dropdown" aria-expanded="false"></a>
+	         			<ul class="dropdown-menu" style="left:210px">
+	 		                    <li><a href="#">摘要</a>
+	 		                    </li>
+	 		                    <li><a  href="#">列表</a>
+	 		                    </li>
+	 		                    <li><a  href="#">创建时间</a>
+	 		                    </li>
+	 		                    <li><a  href="#">修改时间</a>
+	 		                    </li>
+	 		                    <li><a  href="#">文件名称</a>
+	 		                    </li>
+	 		                    <li><a  href="#">文件大小</a>
+	 		                    </li>
+	 		                </ul>
 	         		</div>
 	         	</div>
-                <div id="treeBody" class="tab-wrap">
-                    <div class="tab-item manual-catalog" id="uuz">
-
-                        <div class="catalog-list read-book-preview" id="tree">
-                            <ul id="doctree" class="ztree"></ul>
-                        </div>
-
-                    </div>
-                </div>
-                <div  class="uploadBox ">
-		            <ul style="display:none" class="el-upload-list el-upload-list--text">
-					</ul>
-				</div>
-            </div>
-
-			<!-- 
-            <div id="container" class="m-copyright">
-                <p id="editTime">2017.7.7</p>   
-            </div>
-             -->
-        </div>
-        <div id="line" class="manual-line" ></div>
-        <div class="second-table"  id="secondDropZone">
-         	<div class="searchBox">
-         		<div class="back" onclick="backToParentDoc();"> 
-         			<i class="backicon glyphicon glyphicon-arrow-left"></i>
-         		</div>
-         		<div class="content">
-         			<i class="glyphicon glyphicon-search icon" onclick="searchDoc();"></i>
-         			<input placeholder="搜索..." type="text" id="searchWord"/>
-         		</div>
-         		<div class="dropdown">
-         			<a class="selecticon glyphicon glyphicon-align-justify dropdown-toggle" data-toggle="dropdown" aria-expanded="false"></a>
-         			<ul class="dropdown-menu" style="left:210px">
- 		                    <li><a href="#">摘要</a>
- 		                    </li>
- 		                    <li><a  href="#">列表</a>
- 		                    </li>
- 		                    <li><a  href="#">创建时间</a>
- 		                    </li>
- 		                    <li><a  href="#">修改时间</a>
- 		                    </li>
- 		                    <li><a  href="#">文件名称</a>
- 		                    </li>
- 		                    <li><a  href="#">文件大小</a>
- 		                    </li>
- 		                </ul>
-         		</div>
-         	</div>
-         	<div class="second-list">
-         		<ul id="secondList">
-         		</ul>
-         	</div>
-         </div>
-        <div id="second-line" class="second-line" ></div>
-        
-        <div class="manual-right">
-            <div class="searchBox" style="white-space:nowrap">
-         		<div class="back" onclick="showCenterDiv();"> 
-         			<i class="backicon glyphicon glyphicon-arrow-left"></i>
-         		</div>
-        		<div class="filetitle" id="filetitle"></div>
-        		<div style="position:absolute; right:5px; top:10px">
-        				<!-- <button id="btnViewDoc" class="btn btn-default" type="button" onclick="previewDoc()" style="display:none">预览
-	                    </button> -->
-	                    <button id="btnExitEdit" class="btn btn-default" type="button" onclick="exitEdit()" style="display:none">退出编辑
-	                   	</button>
-	                    <button id="btnEditWiki" class="btn btn-default" type="button" onclick="lockAndEditWiki()" style="display:none">编辑
-	                    </button>
-	                    <button id="btnSaveWiki" class="btn btn-default" type="button" onclick="saveWiki()" style="display:none">保存
-	                    </button>
-        		</div>
-         	</div>
-            <div class="manual-article">
-                <div class="article-body editor-content"  id="doc" style="min-height: 650px">
-                </div>
-            </div>
-        </div>
-        <div class="manual-progress"><b class="progress-bar"></b></div>
-    </article>
+	         	<div class="second-list">
+	         		<ul id="secondList">
+	         		</ul>
+	         	</div>
+	         </div>
+	        <div id="second-line" class="second-line" ></div>
+	        
+	        <div class="manual-right">
+	            <div class="searchBox" style="white-space:nowrap">
+	         		<div class="back" onclick="showCenterDiv();"> 
+	         			<i class="backicon glyphicon glyphicon-arrow-left"></i>
+	         		</div>
+	        		<div class="filetitle" id="filetitle"></div>
+	        		<div style="position:absolute; right:5px; top:10px">
+	        				<!-- <button id="btnViewDoc" class="btn btn-default" type="button" onclick="previewDoc()" style="display:none">预览
+		                    </button> -->
+		                    <button id="btnExitEdit" class="btn btn-default" type="button" onclick="exitEdit()" style="display:none">退出编辑
+		                   	</button>
+		                    <button id="btnEditWiki" class="btn btn-default" type="button" onclick="lockAndEditWiki()" style="display:none">编辑
+		                    </button>
+		                    <button id="btnSaveWiki" class="btn btn-default" type="button" onclick="saveWiki()" style="display:none">保存
+		                    </button>
+	        		</div>
+	         	</div>
+	            <div class="manual-article">
+	                <div class="article-body editor-content"  id="doc" style="min-height: 650px">
+	                </div>
+	            </div>
+	        </div>
+	        <div class="manual-progress"><b class="progress-bar"></b></div>
+	    </article>
+	</div>
     <div class="manual-mask"></div>
 </div>
 
@@ -4223,6 +4224,9 @@
                onpreviewed :function () {
                    console.log("onpreviewed");
                },
+               onresize :function () {
+                   console.log("onresize");
+               },
                onload : function () {
                    console.log("onload edit:" + edit);
                    if(edit == false)
@@ -4314,6 +4318,9 @@
         return {
             loadmd: function(content,edit){
                loadmd(content,edit);
+            },
+            resize: function(){
+                md.resize();
             },
             editorSwitch: function(edit){
             	editorSwitch(edit);
@@ -6082,6 +6089,7 @@ function CompareObj(objA, objB, flag) {
        	  $(".manual-right")[0].style.left=ev.clientX+$(".second-table").width()+3+'px';
        	  $(".second-table").css("left",$(".manual-left").width()+$("#line").width());
        	  $(".second-line").css("left",ev.clientX+$(".second-table").width()+$("#line").width());
+       	  DocEdit.resize();
    	  };
       
       document.onmouseup=function(ev){
@@ -6098,10 +6106,11 @@ function CompareObj(objA, objB, flag) {
         var disY=ev.clientY-oDiv2.offsetTop;
    
        document.onmousemove=function(ev){
-       		var l=ev.clientX-disX;	//计算Line的位置
+       	   var l=ev.clientX-disX;	//计算Line的位置
            oDiv2.style.left=l+'px';	//设置Line的位置
            $('.second-table').width($(".second-line").position().left-$('.manual-left').width());
            $(".manual-right").css("left",$(".second-table").width()+$('.manual-left').width()+3);
+           DocEdit.resize();
            return false;
    	  };
     	  document.onmouseup=function(ev){
