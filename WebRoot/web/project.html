@@ -178,71 +178,68 @@
 						</ul>
 					</div>
 	            </div>
-	
-				<!-- 
-	            <div id="container" class="m-copyright">
-	                <p id="editTime">2017.7.7</p>   
-	            </div>
-	             -->
+				<div id="line" class="drag-line" style="left:279px;top: 0px; right: -4px; width: 7px; height: 100%; position: absolute; z-index: 1;"></div>
 	        </div>
-	        <div id="line" class="manual-line" ></div>
-	        <div class="second-table"  id="secondDropZone">
-	         	<div class="searchBox">
-	         		<div class="back" onclick="backToParentDoc();"> 
-	         			<i class="backicon glyphicon glyphicon-arrow-left"></i>
-	         		</div>
-	         		<div class="content">
-	         			<i class="glyphicon glyphicon-search icon" onclick="searchDoc();"></i>
-	         			<input placeholder="搜索..." type="text" id="searchWord"/>
-	         		</div>
-	         		<div class="dropdown">
-	         			<a class="selecticon glyphicon glyphicon-align-justify dropdown-toggle" data-toggle="dropdown" aria-expanded="false"></a>
-	         			<ul class="dropdown-menu" style="left:210px">
-	 		                    <li><a href="#">摘要</a>
-	 		                    </li>
-	 		                    <li><a  href="#">列表</a>
-	 		                    </li>
-	 		                    <li><a  href="#">创建时间</a>
-	 		                    </li>
-	 		                    <li><a  href="#">修改时间</a>
-	 		                    </li>
-	 		                    <li><a  href="#">文件名称</a>
-	 		                    </li>
-	 		                    <li><a  href="#">文件大小</a>
-	 		                    </li>
-	 		                </ul>
-	         		</div>
-	         	</div>
-	         	<div class="second-list">
-	         		<ul id="secondList">
-	         		</ul>
-	         	</div>
-	         </div>
-	        <div id="second-line" class="second-line" ></div>
-	        
 	        <div class="manual-right">
-	            <div class="searchBox" style="white-space:nowrap">
-	         		<div class="back" onclick="showCenterDiv();"> 
-	         			<i class="backicon glyphicon glyphicon-arrow-left"></i>
-	         		</div>
-	        		<div class="filetitle" id="filetitle"></div>
-	        		<div style="position:absolute; right:5px; top:10px">
-	        				<!-- <button id="btnViewDoc" class="btn btn-default" type="button" onclick="previewDoc()" style="display:none">预览
-		                    </button> -->
-		                    <button id="btnExitEdit" class="btn btn-default" type="button" onclick="exitEdit()" style="display:none">退出编辑
-		                   	</button>
-		                    <button id="btnEditWiki" class="btn btn-default" type="button" onclick="lockAndEditWiki()" style="display:none">编辑
-		                    </button>
-		                    <button id="btnSaveWiki" class="btn btn-default" type="button" onclick="saveWiki()" style="display:none">保存
-		                    </button>
-	        		</div>
-	         	</div>
-	            <div class="manual-article">
-	                <div class="article-body editor-content"  id="doc" style="min-height: 650px">
-	                </div>
-	            </div>
+		        <div class="doclist">
+			        <div class="second-table"  id="secondDropZone" style="width: 279px;">
+			         	<div class="searchBox">
+			         		<div class="back" onclick="backToParentDoc();"> 
+			         			<i class="backicon glyphicon glyphicon-arrow-left"></i>
+			         		</div>
+			         		<div class="content">
+			         			<i class="glyphicon glyphicon-search icon" onclick="searchDoc();"></i>
+			         			<input placeholder="搜索..." type="text" id="searchWord"/>
+			         		</div>
+			         		<div class="dropdown">
+			         			<a class="selecticon glyphicon glyphicon-align-justify dropdown-toggle" data-toggle="dropdown" aria-expanded="false"></a>
+			         			<ul class="dropdown-menu" style="left:210px">
+			 		                    <li><a href="#">摘要</a>
+			 		                    </li>
+			 		                    <li><a  href="#">列表</a>
+			 		                    </li>
+			 		                    <li><a  href="#">创建时间</a>
+			 		                    </li>
+			 		                    <li><a  href="#">修改时间</a>
+			 		                    </li>
+			 		                    <li><a  href="#">文件名称</a>
+			 		                    </li>
+			 		                    <li><a  href="#">文件大小</a>
+			 		                    </li>
+			 		                </ul>
+			         		</div>
+			         	</div>
+			         	<div class="second-list">
+			         		<ul id="secondList">
+			         		</ul>
+			         	</div>
+			         </div>
+			         <div id="second-line" class="drag-line" style="left:279px;top: 0px; right: -4px; width: 7px; height: 100%; position: absolute; z-index: 1;"></div>
+			    </div>    
+		        <div class="detail-container" id="detail-container" style="left: 280px;">
+		            <div class="searchBox" style="white-space:nowrap">
+		         		<div class="back" onclick="showCenterDiv();"> 
+		         			<i class="backicon glyphicon glyphicon-arrow-left"></i>
+		         		</div>
+		        		<div class="filetitle" id="filetitle"></div>
+		        		<div style="position:absolute; right:5px; top:10px">
+		        				<!-- <button id="btnViewDoc" class="btn btn-default" type="button" onclick="previewDoc()" style="display:none">预览
+			                    </button> -->
+			                    <button id="btnExitEdit" class="btn btn-default" type="button" onclick="exitEdit()" style="display:none">退出编辑
+			                   	</button>
+			                    <button id="btnEditWiki" class="btn btn-default" type="button" onclick="lockAndEditWiki()" style="display:none">编辑
+			                    </button>
+			                    <button id="btnSaveWiki" class="btn btn-default" type="button" onclick="saveWiki()" style="display:none">保存
+			                    </button>
+		        		</div>
+		         	</div>
+		            <div class="manual-article">
+		                <div class="article-body editor-content"  id="doc" style="min-height: 650px">
+		                </div>
+		            </div>
+	        	</div>
+	        	<div class="manual-progress"><b class="progress-bar"></b></div>
 	        </div>
-	        <div class="manual-progress"><b class="progress-bar"></b></div>
 	    </article>
 	</div>
     <div class="manual-mask"></div>
@@ -6085,10 +6082,8 @@ function CompareObj(objA, objB, flag) {
           var l=ev.clientX-disX;	//计算Line的位置
           oDiv.style.left=l+'px';	//设置Line的位置
           
-     	  $(".manual-left")[0].style.width=ev.clientX+'px';
-       	  $(".manual-right")[0].style.left=ev.clientX+$(".second-table").width()+3+'px';
-       	  $(".second-table").css("left",$(".manual-left").width()+$("#line").width());
-       	  $(".second-line").css("left",ev.clientX+$(".second-table").width()+$("#line").width());
+     	  $(".manual-left")[0].style.width = ev.clientX + 'px';
+       	  $(".manual-right")[0].style.left = (ev.clientX + 1) + 'px';
        	  DocEdit.resize();
    	  };
       
@@ -6106,10 +6101,8 @@ function CompareObj(objA, objB, flag) {
         var disY=ev.clientY-oDiv2.offsetTop;
    
        document.onmousemove=function(ev){
-       	   var l=ev.clientX-disX;	//计算Line的位置
-           oDiv2.style.left=l+'px';	//设置Line的位置
-           $('.second-table').width($(".second-line").position().left-$('.manual-left').width());
-           $(".manual-right").css("left",$(".second-table").width()+$('.manual-left').width()+3);
+       	   $('.doclist').width(ev.clientX);
+           $(".detail-container").css("left",ev.clientX + 1);
            DocEdit.resize();
            return false;
    	  };

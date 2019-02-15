@@ -124,26 +124,6 @@ h6 {
     left: 0;
     right: 0
 }
-#line.manual-line{
-     	position:absolute;
-     	cursor: col-resize;
-     	left:279px;
-     	top:55px;
-     	bottom:0;
-     	width:3px;
-     	background:#ddd;
-     	z-index:100
-}       
-#line2.manual-line{
-       position:absolute;
-       cursor: col-resize;
-       left:483px;
-       top:55px;
-       bottom:0;
-       width:3px;
-       background:#ddd;
-       z-index:301
-}
 
 .m-manual .manual-left {
     position: absolute;
@@ -273,7 +253,7 @@ h6 {
 
 .m-manual .manual-right {
     position: absolute;
-    left: 661px;
+    left: 280px;
     top: 55px;
     z-index: 300;
     overflow-y: auto;
@@ -580,17 +560,12 @@ h6 {
     .m-manual.manual-reader .manual-body {
         padding-left: 0
     }
-
-   /*  .m-manual.manual-reader .manual-left{
-        width: 80%;
-        max-width: 360px;
-        left: -80%;
-        top: 0;
-        z-index: 4000
-    } */
-	 .manual-line {
-		display:none;
+    	
+	.drag-line
+	{
+	 	cursor: ew-resize !important;
 	}
+		
     .m-manual.manual-reader .manual-head .pull-left {
         right: 0;
         left: 0;
