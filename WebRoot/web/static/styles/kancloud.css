@@ -129,11 +129,11 @@ h6 {
     position: absolute;
     left: 0;
     top: 55px;
-    /*z-index: 301;*/
+    z-index: 300;
     bottom: 0;
     width: 279px;
-    /* border-right: 1px solid #ddd; */
-    background-color: #fafafa;
+    border-right: 1px solid #e0e1e5;
+    background-color: #f5f5f5;
 }
 
 .m-manual .manual-tab .tab-navg {
@@ -561,10 +561,10 @@ h6 {
         padding-left: 0
     }
     	
-	.drag-line
+	/*.drag-line
 	{
 	 	cursor: ew-resize !important;
-	}
+	}*/
 		
     .m-manual.manual-reader .manual-head .pull-left {
         right: 0;

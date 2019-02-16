@@ -33,7 +33,7 @@
 	<link rel="stylesheet" href="static/freeTeam/css/boot-css/bootstrap.custom.css" type="text/css" media="screen" /> 
 	<link rel="stylesheet" type="text/css" href="css/style.css">
  	
-     <style type="text/css">
+    <style type="text/css">
         .editormd-preview{
             left: 0 !important;
             right: auto !important;
@@ -178,11 +178,11 @@
 						</ul>
 					</div>
 	            </div>
-				<div id="line" class="drag-line" style="left:279px;top: 0px; right: -4px; width: 7px; height: 100%; position: absolute; z-index: 1;"></div>
+				<div id="line" class="drag-line" style="cursor: col-resize;left:279px;top: 0px; right: -4px; width: 7px; height: 100%; position: absolute; z-index: 1;"></div>
 	        </div>
 	        <div class="manual-right">
 		        <div class="doclist">
-			        <div class="second-table"  id="secondDropZone" style="width: 279px;">
+			        <div class="second-table"  id="secondDropZone" style="left:0px; top:0px; width: 279px;">
 			         	<div class="searchBox">
 			         		<div class="back" onclick="backToParentDoc();"> 
 			         			<i class="backicon glyphicon glyphicon-arrow-left"></i>
@@ -214,9 +214,9 @@
 			         		</ul>
 			         	</div>
 			         </div>
-			         <div id="second-line" class="drag-line" style="left:279px;top: 0px; right: -4px; width: 7px; height: 100%; position: absolute; z-index: 1;"></div>
+			         <div id="second-line" class="drag-line" style="cursor: col-resize;left:279px;top: 0px; right: -4px; width: 7px; height: 100%; position: absolute; z-index: 1;"></div>
 			    </div>    
-		        <div class="detail-container" id="detail-container" style="left: 280px;">
+		        <div class="detail-container" id="detail-container" style="position:relative;left:280px;">
 		            <div class="searchBox" style="white-space:nowrap">
 		         		<div class="back" onclick="showCenterDiv();"> 
 		         			<i class="backicon glyphicon glyphicon-arrow-left"></i>
@@ -6075,41 +6075,46 @@ function CompareObj(objA, objB, flag) {
 	//目录列表区域拖放功能：预览区和子目录区域需要一起变化
     var oDiv=document.getElementById('line');
     oDiv.onmousedown=function(ev){
-      var disX=ev.clientX-oDiv.offsetLeft;
-      var disY=ev.clientY-oDiv.offsetTop;
+    	document.onmousemove=function(ev){
+		    var left = ev.clientX;	//计算Line的位置
+            //console.log("left = " + left);
 
-      document.onmousemove=function(ev){
-          var l=ev.clientX-disX;	//计算Line的位置
-          oDiv.style.left=l+'px';	//设置Line的位置
-          
-     	  $(".manual-left")[0].style.width = ev.clientX + 'px';
-       	  $(".manual-right")[0].style.left = (ev.clientX + 1) + 'px';
-       	  DocEdit.resize();
-   	  };
-      
-      document.onmouseup=function(ev){
-   	  	//$(".manual-left")[0].style.width=ev.clientX+'px';
-   	 	//$(".manual-right")[0].style.left=ev.clientX+'px';
-   	 	document.onmousemove=null;
-   	  	document.onmouseup=null;
-      };
+		    oDiv.style.left = left+'px';	//设置Line的位置
+	    			    
+		  	$(".manual-left")[0].style.width = left + 'px';
+		 	$(".manual-right")[0].style.left = (left + 1) + 'px';
+		 	DocEdit.resize();
+		};
+		
+		document.onmouseup=function(ev){
+			document.onmousemove=null;
+			document.onmouseup=null;
+		};
     };
     
     var oDiv2=document.getElementById('second-line');
     oDiv2.onmousedown=function(ev){
-        var disX=ev.clientX-oDiv2.offsetLeft;
-        var disY=ev.clientY-oDiv2.offsetTop;
-   
-       document.onmousemove=function(ev){
-       	   $('.doclist').width(ev.clientX);
-           $(".detail-container").css("left",ev.clientX + 1);
+    	var offsetX = oDiv.offsetLeft;
+    	//console.log("offsetX = " + offsetX);
+    	
+    	document.onmousemove=function(ev){
+    		//console.log("ev.clientX = " + ev.clientX);
+        	
+            var left = ev.clientX - offsetX;	//计算Line2的位置
+            //console.log("left = " + left);
+        	
+            oDiv2.style.left = left+'px';	//设置Line2的位置
+    		
+       	   $('.second-table').width(left+'px');
+           $(".detail-container").css("left",left + 1);
            DocEdit.resize();
            return false;
    	  };
-    	  document.onmouseup=function(ev){
-    	 	document.onmousemove=null;
-    	  	document.onmouseup=null;
-        };
+    
+   	  document.onmouseup=function(ev){
+    	  document.onmousemove=null;
+    	  document.onmouseup=null;
+      };
     };
     //页面加载完成处理函数    
     $(document).ready(function(){
