@@ -3,7 +3,8 @@
     left: 0px;
     top: 0px;
     bottom: 0;
-    width: 379px;
+    width: 279px;
+   	background:#fafafa
 }
 .second-line{
     position: absolute;
@@ -63,9 +64,10 @@
     color:rgba(148, 157, 166, 0.36);
 	position:absolute;
 }
-.second-table{
-	overflow:auto;
-	background:#fafafa
+
+.second-list{
+    overflow-y: auto;
+    height:80%;
 }
 
 .second-list ul li {
