@@ -30,10 +30,14 @@
 	<link rel="stylesheet" type="text/css" href="css/zjp-css.css">
 	<!-- FreeTeam CSS-->
 	<link rel="stylesheet" href="static/freeTeam/css/resetV2.css" type="text/css" media="screen" />
-	<link rel="stylesheet" href="static/freeTeam/css/boot-css/bootstrap.custom.css" type="text/css" media="screen" /> 
+	<link rel="stylesheet" href="static/freeTeam/css/boot-css/bootstrap.custom.css" type="text/css" media="screen" />
 	<link rel="stylesheet" type="text/css" href="css/style.css">
- 	
+
     <style type="text/css">
+		html {
+			overflow-x: hidden;
+		}
+
         .editormd-preview{
             left: 0 !important;
             right: auto !important;
@@ -64,7 +68,7 @@
         	font-size:13px;
         	cursor: pointer;
         }
-        
+
         .uploadFileName{
         	cursor: text;
         }
@@ -75,7 +79,7 @@
         	font-size:13px;
         	cursor: pointer;
         }
-        
+
         .reuploadBtn{
         	position:absolute;
         	top:0px;
@@ -83,7 +87,7 @@
         	font-size:13px;
         	cursor: pointer;
         }
-        
+
         .icon_add{
             background: url(images/sprite-4ce3c9eaa2.svg) no-repeat;
     		background-position: 74.78510028653295% 0;
@@ -126,7 +130,7 @@
 	                <a  id="projectName" class="navbar-brand" href="#">仓库名</a>
 	                <span style="font-size: 12px;font-weight: 100;" class="projectVersion"></span>
 	            </div>
-	
+
 	            <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
 	                <ul class="nav navbar-nav navbar-right">
 					    <li id="userImgDiv" style="display:none"><img id="userImg" name="userImg" width="40px" height="40px" src="images/default/defaultHeadPic.png" onerror="UserImgErrHandler();" class="img-circle m5"/></li>
@@ -143,7 +147,7 @@
 	                    </li>
 	                </ul>
 	            </nav>
-	        </div>      
+	        </div>
 	    </header>
 	    <article class="container-fluid manual-body">
 	        <div class="manual-left">
@@ -158,7 +162,7 @@
 							<ul class="dropdown-menu" role="menu">
 								<li><a onclick="newDocEx(1)">新建文件</a></li>
 								<li><a onclick="newDocEx(2)">新建文件夹</a></li>
-								
+
 								<li><a onclick="uploadFilesEx();">上传文件</a></li>
 								<li><a onclick="uploadDirEx()">上传文件夹</a></li>
 							</ul>
@@ -166,7 +170,7 @@
 		         	</div>
 	                <div id="treeBody" class="tab-wrap">
 	                    <div class="tab-item manual-catalog" id="uuz">
-	
+
 	                        <div class="catalog-list read-book-preview" id="tree">
 	                            <ul id="doctree" class="ztree"></ul>
 	                        </div>
@@ -184,7 +188,7 @@
 		        <div class="doclist">
 			        <div class="second-table"  id="secondDropZone" style="left:0px; top:0px; width: 279px;">
 			         	<div class="searchBox">
-			         		<div class="back" onclick="backToParentDoc();"> 
+			         		<div class="back" onclick="backToParentDoc();">
 			         			<i class="backicon glyphicon glyphicon-arrow-left"></i>
 			         		</div>
 			         		<div class="content">
@@ -216,10 +220,10 @@
 			         	</div>
 			         </div>
 			         <div id="second-line" class="drag-line" style="cursor: col-resize;left:279px;top: 0px; right: -4px; width: 7px; height: 100%; position: absolute; z-index: 1;"></div>
-			    </div>    
-		        <div class="detail-container" id="detail-container" style="position:relative;left:280px;background:#fafafa;">
+			    </div>
+		        <div class="detail-container" id="detail-container" style="position:absolute;left:280px;background:#fafafa;">
 		            <div class="searchBox" style="white-space:nowrap;">
-		         		<div class="back" onclick="showCenterDiv();"> 
+		         		<div class="back" onclick="showCenterDiv();">
 		         			<i class="backicon glyphicon glyphicon-arrow-left"></i>
 		         		</div>
 		        		<div class="filetitle" id="filetitle"></div>
@@ -395,18 +399,18 @@
 </div>
 <div style="width:0;height:0;">
 	<textarea id="copiedText"></textarea>
-</div>	
+</div>
 <!-- single file upload form -->
 <div style="display:none">
-	<form id="FileUploadForm" action="/DocSystem/Doc/uploadDoc.do" method="post" enctype="multipart/form-data">  
+	<form id="FileUploadForm" action="/DocSystem/Doc/uploadDoc.do" method="post" enctype="multipart/form-data">
 		<input id="uploadFile" name="uploadFile" type="file" class="fLeft" style="margin-top: 90px;" multiple="multiple"/>
 		<input type="text" value="0" id="reposId" name="reposId" title="所在仓库"/>
-		<input type="text" value="0" id="parentId" name="parentId" title="父节点"/>	
+		<input type="text" value="0" id="parentId" name="parentId" title="父节点"/>
 		<input type="text" value="-1" id="docId" name="docId" title="文件节点"/>
 		<input type="text" value="1" id="uploadType" name="uploadType" title="上传类型：1文件 2文件夹"/>
 	</form>
 </div>
-           
+
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script type="text/javascript" src="static/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="static/layer/layer.js"></script>
@@ -434,14 +438,14 @@
 	//Doc Info
 	var gDocId;
 	var gDocContent;
-	var gEdit; 
-	
+	var gEdit;
+
 	//通用函数接口
 	function showErrorMessage($msg) {
     	qiao.bs.alert($msg);
 	}
-	
-	function closeBootstrapDialog(id){ 
+
+	function closeBootstrapDialog(id){
 		$("#"+id + "div").remove();	//删除全屏遮罩
 		$("#"+id).remove();	//删除对话框
 	}
@@ -449,7 +453,7 @@
 	function getDeleteNodes()
 	{
 		var deleteNodes = [];
-		
+
 		var treeObj = $.fn.zTree.getZTreeObj("doctree");
 		var selectedNodes = treeObj.getSelectedNodes();
 		if(selectedNodes == null || selectedNodes.length < 2)
@@ -464,10 +468,10 @@
 		{
 			deleteNodes = selectedNodes;
 		}
-		
+
 		return deleteNodes;
 	}
-	
+
 	//callback is for success delete
 	function DoDelete(treeNodes,callback)
 	{
@@ -481,16 +485,16 @@
 			var msg =  "是否删除文件 " + treeNode.name;
 			if(treeNodes.length > 1)
 		  	{
-				msg =  "是否删除 " + treeNode.name + "等" + treeNodes.length  +"文件";	
+				msg =  "是否删除 " + treeNode.name + "等" + treeNodes.length  +"文件";
 		  	}
 			else
 			{
 				if(treeNode.type == 2)
 				{
-					msg =  "是否删除整个目录 " + treeNode.name;	
+					msg =  "是否删除整个目录 " + treeNode.name;
 				}
 			}
-			
+
 			bootstrapQ.confirm({
 				id: "deleteConfirm",
 				title: "删除确认",
@@ -498,7 +502,7 @@
 				},function () {
 			    	//alert("点击了确定");
 					DocDelete.deleteDocs(treeNodes,callback);
-			    	return true;   
+			    	return true;
 			 	});
 		}
 	}
@@ -506,7 +510,7 @@
 	function getCopiedNodes()
 	{
 		var treeNodes = [];
-		
+
 		var treeObj = $.fn.zTree.getZTreeObj("doctree");
 		var selectedNodes = treeObj.getSelectedNodes();
 		if(selectedNodes == null || selectedNodes.length < 2)
@@ -521,7 +525,7 @@
 		{
 			treeNodes = selectedNodes;
 		}
-		
+
 		return treeNodes;
 	}
 
@@ -531,15 +535,15 @@
 		if(treeNodes == null || treeNodes.length < 1)
 		{
 			console.log("DoPaste nothing was copied");
-			return;	
+			return;
 		}
-		
+
 		console.log("StartCopy");
 		DocCopy.copyDocs(treeNodes,dstParentNode,gReposId);
 	}
 
 	function copyDocName(node){
-		
+
 		var id = 0;
 		if(node == null)
 		{
@@ -561,7 +565,7 @@
 					time : 1000,
 		});
 	}
-	
+
 	function copyDocPath(node){
 		var id = 0;
 		if(node == null)
@@ -572,7 +576,7 @@
 		id = node.id;
 		var docPath = getNodePath(node);
 		console.log("docPath:" + docPath);
-		
+
 		//window.clipboardData.setData("Text",url);	//剪贴板存在兼容性问题
 		var obj=document.getElementById("copiedText");
 		obj.value=docPath;	//修改其中的值
@@ -585,7 +589,7 @@
 					time : 1000,
 		});
 	}
-	
+
 	function copyUrl(node){
 		var id = 0;
 		if(node == null)
@@ -605,7 +609,7 @@
 		//console.log(url);
 		var url = host+href;
 		console.log(url);
-		
+
 		//window.clipboardData.setData("Text",url);	//剪贴板存在兼容性问题
 		var obj=document.getElementById("copiedText");
 		obj.value=url;	//修改其中的值
@@ -618,9 +622,9 @@
 					time : 1000,
 		});
 	}
-	
+
 	//文件下载接口
- 	function downloadDoc(docId,docName,needConfirm){		
+ 	function downloadDoc(docId,docName,needConfirm){
 		if(needConfirm)
 		{
 			if(confirm("是否下载文件：" + docName) == false)
@@ -630,7 +634,7 @@
 		}
 		window.location.href = "/DocSystem/Doc/doGet.do?id="+docId;
 	}
-	
+
     /*文件上传实现*/
    	function uploadFilesEx()
     {
@@ -638,34 +642,34 @@
 		gParentNodeForUpload = getParentNodeByNode(node);
 	    uploadFiles();
     }
-    
+
    	function uploadDirEx()
     {
     	var node = getNodeByNodeId(gDocId);
 		gParentNodeForUpload = getParentNodeByNode(node);
 	    uploadDir();
     }
-    
+
 	//文件上传入口
 	function uploadFiles(){
 		console.log("uploadFiles() gParentNodeForUpload:",gParentNodeForUpload);
   		//清除文件控件
 		$("#uploadFiles").val("");
 
-  		$("#uploadType").val(1); //文件	
+  		$("#uploadType").val(1); //文件
 	    return $("#uploadFiles").click();
 	}
-	
+
 	//文件夹上传入口
 	function uploadDir(){
 		console.log("uploadDir() gParentNodeForUpload:",gParentNodeForUpload);
   		//清除文件控件
 		$("#uploadDir").val("");
-  		
+
 		$("#uploadType").val(2);
 	    return $("#uploadDir").click();
 	}
-	
+
 	//文件chekcIn入口
 	function checkInFile(){
 		console.log("checkInFile() gParentNodeForUpload:",gParentNodeForUpload);
@@ -674,37 +678,37 @@
 
   		return $("#checkInFile").click();
 	}
-	
-	
-	//get the filename 
+
+
+	//get the filename
 	function getFileName(o){
 	    var pos=o.lastIndexOf("\\");
-	    return o.substring(pos+1);  
+	    return o.substring(pos+1);
 	}
-	
+
 	//upload file confirm dialog
 	function selectUploadConfirm(e)
 	{
 		console.log("selectUploadConfirm",e,gParentNodeForUpload);
 	    var entrys = e.target.files;
-	    
-		checkUserUploadRight(entrys,gParentNodeForUpload,uploadConfirm);		
+
+		checkUserUploadRight(entrys,gParentNodeForUpload,uploadConfirm);
 	    return true;
 	}
-	
+
 	function dragUploadConfirm(e,parentNode)
 	{
 		console.log("dragUploadConfirm",e);
-        
+
 		//getFileList
         var entrys = getFileList(e);
         //console.log("entrys",entrys);
-        		
+
 		//用户确认上传
 		checkUserUploadRight(entrys,parentNode,uploadConfirm);
 	    return true;
 	}
-	
+
 	//CheckInUpload Confirm
 	function checkInUploadConfirm(e)
 	{
@@ -714,13 +718,13 @@
 	    if(fileName != curCheckInDoc.name)
 	    {
 	    	bootstrapQ.alert("请选择文件：" + curCheckInDoc.name);
-		    return false;	
+		    return false;
 	    }
-	    
-	    checkUserUploadRight(entrys,gParentNodeForUpload,uploadWithoutConfirm);		
+
+	    checkUserUploadRight(entrys,gParentNodeForUpload,uploadWithoutConfirm);
 	    return true;
 	}
-	
+
 	//获取用户的权限
 	function checkUserUploadRight(files,parentNode,callback)
 	{
@@ -732,7 +736,7 @@
 		}
 		var vid = gReposId;
 		var remoteDir = getNodePath(parentNode);	//only for display
-		
+
 		$.ajax({
 			url : "/DocSystem/Repos/getUserDocAuth.do",
 			type : "post",
@@ -767,17 +771,17 @@
 			}
 		});
 	}
-	
+
 	//drag upload file confirm dialog（拖拽上传的确认对话框）
 	function uploadConfirm(files,parentNode)
-	{	
+	{
 		console.log("uploadConfirm()");
 		//build upload confirm text
 	    if(files.length > 0)
 	   	{
 	    	console.log("files.length:" + files.length);
 	    	for( var i = 0 ; i < files.length ; i++ )
-	    	{  
+	    	{
 	    		firstFile = files[i];
 	    	   	if(typeof firstFile == 'object')
 	    	   	{
@@ -787,7 +791,7 @@
 	    	   	}
 	    	   	else
 	    	   	{
-	    	   		//This is something else 
+	    	   		//This is something else
 	    	   		//console.log("it is not a file");
 	    	   	}
 	    	}
@@ -796,11 +800,11 @@
 	   	{
 	   		bootstrapQ.alert("请选择文件");
 	      	return false;
-	   	}  
-		
+	   	}
+
 		var fileName = firstFile.name;
 	    console.log("firstFile:"+fileName);
-	  	
+
 	  	var uploadContent = fileName;
 	  	//if(relativePath)
 	  	//{
@@ -810,22 +814,22 @@
 	  	{
 	  		uploadContent = uploadContent + " 等" + files.length + "个文件";
 	  	}
-	  	
+
 	  	//get the parentNode
 	  	var parentId = 0;
 		if(parentNode)
 		{
-			parentId=parentNode.id;	
+			parentId=parentNode.id;
 		}
 		else
 		{
 			parentNode=null;
 		}
-		
+
 		var vid = gReposId;
 
 		var remoteDir = getNodePath(parentNode);	//only for display
-		
+
 	    qiao.bs.dialog({
 	        id: "dialog-uploadDialog",
 	        url: '#uploadConfirmDialog',
@@ -838,39 +842,39 @@
 	                //$("#uploadContent").val(uploadContent);
 	                $("#dialog-uploadDialog input[name='uploadContent']").val(uploadContent);
 	                //set the show name for destiontion remote directory
-	                $("#dialog-uploadDialog input[name='remoteDir']").val(remoteDir);                
-	                 
+	                $("#dialog-uploadDialog input[name='remoteDir']").val(remoteDir);
+
 	            },100);
 	        }
 	    },function () {
 	    	//alert("点击了确定");
 			//开始上传
 			DocUpload.uploadDocs(files,parentNode,parentId,vid);
-	    	return true;   
+	    	return true;
 	    });
 		return true;
 	}
-	
+
 	function uploadWithoutConfirm(files,parentNode)
-	{	
-		console.log("uploadWithoutConfirm()");		
-		
+	{
+		console.log("uploadWithoutConfirm()");
+
 	  	//get the parentNode
 	  	var parentId = 0;
 		if(parentNode)
 		{
-			parentId=parentNode.id;	
+			parentId=parentNode.id;
 		}
 		else
 		{
 			parentNode=null;
 		}
-		
+
 		var vid = gReposId;
-		
+
 		//开始上传
 		DocUpload.uploadDocs(files,parentNode,parentId,vid);
-	    return true;   
+	    return true;
 	}
 
 	//DocUpload类
@@ -890,27 +894,27 @@
         var preUploadTime = 0; //上次的上传时间
         var uploadStartTime = 0;//上传开始时间，用于计算已用时间
         var uploadSpeed = 1000;	//1k/s
-        
+
         /*uploadDoc conditions 用于指示当前的上传文件及上传状态*/
         var index = 0; //当前操作的索引
-        var totalNum = 0; 
+        var totalNum = 0;
  		var SubContextList = []; //文件上传上下文List，用于记录单个文件的上传情况，在开始上传的时候初始化
         var vid = 0;
- 		
+
         //状态机变量，用于实现异步对话框的实现
         var fileCoverConfirmSet = 0; //0：文件已存在时弹出确认窗口，1：文件已存在直接覆盖，2：文件已存在跳过
-        var uploadErrorConfirmSet = 0; //0:上传错误时弹出确认是否继续上传窗口，1：上传错误时继续上传后续文件， 2：上传错误时停止整个上传		
-        
+        var uploadErrorConfirmSet = 0; //0:上传错误时弹出确认是否继续上传窗口，1：上传错误时继续上传后续文件， 2：上传错误时停止整个上传
+
         //vars for reupload
         var reuploadFlag = false; //false: 正常上传  true: 重传
-        var reuploadCount = 0; 
+        var reuploadCount = 0;
         var reuploadTotalNum = 0;
         var reuploadFailNum = 0;
         var reuploadSuccessNum = 0;
         var reuploadedNum = 0;
         var reuploadList = []; //重传列表，保存的是SubContext的index
         var reuploadIndex = 0;	//This is for reupload, the index should be reuploadList[reuploadIndex]
-        
+
         //标准Java成员操作接口
         function getUploadStatus()
         {
@@ -922,7 +926,7 @@
         	console.log("uploadStatus: " + uploadStatus);
         	return uploadStatus;
         }
-      	
+
       	//设置进度条的上传取消按键的接口,this function has performance issue, so it will not be used
     	function itemStopUploadDelegate()
     	{
@@ -943,7 +947,7 @@
     			}
       		}
     	}
-    	
+
 		//多文件Upload接口
 		function uploadDocs(files,parentNode,parentId,vid)	//多文件上传函数
 		{
@@ -955,7 +959,7 @@
 				showErrorMessage("没有需要上传的文件!");
 				return;
 			}
-				
+
 			if(isUploading == true)
 			{
 				DocUploadAppend(files,parentNode,parentId,vid);
@@ -964,24 +968,24 @@
 			{
 				//初始化文件上传参数
 				DocUploadInit(files,parentNode,parentId,vid);
-				
+
 				uploadTime = new Date().getTime();	//初始化上传时间
 				uploadStartTime = uploadTime;
 				preUploadTime = uploadTime;
-				//启动第一个Doc的Upload操作      		
+				//启动第一个Doc的Upload操作
 				uploadDoc();	//start upload
 			}
 		}
-		
+
 		//初始化DocUpload设置
       	function DocUploadInit(files,parentNode,parentId,vid)	//多文件移动函数
 		{
 			console.log("DocUploadInit");
 			//设置为正在上传，避免被其他上传中断
 			isUploading = true;
-			
+
 			reuploadFlag = false; //false: 正常上传  true: 重传
-	        
+
 			//清空所有全局变量
 			stopUploadFlag = false;
 			fileCoverConfirmSet = 0;
@@ -993,13 +997,13 @@
 			//清空上下文列表
 			SubContextList = [];
 			FailList = [];
-			
+
 			//Set the Index
 			index = 0;
-			
+
 			//Build SubContextList and get total Size
 			totalSize = buildSubContextList(files,parentNode,parentId,vid,SubContextList);
-			
+
 			//Set upload total file Num
 			totalNum = 0;
 			if(files && files.length)
@@ -1007,7 +1011,7 @@
 				totalNum = files.length;
 			}
 			console.log("文件总的个数为："+totalNum + " 文件总的大小为："+totalSize);
-			
+
 			//Draw UploadItems by Go through the SubContextList
 			preUploadSize = 0;
 			uploadedFileSize = 0;
@@ -1021,30 +1025,30 @@
 				checkAndDrawUploadItems(SubContextList);
 		   	}
       	}
-      	
+
       	//增加上传文件
       	function DocUploadAppend(files,parentNode,parentId,vid)	//多文件移动函数
 		{
 			console.log("DocUploadAppend");
-			
-			
+
+
 			//Go through files, and add files to SubContextList
 			var totSize = buildSubContextList(files,parentNode,parentId,vid,SubContextList);
-			totalSize += totSize;			
-			
+			totalSize += totSize;
+
 			var totNum = 0;
 			if(files && files.length)
 			{
 				totNum = files.length;
 			}
 			totalNum += totNum;
-			
+
 			showUploadingInfo();
-			
+
 			console.log("文件总的个数为："+totalNum + " 文件总的大小为："+totalSize);
 			checkAndDrawUploadItems(SubContextList);
       	}
-      	
+
       	//这是一个递归调用函数，递归遍历所有目录，并将文件加入到SubContextList中
 		function buildSubContextList(files,parentNode,parentId,vid,SubContextList)
 		{
@@ -1064,11 +1068,11 @@
 	    	   		   	SubContext.parentNode = parentNode;
 	    	   		   	SubContext.parentId = parentId;
 	    	   		   	SubContext.vid = vid;
-	    	   		   	
-			    		SubContext.docId = -1; //-1: 新增  
-			    		
+
+			    		SubContext.docId = -1; //-1: 新增
+
 	    	   		   	//advanced Info
-	    	   		   	SubContext.type = 1;	
+	    	   		   	SubContext.type = 1;
 			    	   	SubContext.size = file.size;
 	    	   		   	SubContext.name = file.name;
 				    	SubContext.relativePath = file.webkitRelativePath;
@@ -1076,28 +1080,28 @@
 				    	{
 				    		SubContext.relativePath = file.fullPath;
 				    	}
-				    	
+
 				    	//Status Info
 			    		SubContext.index = i;
 			    	   	SubContext.state = 0;	//未开始上传
 			    	   	SubContext.status = "待上传";	//未开始上传
-			    	   	
+
 			    	   	//checkSum Init
 			    	   	SubContext.checkSumState = 0;
 			    	   	SubContext.checkSum = "";
-			    	   	
+
 			    	   	//StateMachine SMMain\SMSub
 			    	   	SubContext.SMState = "init";	//uploadDoc状态机的主状态
 			    	   	SubContext.SMSubState = 0;	//uploadDoc状态机的子状态
-			    	   	
-			    	   	//分片上传状态 
+
+			    	   	//分片上传状态
 			    	   	SubContext.cutFileState = 0;
 			    	   	SubContext.chunked = false;
-			    	   	
+
 			    	   	SubContext.fileCoverConfirmSet = 0;	//默认碰到已存在文件需要用户确认是否覆盖
 			    		SubContext.uploadErrorConfirmSet = 0;	//默认碰到错误需要用户确认
 			    		SubContext.stopUploadFlag = false; //停止上传标记未false
-			      								    	   	
+
 			    	   	//Push the SubContext
 			    	   	SubContextList.push(SubContext);
 			    	   	totSize += file.size;
@@ -1108,7 +1112,7 @@
 	    	console.log("buildSubContextList() totSize:" + totSize);
 	    	return totSize;
 	   	}
-      	
+
       	function getFileShowSize(fileSize)
       	{
 			var showSize = fileSize;
@@ -1124,7 +1128,7 @@
 					if((showSize/1024)>1)
 					{
 						showSize = showSize/1024;
-						units = "G";						
+						units = "G";
 					}
 				}
 			}
@@ -1132,7 +1136,7 @@
 			console.log("getFileSize() showSize:" + result);
 			return result;
       	}
-      	
+
       	//初始化上传文件的SubContext,并绘制对应的进度条
       	function checkAndDrawUploadItems(SubContextList)
       	{
@@ -1142,14 +1146,14 @@
       				//console.log("druawUploadItems() all items drawed");
       				return;
       			}
-      			
+
       			//the drawedNum ahead of index less than 100, do draw the doc progress
       			if((drawedNum - index) > 100)
       			{
       			    console.log("druawUploadItems() drawedNum:" + drawedNum + " index:" + index);
       				return;
       			}
-      			
+
       			//Prepare to drawed
       			var startIndex = drawedNum;
       			var endIndex = totalNum;
@@ -1159,7 +1163,7 @@
       			}
       			var str = "";
       			for( var i = startIndex ; i < endIndex ; i++ )
-		    	{	
+		    	{
 		    		//console.log("index:" + i);
 		    		var SubContext = SubContextList[i];
 		    		SubContext.showSize = getFileShowSize(SubContext.size);
@@ -1179,9 +1183,9 @@
 		    				"</div>"+
 		    			  "</li>";
 		    		//已绘制个数增1
-		    		drawedNum++;	    		
+		    		drawedNum++;
 				}
-				$('#uploadedFileList').append(str);		
+				$('#uploadedFileList').append(str);
       	}
 		//文件覆盖确认不能像文件错误确认一样封装成函数的原因在于，文件复制会存在两种种情况：继续、异步等待用户确认，文件错误确认只有一种情况：异步等待用户确认
       	//获取当上传的文件覆盖设置
@@ -1193,13 +1197,13 @@
   	 			{
   	 				return 0;
   	 			}
-  	 		
-  	 			return SubContextList[index].fileCoverConfirmSet;	 			
+
+  	 			return SubContextList[index].fileCoverConfirmSet;
   	 		}
-  	 		
+
 	 		return fileCoverConfirmSet;
       	}
-      	
+
       	//文件覆盖处理接口
       	function fileCoverConfirm(docName,msgInfo)
       	{
@@ -1209,7 +1213,7 @@
      		{
      			fileCoverConfirmSet = 1;
      		}
-      		
+
       		//检查当前目录下是否有同名文件或目录
   	 		var confirm = getFileCoverConfirmSetting();
 	  	 	if(confirm == 1)
@@ -1232,11 +1236,11 @@
 		            	closeBootstrapDialog("fileCoverConfirm");
 		            	uploadDoc(); //reEnter uploadDoc
 		            },5*60*1000);	//5分鐘用戶不確認則關閉對話框
-		        
+
 	    	    qiao.bs.confirm({
 	    	    	id: 'fileCoverConfirm',
 	    	        msg: docName + "已存在,是否覆盖?",
-	    	        close: false,		
+	    	        close: false,
 	    	        okbtn: "替换",
 	    	        qubtn: "跳过",
 	    	    },function () {
@@ -1251,11 +1255,11 @@
 		 	            	closeBootstrapDialog("takeSameActionConfirm1");
 		 	            	uploadDoc(); //reEnter uploadDoc
 		 	            },5*60*1000);	//5分鐘用戶不確認則關閉對話框
-		 	            
+
 	  	 	    	    qiao.bs.confirm({
 	  	 	    	    	id: 'takeSameActionConfirm1',
 	  	 	    	        msg: "后续已存在文件是否自动覆盖？",
-	  	 	    	        close: false,		
+	  	 	    	        close: false,
 	  	 	    	        okbtn: "是",
 	  	 	    	        qubtn: "否",
 	  	 	    	    },function () {
@@ -1275,25 +1279,25 @@
 	  	 			{
 	  	 				uploadDoc(); //reEnter uploadDoc
 	  	 			}
-	    	    	return true;   
+	    	    	return true;
 	    	    },function(){
 	    	    	console.log("fileCoverConfirm() 用户选择跳过上传 " + docName);
 	    	    	clearTimeout(fileCoverTimer);
-	
+
 	  	 			SubContextList[index].fileCoverConfirmSet = 2; //不覆盖
-	  	 			if(index < (totalNum-1)) //后续还有才提示 
+	  	 			if(index < (totalNum-1)) //后续还有才提示
 	  	 			{
 		  	 			var fileCoverTimer2 = setTimeout(function () {	//超时用户没有动作，则直接覆盖
 		 	            	console.log("fileCoverConfirm() 后续已存在文件是否自动跳过，用户确认超时，后续自动跳过！");
 		 	            	fileCoverConfirmSet = 2;
-		 	            	closeBootstrapDialog("takeSameActionConfirm2");	 	            	
+		 	            	closeBootstrapDialog("takeSameActionConfirm2");
 		 	            	uploadErrorHandler(docName,"后续已存在文件是否自动跳过，用户确认超时，跳过且后续自动跳过！");
 		 	            },5*60*1000);	//5分鐘用戶不確認則關閉對話框
-	  	 				
+
 	  	 	    	    qiao.bs.confirm({
 	  	 	    	    	id: 'takeSameActionConfirm2',
 	  	 	    	        msg: "后续已存在文件是否自动跳过？",
-	  	 	    	        close: false,		
+	  	 	    	        close: false,
 	  	 	    	        okbtn: "是",
 	  	 	    	        qubtn: "否",
 	  	 	    	    },function () {
@@ -1307,17 +1311,17 @@
 	  	 	    	    	clearTimeout(fileCoverTimer2);
 	  						uploadErrorHandler(docName,"文件已存在，跳过但后续不自动跳过");
 	  	  	 				return true;
-	  	 				});			
+	  	 				});
 	  	 			}
 	  	 			else
 	  	 			{
 	  	 				uploadErrorHandler(docName,"文件已存在，跳过");
 	  	 			}
 	    	    	return true;
-	    	    });      		
+	    	    });
       	 	}
       	}
-      	
+
       	//获取当上传的文件覆盖设置
       	function getUploadErrorConfirmSetting()
       	{
@@ -1327,13 +1331,13 @@
   	 			{
   	 				return 0;
   	 			}
-  	 		
-  	 			return SubContextList[index].uploadErrorConfirmSet;	 			
+
+  	 			return SubContextList[index].uploadErrorConfirmSet;
   	 		}
-  	 		
+
 	 		return uploadErrorConfirmSet;
       	}
-      	
+
       	//upload Error Confirm
       	function uploadErrorConfirm(FileName,errMsg)
       	{
@@ -1344,17 +1348,17 @@
             	closeBootstrapDialog("uploadErrorConfirm");
             	uploadErrorHandler(FileName,errMsg);
             },5*60*1000);	//5分鐘用戶不確認則關閉對話框
-      		
+
 			//弹出用户确认窗口
       		qiao.bs.confirm({
     	    	id: 'uploadErrorConfirm',
     	        msg: FileName + "上传失败（"+errMsg+"）,是否继续上传其他文件？",
-    	        close: false,		
+    	        close: false,
     	        okbtn: "继续",
     	        qubtn: "结束上传",
     	    },function () {
     	    	//alert("点击了确定");
-				clearTimeout(uploadErrorTimer);			
+				clearTimeout(uploadErrorTimer);
       			SubContextList[index].uploadErrorConfirmSet = 1; //继续上传
     	 		if(index < (totalNum-1))	//后续还有文件
                 {
@@ -1364,11 +1368,11 @@
     	            	closeBootstrapDialog("takeSameActionConfirm3");
     	            	uploadErrorHandler(FileName,errMsg);
     	            },5*60*1000);	//5分鐘用戶不確認則關閉對話框
-    	 			
+
   	 	    	    qiao.bs.confirm({
   	 	    	    	id: 'takeSameActionConfirm3',
   	 	    	        msg: "后续错误是否执行此操作？",
-  	 	    	        close: false,		
+  	 	    	        close: false,
   	 	    	        okbtn: "是",
   	 	    	        qubtn: "否",
   	 	    	    },function () {
@@ -1382,7 +1386,7 @@
   	 					clearTimeout(uploadErrorTimer1);
   	 	    	    	uploadErrorHandler(FileName,errMsg);
   	  	 				return true;
-  	 				});	
+  	 				});
                 }
     	 		else
     	 		{
@@ -1393,11 +1397,11 @@
     	    	//alert("点击了取消");
     	    	clearTimeout(uploadErrorTimer);
       			SubContextList[index].uploadErrorConfirmSet = 2; //结束所有上传
-          		uploadErrorConfirmSet = 2; //全局取消上传    	 		
+          		uploadErrorConfirmSet = 2; //全局取消上传
 		 		uploadErrorAbortHandler(FileName,errMsg);
       		});
       	}
-      	
+
       	//uploadErrorConfirmHandler
       	function uploadErrorConfirmHandler(FileName,errMsg)
       	{
@@ -1416,19 +1420,19 @@
 				uploadErrorConfirm(name, errMsg);
 			}
       	}
-      	
+
       	//uploadErrorHandler
       	function uploadErrorHandler(FileName,errMsg)
       	{
       		console.log("uploadErrorHandler() "+ FileName + " " + errMsg);
-      		
+
       		//CheckIn Failed
       		if(curCheckInDoc.id && curCheckInDoc.id > -1)
-      		{	
-          		console.log("uploadErrorAbortHandler() checkIn failed for "+ FileName + " " + errMsg);      			
+      		{
+          		console.log("uploadErrorAbortHandler() checkIn failed for "+ FileName + " " + errMsg);
           		curCheckInDoc.id = -1;
       		}
-      		
+
       		if(false == reuploadFlag)
       		{
       			failNum++;
@@ -1442,20 +1446,20 @@
 			SubContextList[index].state = 3;	//上传结束
       		SubContextList[index].status = "fail";
 			SubContextList[index].msgInfo = errMsg;
-			uploadNextDoc();		 	
+			uploadNextDoc();
       	}
-      	
+
       	//uploadErrorAbortHandler
       	function uploadErrorAbortHandler(FileName,errMsg)
       	{
       		console.log("uploadErrorAbortHandler() "+ FileName + " " + errMsg);
       		//CheckIn Failed
       		if(curCheckInDoc.id && curCheckInDoc.id > -1)
-      		{	
-          		console.log("uploadErrorAbortHandler() checkIn failed for "+ FileName + " " + errMsg);      			
+      		{
+          		console.log("uploadErrorAbortHandler() checkIn failed for "+ FileName + " " + errMsg);
           		curCheckInDoc.id = -1;
       		}
-      	
+
       		if(false == reuploadFlag)
       		{
       			failNum++;
@@ -1471,10 +1475,10 @@
       		SubContextList[index].msgInfo = errMsg;
       		uploadEndHandler();
       	}
-      	
+
       	//uploadSuccessHandler
       	function uploadSuccessHandler(name,msgInfo)
-      	{	
+      	{
       		console.log("uploadSuccessHandler() "+ name + " " + msgInfo);
       		//If curCheckInDoc was set, means the upload is for CheckIn
       		if(curCheckInDoc.id && curCheckInDoc.id > -1)
@@ -1483,11 +1487,11 @@
       			unlockDoc(curCheckInDoc.id);
       			curCheckInDoc.id = -1;
       		}
-      		
+
       		successNum++;
-	      	
+
       		if(true == reuploadFlag)
-      		{	
+      		{
 	      		console.log("uploadSuccessHandler() 重传成功");
 	      		reuploadSuccessNum++;
 	      	}
@@ -1511,14 +1515,14 @@
       			$(".reuploadAllBtn").hide();
       		}
       		$(".upload-list-title").text(uploadEndInfo);
-      		
+
             // 普通消息提示条
 			bootstrapQ.msg({
 					msg : '上传结束！',
 					type : 'success',
 					time : 2000,
-				    }); 
-            
+				    });
+
   			//清除标记
   			isUploading = false;
   			reuploadFlag = false;
@@ -1528,20 +1532,20 @@
       	function uploadEndHandler()
       	{
       		console.log("uploadEndHandler() 上传结束，共"+ totalNum +"文件，成功"+successNum+"个，失败"+failNum+"个！");
-			
-      		//显示上传完成 
-      		showUploadEndInfo();      		
-      		
+
+      		//显示上传完成
+      		showUploadEndInfo();
+
       		//清除文件控件
 			$("#uploadFiles").val("");
   			$("#uploadDir").val("");
       		$("#checkInFile").val("");
-            
+
   			//清除上传中标志
             isUploading = false;
       	}
-      	
-      	//uploadNextDoc，如果后续有未上传文件则上传下一个文件 
+
+      	//uploadNextDoc，如果后续有未上传文件则上传下一个文件
 		function uploadNextDoc()
 		{
       		if(false == reuploadFlag)
@@ -1549,14 +1553,14 @@
 	      		index++;
 				if(index < totalNum)
 				{
-					uploadDoc(); 
+					uploadDoc();
 				}
 				else
 				{
 					uploadEndHandler();
 				}
       		}
-      		else 
+      		else
       		{
       			reuploadIndex ++;
       			if(reuploadIndex < reuploadTotalNum)
@@ -1567,10 +1571,10 @@
       			else
       			{
       				uploadEndHandler();
-      			}      				
+      			}
       		}
 		}
-      	
+
       	//检查当前上传文件的父节点是否存在，不存在则通知后台新建，直到全部新建完成
  		function checkAddParentNode(SubContext)
  		{
@@ -1588,10 +1592,10 @@
  				SubContext.realParentId = tempParentNode?tempParentNode.id:0;
     			return true;
     		}
-			
+
     		//文件父目录检查部分
-			var pathArray = new Array(); //定义一数组 
-			pathArray = filePath.split("/"); //字符分割 
+			var pathArray = new Array(); //定义一数组
+			pathArray = filePath.split("/"); //字符分割
 
 			//检查其其父节点是否存在，如果不存在则需要先新建父节点目录
 			for(var i=0; i<pathArray.length-1; i++)	//最后一个是文件本身因此不需要检查
@@ -1627,13 +1631,13 @@
 			             data : {
 			             	name : nodeName,
 			                type : 2, //文件类型
-			                reposId : vid, 
+			                reposId : vid,
 			                parentId : tempParentId,
 			             },
 			             success : function (ret) {
 			             	if( "ok" == ret.status && ret.data.id){
 			  					addTreeNode(ret.data,tempParentNode);
-			             		
+
 			             		console.log("checkAddParentNode() call uploadDoc to reenter the code");
 			        		  	uploadDoc();
 			        		  	return;
@@ -1656,11 +1660,11 @@
 			SubContext.realParentId = tempParentNode?tempParentNode.id:0;
 			return true;
  		}
-      	
+
  		var CheckSumCaculator = (function(){
  			var caculateIndex = 0;
  			var reuploadCaculateIndex = 0;
- 			
+
  	      	//由于FileReader是异步调用，因此该接口也是异步调用，结果会保存在SubContext.checkSum中
  	      	function caculate()
  	      	{
@@ -1677,7 +1681,7 @@
  	      			caculateNext();
  	      			return;
  	      		}
- 	      		
+
  	      		//start to caculate the checkSum for SubContext
  	      		console.log("caculateFileCheckSum() start caculate checkSum for:",SubContext);
  	      		var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
@@ -1690,9 +1694,9 @@
  	            	uniqueId = 'chunk_' + (new Date().getTime()),
  	            	chunkStep = 1,
  	            	fileReader = new FileReader();
- 	      		
+
  	      		//console.log("caculateFileCheckSum() blobSlice",blobSlice);
- 	      		
+
  		        fileReader.onload = function (e) {
  		            //console.log("currentChunk=" + currentChunk);
  		            if(stopUploadFlag == true || SubContext.stopUploadFlag == true)
@@ -1700,7 +1704,7 @@
  		            	console.log("caculateFileCheckSum() upload was stoped, stop caculate");
  		                return;
  		            }
- 		            
+
  		            if (currentChunk === 0) {
  		                console.log("caculateFileCheckSum() Read chunk number id=" + uniqueId + " + currentChunk=" + (currentChunk + 1) + " chunks=" + chunks);
  		                if(chunks > 10)
@@ -1709,45 +1713,45 @@
  		                }
  		                console.log("caculateFileCheckSum() chunkStep=" + chunkStep);
  		            }
- 		
+
  		            spark.appendBinary(e.target.result);                 // append array buffer
  		            currentChunk += chunkStep;
- 		
+
  		            if (currentChunk < chunks) {
  		                loadNext();
  		            } else {
 
- 		            	SubContext.checkSum = spark.end();	            	
+ 		            	SubContext.checkSum = spark.end();
  		                console.log("caculateFileCheckSum() Computed hash:" + SubContext.checkSum); // computed hash
- 		            	SubContext.checkSumState = 2; 		                
- 		                
+ 		            	SubContext.checkSumState = 2;
+
  		                //To caculateNext
  		                caculateNext();
  		            }
  		        };
- 		
+
  		        //Fail to compute hash
  		        fileReader.onerror = function () {
  		        	SubContext.checkSumState = 3;
  	                console.log("caculateFileCheckSum() Fail to Computed hash"); //fail to compute hash
- 	                
+
 		            //To caculateNext
 		            caculateNext();
  		        };
- 		
+
  		        function loadNext() {
  		            var start = currentChunk * chunkSize;
  		            var end = start + chunkSize >= file.size ? file.size : start + chunkSize;
- 		
+
  		            fileReader.readAsBinaryString(blobSlice.call(file, start, end));
  		        }
- 		
+
  	      		//set the running state
  	      		SubContext.checkSumState = 1;
  	      		SubContext.checkSum = "";
  		        loadNext();
  	      	}
- 	      	
+
  	   		function caculateNext()
  	   		{
  	         	if(false == reuploadFlag)
@@ -1755,14 +1759,14 @@
  	   	      		caculateIndex++;
  	   				if(caculateIndex < totalNum)
  	   				{
- 	   					caculate(); 
+ 	   					caculate();
  	   				}
  	   				else
  	   				{
  	   					console.log("caculateNext() all upload doc checkSum was computed");
  	   				}
  	         	}
- 	         	else 
+ 	         	else
  	         	{
  	         		reuploadCaculateIndex ++;
  	         		if(reuploadCaculateIndex < reuploadTotalNum)
@@ -1773,10 +1777,10 @@
  	         		else
  	         		{
  	         			console.log("caculateNext() for all reupload doc checkSum was computed");
- 	         		}			
+ 	         		}
  	         	}
  	       }
- 	   	   
+
  	   		//开放给外部的调用接口
  	        return {
  	            caculate : function(startId){
@@ -1793,10 +1797,10 @@
  	            },
  	        };
  		})();
-      	
-      	
+
+
 		function getFileCheckSum(SubContext)
-		{            
+		{
 			switch(SubContext.checkSumState)
 			{
 			case 0:
@@ -1804,15 +1808,15 @@
 				 console.log("getFileCheckSum() checkSum not computed, start compute");
 				 if(false == reuploadFlag)
 			     {
-					 CheckSumCaculator.caculate(index);					 
+					 CheckSumCaculator.caculate(index);
 			     }
 				 else
 			     {
-					 CheckSumCaculator.caculate(reuploadIndex);					 
+					 CheckSumCaculator.caculate(reuploadIndex);
 			     }
 			case 1:
 				//Start timer to wait for result
-		        console.log("getFileCheckSum() checkSum not ready, wait for result 100 ms later"); 
+		        console.log("getFileCheckSum() checkSum not ready, wait for result 100 ms later");
 				setTimeout(function () {
 		            uploadDoc(); //reEnter uploadDoc
 		        },100);	//check it one minute later
@@ -1826,10 +1830,10 @@
 				return true;
 			}
 		}
-      	
+
       	//返回false表示该接口触发异步调用，当前uploadDoc线程需要先退出，异步回调会根据check结果决定后续是否reenter uploadDoc
       	function checkDocInfo(SubContext)
-      	{      		
+      	{
       		var name = SubContext.name;
 	  	 	//console.log("checkDocInfo() file:" + name);
 
@@ -1839,12 +1843,12 @@
    			{
    				return true;
    			}
-   			
+
    			console.log("checkDocInfo() for file:"+ name);
    			//Modify the SM
       		SubContext.SMState = "checkDocInfo";
       		SubContext.SMSubState = 1;
-      		
+
       		//检查服务器端是否存在同名文件，并确认文件内容是否相同
    			//调用后台接口检查DocInfo，回调函数需要根据情况决定具体的操作
   			$.ajax({
@@ -1856,12 +1860,12 @@
 					type: 1,
 					size: SubContext.size,
 	             	checkSum: SubContext.checkSum,
-	             	reposId : SubContext.vid, 
+	             	reposId : SubContext.vid,
 	                parentId : SubContext.realParentId,
 	             },
 	             success : function (ret) {
 	             	if( "ok" == ret.status)
-	             	{		
+	             	{
 	             		console.log("checkDocInfo() ret",ret);
 	             		if(ret.msgData == "0")	//文件存在但checkSume不同，等待用户确认是否覆盖
 	             		{
@@ -1872,12 +1876,12 @@
 	             		else if(ret.msgData == "1")	//文件存在且checkSum相同，直接标记成功
 	             		{
 		                	if(SubContext.docId == -1) //文件新建成功
-			                {	
+			                {
 			             		addTreeNode(ret.data,SubContext.realParentNode);
-			             		//set the docId so that We can open it 
-		             			SubContext.docId = ret.data.id;	                
+			             		//set the docId so that We can open it
+		             			SubContext.docId = ret.data.id;
 			                }
-	             			
+
 	             			$('.file'+index).removeClass('is-uploading');
 		    				$('.file'+index).addClass('is-success');
 		                    uploadSuccessHandler(name,ret.msgInfo);
@@ -1901,10 +1905,10 @@
 		            return;
 	            }
 	        });
-    		
+
    			return false;
       	}
-      	
+
       	function showUploadingInfo()
       	{
       		if(reuploadFlag == false)
@@ -1916,7 +1920,7 @@
       			$(".upload-list-title").text("正在重传   " + reuploadedNum + " / " + reuploadTotalNum);
       		}
       	}
-      	
+
 		//重新上传所有失败文件（包括用户自己选择取消上传的文件）
 		function reuploadFailDocs(id)
 		{
@@ -1926,9 +1930,9 @@
 				console.log("reuploadFailDocs() 首次上传未结束,不能重传失败文件");
 				return;
 			}
-			
+
 			if(false == reuploadFlag && false == isUploading)
-			{	
+			{
 				console.log("reuploadFailDocs() 启动重传");
 
 				//开始重传
@@ -1946,7 +1950,7 @@
 			{
 				console.log("reuploadFailDocs() 重传进行中,更新重传列表即可");
 			}
-	        
+
 			//Build reupload List
 			if(id)
 			{
@@ -1960,17 +1964,17 @@
 					setSubContextForReupload(i);
 				}
 			}
-			
+
 			console.log("reuploadFailDocs() 重传个数："+reuploadTotalNum);
 			if(0 == reuploadTotalNum )
 			{
 				console.log("reuploadFailDocs() 没有需要重传的Doc");
-				return;	
+				return;
 			}
-			
+
 			//更新上传进度
 			showUploadingInfo();
-			
+
 			if(false == reuploadFlag && false == isUploading)
 			{
 				reuploadFlag = true;
@@ -1982,18 +1986,18 @@
 				uploadDoc();
 			}
 		}
-		
+
 		function setSubContextForReupload(id)
 		{
 			SubContext = SubContextList[id];
-			
+
 			//console.log("setSubContextForReupload()",SubContext);
 			//已成功地不能重传
 			if(2 == SubContext.state)
 			{
 				return;
 			}
-			
+
 			//避免在上传过程中，被多次重传
 			if(true == reuploadFlag)
 			{
@@ -2003,15 +2007,15 @@
 				}
 			}
 			SubContext.reuploadFlag = true;
-				
+
 			//其他所有状态的都可以重传
 			reuploadTotalNum ++;
 
-			//Reset all basick SubContext 
+			//Reset all basick SubContext
 			SubContext.state = 0;
 			if(SubContext.checkSumState != 2) //checkSum is not ready, need to recaculate the checkSum
 			{
-				SubContext.checkSumState = 0; 
+				SubContext.checkSumState = 0;
 			}
 			//CheckDocInfo should be reCheck
 			SubContext.SMState = "init";
@@ -2021,13 +2025,13 @@
 			//confirmSet should be clean
 			SubContext.fileCoverConfirmSet = 0;
 			SubContext.uploadErrorConfirmSet = 0;
-			
+
 			reuploadList.push(id);
 		}
-		
+
 		//CutFile will cut file to dedicated size slice
 		function CutFile(SubContext)
-		{ 	
+		{
 			if(0 == SubContext.cutFileState)
 			{
 				console.log("CutFile() for", SubContext);
@@ -2039,7 +2043,7 @@
 					console.log("CutFile() file size less than minCutSize " + minCutSize);
 					return true;
 				}
-				
+
 				console.log("CutFile() start to cut file");
 				SubContext.chunked = true;
 				SubContext.cutSize = cutSize;
@@ -2073,7 +2077,7 @@
  	      		console.log("CutFile() is in processing for: ",SubContext);
 	      		return false;
  	      	}
- 	      		
+
  	      	//start to caculate the chunk checkSum
  	      	console.log("CutFile() start to caculate chunk checkSum for:" + SubContext.name);
  	      	var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
@@ -2082,7 +2086,7 @@
  	            	chunks = SubContext.chunkNum,
  	            	currentChunk = 0,
  	            	fileReader = new FileReader();
- 	      		
+
         	fileReader.onload = function (e) {
             	if(stopUploadFlag == true || SubContext.stopUploadFlag == true)
             	{
@@ -2091,9 +2095,9 @@
             	}
     	      	var hash = SparkMD5.hashBinary(e.target.result);   //compute Data Hash
     	      	SubContext.chunkList[currentChunk].checkSum = hash;
-    	      	SubContext.chunkList[currentChunk].checkSumState = 2;		            	
+    	      	SubContext.chunkList[currentChunk].checkSumState = 2;
             	console.log("CutFile() Chunk " + currentChunk + " data read ok, checkSum is " + hash);
-            	
+
             	//Try to start read next chunk data
             	currentChunk ++;
             	if (currentChunk < chunks) {
@@ -2106,7 +2110,7 @@
             		return;
             	}
             };
-		        
+
 		    function loadNext() {
 		    	//console.log("loadNext()");
 		    	SubContext.chunkList[currentChunk].checkSumState = 1;
@@ -2115,12 +2119,12 @@
 		        //console.log("loadNext() ",start,end);
 		        fileReader.readAsBinaryString(blobSlice.call(file, start, end));
 		    }
-		    
+
 	      	//Trigger the fileRead
 		    loadNext();
 		    return false;
 		}
-		
+
 		function isLastChunk(SubContext)
 		{
 			if(SubContext.chunkIndex == SubContext.chunkNum -1)
@@ -2129,9 +2133,9 @@
 			}
 			return false;
 		}
-		
+
 		function getChunkCheckSum(SubContext)
-		{            
+		{
 			console.log("getChunkCheckSum() chunkIndex:" + SubContext.chunkIndex)
 			var chunk = SubContext.chunkList[SubContext.chunkIndex];
 			switch(chunk.checkSumState)
@@ -2139,7 +2143,7 @@
 			case 0:
 			case 1:
 				//Start timer to wait for result
-		        console.log("getChunkCheckSum() chunk checkSum not ready, wait for result 100 ms later"); 
+		        console.log("getChunkCheckSum() chunk checkSum not ready, wait for result 100 ms later");
 				setTimeout(function () {
 		            uploadDoc(); //reEnter uploadDoc
 		        },100);	//check it one minute later
@@ -2153,18 +2157,18 @@
 				return true;
 			}
 		}
-		
+
       	function checkChunkUploaded(SubContext)
-      	{      		
+      	{
       		var name = SubContext.name;
 	  	 	console.log("checkChunkUploaded() for file:"+ name);
-	  	 	
+
    			var chunk = SubContext.chunkList[SubContext.chunkIndex];
 	  	 	if(0 != chunk.uploadedState)
 	  	 	{
 	  	 		return true;
 	  	 	}
-   			
+
    			//检查服务器端是否存在分片文件（checkHash should same）
    			//调用后台接口检查chunk，并设置chunk.state re-enter upload
   			$.ajax({
@@ -2181,14 +2185,14 @@
 	             	cutSize: SubContext.cutSize,
 	             	chunkSize: chunk.chunkSize,
 	             	chunkHash: chunk.checkSum,
-	             	reposId : SubContext.vid, 
+	             	reposId : SubContext.vid,
 	                parentId : SubContext.realParentId,
 	             },
 	             success : function (ret) {
 	             	if( "ok" == ret.status)
-	             	{		
+	             	{
 	             		console.log("checkChunkUploade() ret",ret);
-	             		if(ret.msgData == "0")	//分片文件不存在 
+	             		if(ret.msgData == "0")	//分片文件不存在
 	             		{
 	             			chunk.uploadedState = 1;
 	             			uploadDoc();
@@ -2197,27 +2201,27 @@
 	             		else
 	             		{
 	             			chunk.uploadedState = 2;
-	             			
+
 	             			//Show current doc upload progress
 	             			SubContext.uploadedSize += chunk.chunkSize
 	             			console.log("checkChunkUploaded() uploadedSize:" + SubContext.uploadedSize + " fileSize:" +   SubContext.size);
 	    					var per =  Math.floor(100 * SubContext.uploadedSize / SubContext.size);
 	    					$('.file'+index+' .el-progress__text').text(per+"%");
 	    					$('.file'+index+' .el-progress-bar__inner')[0].style.width=per+'%';
-							
+
 	    					console.log("checkChunkUploaded() chunkIndex:" + SubContext.chunkIndex + " chunkNum:" +   SubContext.chunkNum);
 	    					//the last chunk exists
 	    					if(SubContext.chunkIndex == (SubContext.chunkNum -1))
 	    					{
 	    						console.log("checkChunkUploaded() All chunks uploaded",SubContext);
-		    					
+
 		    					//All Chunk Uploaded, means file upload ok, 这里的逻辑是有问题的，因为没有ret
 		    		        	if(SubContext.docId == -1) //文件新建成功
-		    		            {	
+		    		            {
 		    		         		addTreeNode(ret.data,SubContext.realParentNode);
-		    		         		//set the docId so that We can open it 
+		    		         		//set the docId so that We can open it
 		    		         		SubContext.docId = ret.data.id;
-		    						
+
 		    		            }
 		    					//update the uploadStatus
 		    					$('.file'+index).removeClass('is-uploading');
@@ -2246,9 +2250,9 @@
 	        });
    			return false;
       	}
-		
+
 		function startChunkUpload(SubContext)
-		{ 
+		{
 			if(SubContext.chunkIndex <  SubContext.chunkNum)
 			{
    	   			if(false == getChunkCheckSum(SubContext))
@@ -2256,14 +2260,14 @@
    	   				//checkSum for chunk is not ready, timer be called, callback will re-enter uploadDoc 100ms later
    	   				return;
    	   			}
-	   			
+
    	   			//检查Chunk是否存在且是否相同，return false 表示内部有异步调用
    	   			if(false == checkChunkUploaded(SubContext))
    	   			{
-   	    			console.log("startChunkUpload() checkChunkUploaded be called, callback will re-enter uploadDoc");   				
+   	    			console.log("startChunkUpload() checkChunkUploaded be called, callback will re-enter uploadDoc");
    	   				return;
    	   			}
-	   			
+
    	   			//根据chunk.state决定是否上传
    	   			var chunk = SubContext.chunkList[SubContext.chunkIndex];
    				if(1 == chunk.uploadedState)	//current chunk not uploaded
@@ -2273,7 +2277,7 @@
    				}
 			}
 		}
-		
+
     	function startUpload(SubContext)
     	{
 
@@ -2302,7 +2306,7 @@
 				form.append("docId", SubContext.docId);
 				form.append("parentId", SubContext.realParentId);
 				form.append("reposId", SubContext.vid);
-				
+
 				var chunkIndex = SubContext.chunkIndex;
 				var chunkNum = SubContext.chunkNum;
 				var chunk = SubContext.chunkList[chunkIndex];
@@ -2316,23 +2320,23 @@
 				form.append("chunkHash", chunk.checkSum);
 				form.append("uploadFile", chunkData);
 			}
-			
+
 			var name = SubContext.name;
 			//新建http异步请求
 			var xhr = new XMLHttpRequest();
-			
+
 			//设置异步上传状态变化回调处a理函数
-			xhr.onreadystatechange = function() {				
+			xhr.onreadystatechange = function() {
 				//文件上传状态
 				console.log("xhr onreadystatechange() status:" + xhr.status + " readyState:" + xhr.readyState);
-				if(xhr.status == 200) 
+				if(xhr.status == 200)
 				{
 					if(xhr.readyState != 4)
 					{
 						//文件上传未结束
 						return;
 					}
-					
+
 					//上传成功！
 					var ret = JSON.parse(xhr.responseText);
 					if("ok" == ret.status){
@@ -2343,15 +2347,15 @@
 							uploadDoc();
 							return;
 						}
-						
+
 	                	if(SubContext.docId == -1) //文件新建成功
-		                {	
+		                {
 		             		addTreeNode(ret.data,SubContext.realParentNode);
-		             		//set the docId so that We can open it 
+		             		//set the docId so that We can open it
 		             		SubContext.docId = ret.data.id;
-							
+
 		                }
-	                	
+
 						//update the uploadStatus
 						$('.file'+index).removeClass('is-uploading');
 						$('.file'+index).addClass('is-success');
@@ -2361,7 +2365,7 @@
 					 {
 						//上传失败
 						console.log("上传失败：" + ret.msgInfo);
-	
+
 						//update the uploadStatus
 						$('.file'+index).removeClass('is-uploading');
 						$('.file'+index).addClass('is-fail');
@@ -2369,7 +2373,7 @@
 						return;
 		             }
 				}else{
-					if(xhr.status < 300) 
+					if(xhr.status < 300)
 					{
 						//不是真正的异常
 						return;
@@ -2382,28 +2386,28 @@
 					return;
 				}
 			};
-			
+
 			//设置异步上传进度回调处理函数
 			xhr.upload.onprogress = function(evt) {
 				//由于xhr.abort不能立即结束上传，因此会导致uploadErrorHandler多次被调用而导致状态机混乱，因此目前处理方式只对未开始上传的文件有效
 				if(stopUploadFlag == true || SubContextList[index].stopUploadFlag == true)
 				{
-					console.log("stopUploadFlag: " + stopUploadFlag + " SubContextList[index].stopUploadFlag:" + SubContextList[index].stopUploadFlag);	
+					console.log("stopUploadFlag: " + stopUploadFlag + " SubContextList[index].stopUploadFlag:" + SubContextList[index].stopUploadFlag);
 					if(true == SubContextList[index].stopUploadFlag)	//we need to promise there is only one abort for one doc upload
 					{
 						SubContextList[index].stopUploadFlag = false;
-						xhr.abort(); //结束当前上传	 
+						xhr.abort(); //结束当前上传
 						uploadErrorHandler(name, name + " 取消上传！");
 					}
 					return;
 				}
-				
+
 				//文件上传进度(evt获取到的是上传的所有数据的百分比，所有比实际文件要大)
 				var loaded = evt.loaded;	//已上传大小
 				var tot = evt.total;
 				var per = Math.floor(100 * loaded / tot); //已经上传的百分比
 				console.log("upload.onprogress loaded:" + loaded + " tot:" + tot + " per:" + per);
-				
+
 				//计算实际文件的分片上传进度
 				if(SubContext.chunked)
 				{
@@ -2415,12 +2419,12 @@
 					}
 					per =  Math.floor(100 * realUploaedSize / SubContext.size);
 				}
-				
+
 				//计算当前文件上传百分比
 				$('.file'+index+' .el-progress__text').text(per+"%");
 				$('.file'+index+' .el-progress-bar__inner')[0].style.width=per+'%';
-				console.log("上传中："+per+"%！"); 
-	
+				console.log("上传中："+per+"%！");
+
 				//统计总的已上传大小、百分比、上传速度、剩余上传时间
 				uploadTime = new Date().getTime();
 				if(per=="100")
@@ -2439,7 +2443,7 @@
 	    		{
 	    			remainSize = 0;
 	    		}
-				
+
 				var perTime = (uploadTime - preUploadTime)/1000;
 	    		//console.log("preUploadTime:" + preUploadTime + " uploadTime:" + uploadTime + " perTime:" + perTime);
 				if(perTime > 1)	//每10秒更新一次下载速度
@@ -2448,7 +2452,7 @@
 	        		uploadSpeed = bspeed;
 	        		preUploadSize = uploadedSize;
 					preUploadTime = uploadTime;
-	    		}				
+	    		}
 	    		var remainTime = remainSize/uploadSpeed;
 	    		var totPer = Math.floor(100 * uploadedSize / totalSize);
 				//计算显示用speed和时间
@@ -2467,19 +2471,19 @@
 	       		//console.log("上传速度："+ speed + units);
 				//console.log("总进度：" + totPer + " 已用时间：" + usedTime + " 剩余时间：" + remainTime);
 			};
-			
-			//上传表单			
+
+			//上传表单
 			xhr.open("post", "/DocSystem/Doc/uploadDoc.do");
 			xhr.send(form);
 			uploadTime = new Date().getTime();	//上传时间初始化
     	}
-    	
+
 		//uploadDoc接口，该接口是个递归调用
     	function uploadDoc()
     	{
     		//console.log("uploadDoc() index:" + index + " totalNum:" + totalNum);
     		var SubContext = SubContextList[index];
-			
+
     		//判断是否取消上传
     		if(stopUploadFlag == true)
     		{
@@ -2487,7 +2491,7 @@
     			uploadEndHandler();
     			return;
     		}
-    		
+
     		//取消当前文件上传
 			if(SubContext.stopUploadFlag == true)
 			{
@@ -2495,10 +2499,10 @@
     			uploadErrorHandler(name,"用户取消了上传！");
 				return;
 			}
-    		
+
     		//设置上传状态
     		if(0 == SubContext.state)
-    		{   
+    		{
     			console.log("uploadDoc() 开始上传 fileName:" + SubContext.name,SubContext);
 				SubContext.state = 1;	//上传中
 				SubContext.uploadedSize = 0; //Clear uploadedSize
@@ -2511,21 +2515,21 @@
     			{
     				reuploadedNum++;
     			}
-				
+
 				showUploadingInfo();
-				
+
 				//get the file from the SubContextList
     			var file = SubContext.file;
-				if(!file) 
+				if(!file)
 				{
 					uploadErrorHandler("未知","不是文件");
-					return; 
+					return;
 				}
     		}
-    		
+
     		//每次上传前检查是否需要绘制，小于200个上传项目时绘制
     		checkAndDrawUploadItems(SubContextList);
-			
+
     		//文件父目录检查部分，uploadDoc每次进来都需要检查，return false表示内部有异步调用
     		if(false == checkAddParentNode(SubContext))
     		{
@@ -2533,41 +2537,41 @@
     			return;
     		}
    			//console.log("uploadDoc() checkAddParentNode completed");
-   		 	
+
    			if(false == getFileCheckSum(SubContext))
    			{
    				//checkSum is not ready, timer be called, callback will re-enter uploadDoc 100ms later
    				return;
    			}
-   			
+
    			//检查文件是否存在且是否相同，return false 表示内部有异步调用
    			if(false == checkDocInfo(SubContext))
    			{
-    			console.log("uploadDoc() checkDocInfo be called, callback will re-enter uploadDoc");   				
+    			console.log("uploadDoc() checkDocInfo be called, callback will re-enter uploadDoc");
    				return;
    			}
-   			//console.log("uploadDoc() checkDocInfo completed"); 
-			
+   			//console.log("uploadDoc() checkDocInfo completed");
+
    			//该接口只对大于50M的文件进行切片，设置chunked标记，生成chunkList（chunkHash或者叫chunkCheckSum并没有完全生成，所以后续getChunkedSum可能需要等待）
-   			CutFile(SubContext); 
-   			
-   			if(false == SubContext.chunked) 
+   			CutFile(SubContext);
+
+   			if(false == SubContext.chunked)
    			{
    	   			startUpload(SubContext);
    	   			return;
    			}
    			else
    			{
-   				startChunkUpload(SubContext);	
+   				startChunkUpload(SubContext);
    			}
     	}
-		
+
 		function stopUpload(index)
 		{
 			console.log("stopUpload() index:" + index ,SubContextList[index]);
 			SubContextList[index].stopUploadFlag = true;
 		}
-		
+
 		function stopAllUpload()
 		{
 			//将未上传的全部设置
@@ -2576,12 +2580,12 @@
 				SubContextList[i].stopUploadFlag = true;
 			}
 			stopUploadFlag = true;
-			
+
   			//清除标记
   			isUploading = false;
   			reuploadFlag = false;
 		}
-				
+
 		//开放给外部的调用接口
         return {
             uploadDocs: function(files,parentNode,parentId,vid){
@@ -2606,9 +2610,9 @@
     function reuploadFailDocs(index)
     {
     	console.log("reuploadFailDocs() index:" + index);
-    	DocUpload.reuploadFailDocs(index);    	
+    	DocUpload.reuploadFailDocs(index);
     }
-    	
+
 	//Stop Upload
 	function stopUpload(index)
 	{
@@ -2616,7 +2620,7 @@
     	console.log("stopUpload " + index);
     	DocUpload.stopUpload(index);
     }
-	
+
 	//删除多余的treeNode
 	function deleteDuplicatedTreeNode(name,parentNode)
     {
@@ -2637,7 +2641,7 @@
 		}
 		return;
     }
-	
+
 	function deleteTreeNode(name,parentNode)
     {
 		console.log("deleteTreeNode",name,parentNode);
@@ -2677,7 +2681,7 @@
 	    	$(".el-upload-list").hide();
 	    }
 	});
-	
+
 	var showUploadList = true;
 	$(".el-upload-list").delegate(".upload-list-title","click",function(){
 		if(showUploadList == true)
@@ -2697,7 +2701,7 @@
 			//$(this).animate({opacity: 1});	//this 指向的是title，显示title
 		}
 	});
-	
+
 	/* 上传进度放在目录树的实现，不友好，代码放这里是可能给其他实现作参考
 	$('.lookPro').on('click',function(){
 		$(".el-upload-list").show();
@@ -2710,7 +2714,7 @@
 		$(this).addClass('active');
 	});
 	*/
-	
+
     var zTree = jQuery.fn.zTree;
 
     $(document).keydown(function(e){
@@ -2883,7 +2887,7 @@
                     gReposName = gReposInfo.name;
                     gReposCreateTime = gReposInfo.createTime;
                     $("#projectName").text(gReposName);
-					//回调函数	
+					//回调函数
                     callback && callback();
                 }else {
                     $("#projectName").text("仓库名");
@@ -2906,7 +2910,7 @@
 		    dataType : "json",
 		    data : {
 		    	docId: gDocId,
-		        vid : gReposId,      
+		        vid : gReposId,
 		    },
 		    success : function (ret) {
 		        	if( "ok" == ret.status ){
@@ -2947,7 +2951,7 @@
 					});
 					//清除debounce
 					debounce.clear();
-					
+
 					if(newDocId)
 					{
 						unlockAndExitEditWiki(curDocId,newDocId);
@@ -2962,7 +2966,7 @@
         });
 
     }
-    
+
     //文件临时保存操作
     function tmpSaveDoc(id, content){
 		console.log("tmpSaveDoc: " + content);
@@ -3002,7 +3006,7 @@
         });
 
     }
-    
+
     function updateUrl(reposId,docId,edit)
     {
         //Update URL 保证页面刷新后还是处于正确的状态
@@ -3020,7 +3024,7 @@
       	console.log("getDoc() docId:"+docId + " edit:" + edit);
       	if(docId)	//undefine do clean the info of rightDiv
         {
-	      	//To get the Doc  
+	      	//To get the Doc
 	        $.ajax({
 	            url : "/DocSystem/Doc/getDoc.do",
 	            type : "post",
@@ -3038,17 +3042,17 @@
 	                    	gDocContent = "";	//Convert it to empty String
 	                    }
 	                    else
-	                    {	
+	                    {
 	                    	gDocContent = JSON.parse(ret.data.content);
 	                    }
-	                    
+
 						//Update URL 保证页面刷新后还是处于正确的状态
 						updateUrl(gReposId,gDocId,edit);
-						
+
 						DocEdit.loadmd(gDocContent,edit);
-	                    
-	                    WikiEditBtnCtrl(edit);		
-						
+
+	                    WikiEditBtnCtrl(edit);
+
 	                    //we need to clear debounce when a new doc was loaded
 						debounce.clear();
 						if(edit)
@@ -3063,7 +3067,7 @@
 	                }
 	                else
 	                {
-	                	showErrorMessage("获取文件信息失败：" + ret.msgInfo);              	
+	                	showErrorMessage("获取文件信息失败：" + ret.msgInfo);
 	                }
 	            },
 	            error : function () {
@@ -3076,7 +3080,7 @@
       	{
       		//Clean FileName
       		$('#filetitle').html("");
-      		
+
       		//Clean the display content
       		DocEdit.stopAutoTmpSaver();
       		debounce.clear();
@@ -3085,7 +3089,7 @@
       		DocEdit.loadmd(gDocContent,gEdit);
       	}
     }
-	
+
 	function showDocHistory(node)
 	{
 		console.log("showDocHistory()");
@@ -3100,7 +3104,7 @@
 			docName = treeNode.name;
 		}
 		console.log("parentPath:" + parentPath + " docName:"+docName);
-		
+
 		//show HistoryLogs page
 		bootstrapQ.dialog({
 			title: "文件历史",
@@ -3113,13 +3117,13 @@
 			},
 		});
 	}
-	
+
 	function getTreeNodeFullPath(treeNode)
 	{
 		console.log("getTreeNodeFullPath treeNode",treeNode);
-		
+
 		var parentPath = "";
-		
+
 		var nodes = treeNode.getPath();
 		console.log("getTreeNodeFullPath nodes",nodes);
 		for(var i=0;i<nodes.length-1;i++)
@@ -3128,14 +3132,14 @@
 		}
 		return parentPath + treeNode.name;
 	}
-	
-	
+
+
 	function getTreeNodeParentPath(treeNode)
 	{
 		console.log("getTreeNodeParentPath treeNode",treeNode);
-		
+
 		var parentPath = "";
-		
+
 		var nodes = treeNode.getPath();
 		console.log("getTreeNodeParentPath nodes",nodes);
 		for(var i=0;i<nodes.length-1;i++)
@@ -3144,7 +3148,7 @@
 		}
 		return parentPath;
 	}
-	
+
 	//getDocHistory接口
 	function getDocHistory(docPath,reposId)
 	{
@@ -3155,7 +3159,7 @@
              dataType : "json",
              data : {
              	docPath : docPath,
-                reposId : reposId, 
+                reposId : reposId,
              },
              success : function (ret) {
              	if( "ok" == ret.status){
@@ -3176,8 +3180,8 @@
             }
         });
 	}
-	
-   	//addDoc接口	
+
+   	//addDoc接口
    	function addDoc(name,type,content,parentNode,parentId,vid)
    	{
    		console.log("addDoc name:" + name + " type:" +  type + " content:" +  content + " parentNode:" +  parentNode + " vid:" +  vid);
@@ -3189,7 +3193,7 @@
              	name : name,
              	content: content,
                 type : type, //文件类型
-                reposId : vid, 
+                reposId : vid,
                 parentId : parentId,
              },
              success : function (ret) {
@@ -3200,11 +3204,11 @@
                     }
                     else
                     {
-                    	isParent = false;                    	
+                    	isParent = false;
                     }
                     //Add zTreeNode
              		addTreeNode(ret.data,parentNode);
-                    
+
              		// 普通消息提示条
 					bootstrapQ.msg({
 								msg : "新建完成！",
@@ -3222,7 +3226,7 @@
             }
         });
     }
-    
+
     //renameDoc接口
     function renameDoc(id,newName)
     {
@@ -3257,55 +3261,55 @@
                 }
         });
     }
-    
+
 	//DocDelete类
     var DocDelete = (function () {
     	var busy = 0;
-    	
+
         //deleteDoc current conditions
         var treeNodes = null; //doc nodes which need to be delete
         var index = 0;  //current delete node index in treeNodes
         var totalNum = 0; //total nums of treeNodes
         var status = 0;  //deleteDoc使用状态机实现，子目录的递归复制，0表示当秦index指向的treeNode是第一次进来，1表示第二次进来，第二次进来的话，不需要再检查其子目录
-        
+
         //Context Cache: 用于deleteDoc的子目录复制操作的递归实现（利用上下文堆栈实现copyDoc的异步递归实现）
         var indexCache = [];
         var treeNodesCache =[];
         var totalNumCache = [];
         var statusCache =[];
         var successCallBack;
-        
+
         //标准Java成员操作接口
 		function getIndex()
 		{
             return index;
 		}
-		
+
 		function setIndex(i)
 		{
 			index = i;
 		}
-		
+
 		function getTreeNodes()
 		{
             return treeNodes;
 		}
-		
+
 		function setTreeNodes(nodes)
 		{
 			treeNodes = nodes;
 		}
-		
+
 		function getTotalNum()
 		{
             return totalNum;
 		}
-		
+
 		function setTotalNum(num)
 		{
 			totalNum = num;
 		}
-		
+
 		//上下文操作接口
 		function pushContext()
 		{
@@ -3332,7 +3336,7 @@
 		{
 			return indexCache.length;
 		}
-		
+
 		//多文件Delete接口
 		function deleteDocs(treeNodes,parentNode,vid)	//多文件移动函数
 		{
@@ -3342,16 +3346,16 @@
 				bootstrapQ.alert("系统正忙，请稍候重试！");
 				return;
 			}
-			
+
 			busy = 1;
 			clearContext();	//清空Context缓存
-			
+
 			DocDeleteSet(treeNodes,parentNode,vid);	//设置DocCopy Parameters
-				
-			//启动删除操作      		
+
+			//启动删除操作
 			deleteDoc();	//start delete
 		}
-		
+
       	//初始化deleteDoc conditions
       	function DocDeleteSet(treeNodes)	//多文件移动函数
 		{
@@ -3367,19 +3371,19 @@
 			setTotalNum(totalNum);
 			status = 0;
 		}
-      		
+
 		//deleteDoc接口，该接口是个递归调用
 		function deleteDoc()
 		{
 			var treeNode = treeNodes[index];
 			console.log("deleteDoc index:" + index + " name:" + treeNode.name + " totalNum:" + totalNum);
-			
+
 			//后台会自动删除子目录，因此前台不需要遍历删除其子目录
 			//if(doDeleteSubDocs() == true)
 			//{
 			//	return;
 			//}
-			
+
 			$.ajax({
                 url : "/DocSystem/Doc/deleteDoc.do",
                 type : "post",
@@ -3396,7 +3400,7 @@
 				     	treeObj.removeNode(treeNode);
 				     	//Delete docList Node
 				     	DocList.deleteNode(treeNode.id);
-				     	
+
 				     	//start to delete nextDoc
 				     	deleteNextDoc();
 				     	return;
@@ -3415,7 +3419,7 @@
 	            }
 	    	});
 		}
-		
+
       	function deleteErrorConfirm(FileName,errMsg)
       	{
       		var msg = FileName + "删除失败,是否删除复制其他文件？";
@@ -3427,7 +3431,7 @@
       		qiao.bs.confirm({
     	    	id: "deleteErrorConfirm",
     	        msg: msg,
-    	        close: false,		
+    	        close: false,
     	        okbtn: "继续",
     	        qubtn: "结束",
     	    },function () {
@@ -3442,7 +3446,7 @@
     	    	return true;
       		});
       	}
-		
+
       	//删除子目录
       	function doDeleteSubDocs(treeNode)
       	{
@@ -3460,10 +3464,10 @@
 		      			//index++; //当前节点还没有被删除，所以index不可以增加哦
 		      			status = 1; //但是需要记录该节点是第二次进来，避免再次检查该目录是否为空，理论上本来应该是可以检查的，但是好像获取subTreeNodes有点问题，导致获取到的子节点仍然存在
 		      			pushContext();
-		      			
+
 		      			//设置新的copyDoc条件
 		      			DocDeleteSet(subTreeNodes);
-		      			
+
 		      			deleteDoc();	//启动删除子目录
 		      			return true;
 		      		}
@@ -3475,7 +3479,7 @@
 			}
 			return false;
       	}
-      	
+
       	function deleteNextDoc()
       	{
            	//确定是否还有需要删除的文件
@@ -3483,10 +3487,10 @@
            	if(index < totalNum)	//callback没传入，表示单个上传
            	{
            		status = 0;
-           		deleteDoc();	//do delete Next Doc	                   	
+           		deleteDoc();	//do delete Next Doc
 	      	}
            	else	//更新显示数据
-           	{	
+           	{
            		if(ContextSize() > 0)	//上下文非空
           		{
           			popContext();	//pop out the Context
@@ -3499,7 +3503,7 @@
 					{
 		    	    	busy = 0;
 			            clearContext(); //清空上下文
-			            
+
 						bootstrapQ.msg({
 							msg : '删除完成！',
 							type : 'success',
@@ -3511,10 +3515,10 @@
           		{
         	    	busy = 0;
     	            clearContext(); //清空上下文
-    	            
+
     	            //调用回调函数
     	            successCallBack && successCallBack();
-    	            
+
     	            bootstrapQ.msg({
 						msg : '删除完成！',
 						type : 'success',
@@ -3523,8 +3527,8 @@
             	}
             }
       	}
-      	
-		
+
+
 		//开放给外部的调用接口
         return {
         	deleteDocs: function(treeNodes,parentNode,vid,callback){
@@ -3536,17 +3540,17 @@
             },
         };
     })();
-	
+
 	//DocCopy类
     var DocCopy = (function () {
-    	
+
     	//copyDoc conditions
         var index = 0;        //当前操作的索引
         var treeNodes = null;
         var totalNum = 0;
         var parentNode = null;
         var parentId = 0;
-        var vid = 0; 
+        var vid = 0;
 
         //Context Cache
         var indexCache = [];
@@ -3555,69 +3559,69 @@
         var parentNodeCache = [];
         var parentIdCache = [];
         var vidCache = [];
-        
+
         //标准Java成员操作接口
 		function getIndex()
 		{
             return index;
 		}
-		
+
 		function setIndex(i)
 		{
 			index = i;
 		}
-		
+
 		function getTreeNodes()
 		{
             return treeNodes;
 		}
-		
+
 		function setTreeNodes(nodes)
 		{
 			treeNodes = nodes;
 		}
-		
+
 		function getTotalNum()
 		{
             return totalNum;
 		}
-		
+
 		function setTotalNum(num)
 		{
 			totalNum = num;
 		}
-		
+
 		function getParentNode()
 		{
             return parentNode;
 		}
-		
+
 		function setParentNode(node)
 		{
 			parentNode = node;
 		}
-		
+
 		function getParentId()
 		{
             return parentId;
 		}
-		
+
 		function setParentId(id)
 		{
 			parentId = id;
 		}
-		
+
 		function getVid()
 		{
             return vid;
 		}
-		
+
 		function setVid(id)
 		{
 			vid = id;
 		}
-		
-		
+
+
 		//上下文操作接口
 		function pushContext()
 		{
@@ -3626,7 +3630,7 @@
 			totalNumCache.push(totalNum);
 			parentNodeCache.push(parentNode);
 			parentIdCache.push(parentId);
-			vidCache.push(vid);			
+			vidCache.push(vid);
 		}
 		function popContext()
 		{
@@ -3650,7 +3654,7 @@
 		{
 			return indexCache.length;
 		}
-      	
+
 		//提供给外部的多文件copy接口
 		function copyDocs(treeNodes,parentNode,vid)	//多文件移动函数
 		{
@@ -3661,13 +3665,13 @@
 				return;
 			}
 			clearContext();	//清空Context缓存
-			
+
 			DocCopySet(treeNodes,parentNode,vid);	//设置DocCopy Parameters
-				
-			//启动复制操作      		
+
+			//启动复制操作
 			copyDoc();	//start copy
 		}
-		
+
       	//初始化DocCopy设置
       	function DocCopySet(treeNodes,parentNode,vid)	//多文件移动函数
 		{
@@ -3690,29 +3694,29 @@
  				parentId = parentNode.id;
 			}
 			setParentId(parentId);
-			
-			setVid(vid);			
+
+			setVid(vid);
       	}
-      		
+
 		//copyDoc接口，该接口是个递归调用
 		function copyDoc(dstName)
 		{
 			var treeNode = treeNodes[index];
 			console.log("copyDoc index:" + index + " name:" + treeNode.name + " parentId:" + parentId + " vid:" + vid + " totalNum:" + totalNum);
-			
+
 			//
 			if(treeNode.id == parentId)
 			{
 				console.log("treeNode is same to parentNode","treeNode",treeNode.id,"parentId",parentId);
 				copyErrorConfirm(treeNode.name);
 				return;
-			}			
-			
+			}
+
 			var dstDocName = treeNode.name;
 			//如果copyDoc未指定dstName,需要检查parentNode下是否存在同名Node
 			if(dstName != undefined)
 			{
-				dstDocName = dstName;	
+				dstDocName = dstName;
 			}
 			else
 			{
@@ -3723,7 +3727,7 @@
 			  		return;
 			  	}
 			}
-			
+
 			$.ajax({
 	            url : "/DocSystem/Doc/copyDoc.do",
 	            type : "post",
@@ -3737,10 +3741,10 @@
 	            success : function (ret) {
 	                if( "ok" == ret.status ){
 	                	console.log("copyDoc() ok:",ret.data);
-	                 	
+
 	                	//后台复制成功，根据后台返回的docid,新建一个treeNode
-	                	addTreeNode(ret.data,parentNode);	          			
-	          			
+	                	addTreeNode(ret.data,parentNode);
+
 	          			//复制下一个Doc
 	                    copyNextDoc();
 	                }
@@ -3758,7 +3762,7 @@
 	            }
 	    	});
 		}
-		
+
 		function doCopySubDocs(treeNode)
 		{
   			if(treeNode.isParent)	//如果是parentNode,则获取其子目录
@@ -3782,7 +3786,7 @@
             }
   			return false;
 		}
-		
+
 		//启动复制下一个Doc,如果没有了的话则结束复制
 		function copyNextDoc()
 		{
@@ -3791,10 +3795,10 @@
            	if(index < totalNum)	//callback没传入，表示单个上传
            	{
    				//Start to copy next Doc
-	      		copyDoc();	//do copy Next Doc	                   	
+	      		copyDoc();	//do copy Next Doc
 	      	}
            	else	//更新显示数据
-           	{	
+           	{
            		if(ContextSize() > 0)	//上下文非空
           		{
           			popContext();	//pop out the Context
@@ -3807,7 +3811,7 @@
 					{
 	        	    	busy = 0;
 	    	            clearContext(); //清空上下文
-			            
+
 						bootstrapQ.msg({
 							msg : '复制完成！',
 							type : 'success',
@@ -3828,14 +3832,14 @@
             	}
             }
 		}
-		
+
 		function CopyConflictConfirm(copiedNodeName)
 		{
 		    qiao.bs.dialog({
 		        id: "dialog-copyConflictDialog",
 		        url: '#copyConflictConfirmDialog',
 		        title: copiedNodeName + '已存在',
-    	        //close: false,		
+    	        //close: false,
 		        okbtn: "确定",
     	        qubtn: "取消",
 		        callback: function () {
@@ -3848,10 +3852,10 @@
 		    	var dstName =  $("#dialog-copyConflictDialog input[name='newDocName']").val();
 		    	console.log("copyConflictConfirm newName:",dstName);
 				copyDoc(dstName);
-		    	return true;   
+		    	return true;
 		    });
 		}
-		
+
       	function copyErrorConfirm(FileName,errMsg)
       	{
       		var msg = FileName + "复制失败,是否继续复制其他文件？";
@@ -3863,7 +3867,7 @@
       		qiao.bs.confirm({
     	    	id: "copyErrorConfirm",
     	        msg: msg,
-    	        close: false,		
+    	        close: false,
     	        okbtn: "继续",
     	        qubtn: "结束",
     	    },function () {
@@ -3878,7 +3882,7 @@
     	    	return true;
       		});
       	}
-		
+
 		//开放给外部的调用接口
         return {
 			copyDocs: function(treeNodes,parentNode,vid){
@@ -3888,17 +3892,17 @@
     })();
 
 
-	//DocMove类	
+	//DocMove类
     var DocMove = (function () {
     	var busy = 0;
-    	
+
         //moveDoc conditions
     	var index = 0; //当前操作的索引
         var treeNodes = null;
         var totalNum = 0;
         var parentNode = null;
         var parentId = 0;
-        var vid = 0; 
+        var vid = 0;
 
         //Context Cache
         var indexCache = [];
@@ -3907,69 +3911,69 @@
         var parentNodeCache = [];
         var parentIdCache = [];
         var vidCache = [];
-        
+
         //标准Java成员操作接口
 		function getIndex()
 		{
             return index;
 		}
-		
+
 		function setIndex(i)
 		{
 			index = i;
 		}
-		
+
 		function getTreeNodes()
 		{
             return treeNodes;
 		}
-		
+
 		function setTreeNodes(nodes)
 		{
 			treeNodes = nodes;
 		}
-		
+
 		function getTotalNum()
 		{
             return totalNum;
 		}
-		
+
 		function setTotalNum(num)
 		{
 			totalNum = num;
 		}
-		
+
 		function getParentNode()
 		{
             return parentNode;
 		}
-		
+
 		function setParentNode(node)
 		{
 			parentNode = node;
 		}
-		
+
 		function getParentId()
 		{
             return parentId;
 		}
-		
+
 		function setParentId(id)
 		{
 			parentId = id;
 		}
-		
+
 		function getVid()
 		{
             return vid;
 		}
-		
+
 		function setVid(id)
 		{
 			vid = id;
 		}
-		
-		
+
+
 		//上下文操作接口
 		function pushContext()
 		{
@@ -3978,7 +3982,7 @@
 			totalNumCache.push(totalNum);
 			parentNodeCache.push(parentNode);
 			parentIdCache.push(parentId);
-			vidCache.push(vid);			
+			vidCache.push(vid);
 		}
 		function popContext()
 		{
@@ -4002,7 +4006,7 @@
 		{
 			return indexCache.length;
 		}
-      	
+
 		//多文件move接口
 		function moveDocs(treeNodes,parentNode,vid)	//多文件移动函数
 		{
@@ -4015,13 +4019,13 @@
 			}
 			busy = 1;
 			clearContext();	//清空Context缓存
-			
+
 			DocMoveSet(treeNodes,parentNode,vid);	//设置DocMove Parameters
-				
-			//启动复制操作      		
+
+			//启动复制操作
 			moveDoc();	//start move
 		}
-		
+
       	//初始化DocMove设置
       	function DocMoveSet(treeNodes,parentNode,vid)	//多文件移动函数
 		{
@@ -4044,24 +4048,24 @@
  				parentId = parentNode.id;
 			}
 			setParentId(parentId);
-			
-			setVid(vid);			
+
+			setVid(vid);
       	}
-      		
+
 		//moveDoc接口，该接口是个递归调用
     	function moveDoc()
     	{
     		console.log("moveDoc index:" + index + " totalNum:" + totalNum + " parentId:" + parentId + " vid:" + vid);
     		var treeNode = treeNodes[index];
-    		
+
   	    	if(treeNode.pid == parentId)
   			{
   	    		console.log("treeNode is already under parentNode","treeNode",treeNode,"parentNode",parentNode);
   	    		//moveErrorConfirm(treeNode.name);
   	    		moveNextDoc();
-  	    		return; 
+  	    		return;
   			}
-  	    	
+
 			//执行后台moveDoc操作
     		$.ajax({
                 url : "/DocSystem/Doc/moveDoc.do",
@@ -4084,7 +4088,7 @@
                			{
                				DocList.deleteNode(treeNode.id);
                			}
-                   		
+
                 	   	//moveNextDoc
                 	   	moveNextDoc();
                 	   	return;
@@ -4116,7 +4120,7 @@
 	        {
     	    	busy = 0;
 	            clearContext(); //清空上下文
-	            
+
 	         	console.log("moveDoc End");
 				bootstrapQ.msg({
 					msg : '移动完成！',
@@ -4125,7 +4129,7 @@
 				});
 	        }
 		}
-		
+
       	function moveErrorConfirm(FileName,errMsg)
       	{
       		var msg = FileName + "移动失败,是否继续移动其他文件？";
@@ -4137,7 +4141,7 @@
       		qiao.bs.confirm({
     	    	id: "moveErrorConfirm",
     	        msg: msg,
-    	        close: false,		
+    	        close: false,
     	        okbtn: "继续",
     	        qubtn: "结束",
     	    },function () {
@@ -4152,7 +4156,7 @@
     	    	return true;
       		});
       	}
-		
+
 		//开放给外部的调用接口
         return {
             moveDocs: function(treeNodes,parentNode,vid){
@@ -4164,14 +4168,14 @@
 
 <script type="text/javascript">
 	/********************* 文件编辑接口 *********************************************/
-	//DocEdit类	
+	//DocEdit类
     var DocEdit = (function () {
     	var md;	//mdeditor对象
     	var firstcall = true;
       	//自动保存定时器
       	var autoSaveTimer;
       	var timerState = 0;
-    
+
       	function editorInit(content,edit)
       	{
       		console.log("DocEdit editorInit");
@@ -4212,7 +4216,7 @@
     		       else
     		       {
     		           debounce.clear();
-    		       }       
+    		       }
                },
                onpreviewing : function () {
                    console.log("onpreviewing");
@@ -4229,18 +4233,18 @@
                    console.log("onload edit:" + edit);
                    if(edit == false)
                    {
-                   		this.previewing();               
+                   		this.previewing();
                    }
                    gEdit = edit;
                    WikiEditBtnCtrl(gEdit);
                }
        		};
-       		
+
       		//editormd was defined in editormd.js
-       		md = editormd("doc",params);   
+       		md = editormd("doc",params);
       	}
-        
-    	function editorLoadmd(content,edit) 
+
+    	function editorLoadmd(content,edit)
     	{
     		console.log("DocEdit editorLoadmd() edit:" + edit);
     		if(!md)
@@ -4248,7 +4252,7 @@
     			showErrorMessage("please call editorInit firstly");
        			return;
        		}
-       		
+
     		md.setMarkdown(content);
     		if(edit != gEdit)
     		{
@@ -4256,20 +4260,20 @@
     			md.previewing();
     		}
         }
-        
+
         function loadmd(content,edit)
         {
 			if(firstcall == true)
-   			{ 
+   			{
     			firstcall = false;
-         		editorInit(content,edit);	
+         		editorInit(content,edit);
     		}
     		else
       		{
-      			editorLoadmd(content,edit);	                    
+      			editorLoadmd(content,edit);
 			}
         }
-		      		
+
 		function editorSwitch(edit)
     	{
     		console.log("DocEdit editorSwitch() edit:"+edit);
@@ -4278,16 +4282,16 @@
     			showErrorMessage("please call editorInit firstly");
        			return;
        		}
-       		
+
     		if(edit != gEdit)
     		{
     		    gEdit = edit;
     			md.previewing();
     		}
     	}
-    	
+
     	function startAutoTmpSaver()
-		{ 
+		{
 			console.log("DocEdit.startAutoTmpSaver timerState:" + timerState);
 			if(timerState == 0)
 			{
@@ -4301,8 +4305,8 @@
 		    		}
 		    	},20000);
 		    }
-		}     
-	
+		}
+
 		function stopAutoTmpSaver(){
 			console.log("DocEdit.stopAutoTmpSaver timerState:" + timerState);
 			if(timerState == 1)
@@ -4329,10 +4333,10 @@
             stopAutoTmpSaver: function(){
             	stopAutoTmpSaver();
             },
-            
+
         };
     })();
-	
+
 	//退出文件编辑状态
     function exitEdit(curDocId,newDocId) {
     	console.log("exitEdit curDocId:" + curDocId + " newDocId:" + newDocId);
@@ -4340,13 +4344,13 @@
     	{
     		curDocId = gDocId;
     	}
-    	
+
     	if(debounce.getStatus() == 1)
     	{
     		qiao.bs.confirm({
   	 	    		id: 'saveDocConfirm',
   	 	    		msg: "修改未保存，是否保存？",
-  	 	    		close: false,		
+  	 	    		close: false,
   	 	    		okbtn: "保存",
   	 	    		qubtn: "直接退出",
   	 	    	},function () {
@@ -4362,7 +4366,7 @@
     		unlockAndExitEditWiki(curDocId,newDocId);
     	}
 	}
-	
+
 	    //将编辑中的文件保存到后台
     function saveWikiAndExit(curDocId,newDocId) {
     	console.log("saveWikiAndExit  curDocId:" + curDocId + " newDocId:" + newDocId);
@@ -4371,7 +4375,7 @@
     		saveDoc(gDocId, debounce.get(),newDocId);
     	}
     }
-	
+
 	function unlockAndExitEditWiki(curDocId,newDocId)
 	{
 		console.log("unlockAndExitEditWiki()  curDocId:" + curDocId + " newDocId:" + newDocId);
@@ -4381,7 +4385,7 @@
 			dataType : "json",
 			data : {
 				lockType : 0, //unlock the doc
-				reposId : gReposId, 
+				reposId : gReposId,
 				docId : curDocId,
 			},
 			success : function (ret) {
@@ -4398,7 +4402,7 @@
 					return;
 				}
 			},
-			error : function () 
+			error : function ()
 			{
 				showErrorMessage("unlockDoc 异常");
 				exitEditWiki(curDocId,newDocId);
@@ -4406,18 +4410,18 @@
 			}
 		});
 	}
-	
-    function exitEditWiki(curDocId,newDocId) {  
+
+    function exitEditWiki(curDocId,newDocId) {
       	console.log("exitEditWiki()  curDocId:" + curDocId + " newDocId:" + newDocId);
 		//swith to preview state
         DocEdit.editorSwitch(false);
         //编辑等按键显示控制
         WikiEditBtnCtrl(false);
-	    
+
 	    //Stop autoSaver
 	    debounce.clear();
 	    DocEdit.stopAutoTmpSaver();
-	            
+
         if(newDocId)
         {
         	var edit = false;
@@ -4428,7 +4432,7 @@
         	updateUrl(gReposId,curDocId,false);
         }
     }
-	
+
 	//进入编辑状态
 	function lockAndEditWiki()
 	{
@@ -4442,7 +4446,7 @@
 			dataType : "json",
 			data : {
 				lockType : 3, //LockType: VDoc Online Edit
-				reposId : vid, 
+				reposId : vid,
 				docId : docId,
 			},
 			success : function (ret) {
@@ -4458,14 +4462,14 @@
 					return;
 				}
 			},
-			error : function () 
+			error : function ()
 			{
 				showErrorMessage("lockDoc 异常");
 				return;
 			}
 		});
 	}
-	
+
 	function unlockDoc(docId)
 	{
 		console.log("unlockDoc()  docId:" + docId);
@@ -4475,13 +4479,13 @@
 			dataType : "json",
 			data : {
 				lockType : 0, //unlock the doc
-				reposId : gReposId, 
+				reposId : gReposId,
 				docId : docId,
 			},
 			success : function (ret) {
 				if( "ok" == ret.status){
 					console.log(ret.data);
-					
+
 					$("[dataId='"+ docId +"']").children("div:first-child").css("color","black");
 				    return;
  				}
@@ -4491,28 +4495,28 @@
 					return;
 				}
 			},
-			error : function () 
+			error : function ()
 			{
 				showErrorMessage("unlockDoc 异常");
 				return;
 			}
 		});
 	}
-	
+
 	//进入文件编辑状态
     function editWiki(docId){
-        
+
         DocEdit.editorSwitch(true);
-        
+
         WikiEditBtnCtrl(true);
-	    
+
         updateUrl(gReposId,docId,true);
-        
+
         //start the autoTmpSaver
         debounce.clear();
 	    DocEdit.startAutoTmpSaver();
     }
-    
+
     //将编辑中的文件保存到后台
     function saveWiki() {
     	console.log("saveWiki");
@@ -4521,45 +4525,45 @@
     		saveDoc(gDocId, debounce.get());
     	}
     }
-	
+
 	//debounce文件编辑缓存类
     var debounce = (function () {
         //var cache = [];
         var latestcopy = "";
         var status = 0; //For save
         var status1 = 0; //For tmpSave
-        
+
 		function getLatestCopy()
 		{
 		    return latestcopy;
 		}
-		
+
 		function getStatus()
 		{
-			if ( status == 1 ){	
+			if ( status == 1 ){
             	return 1;
             }
             return 0;
 		}
-		
+
 		function clearStatus()
 		{
 			status = 0;
 		}
-		
+
 		function getStatus1()
 		{
-			if ( status1 == 1 ){	
+			if ( status1 == 1 ){
             	return 1;
             }
             return 0;
 		}
-		
+
 		function clearStatus1()
 		{
 			status1 = 0;
 		}
-		
+
         return {
             get: function(){
             	return getLatestCopy();
@@ -4592,8 +4596,8 @@
             }
         };
     })();
-	
-	
+
+
     function makeUrl(params) {
         var href = window.location.href;
         var i = href.indexOf("?");
@@ -4621,7 +4625,7 @@
 	        var strs = str.split("="); // 用等号进行分隔 （因为知道只有一个参数 所以直接用等号进分隔 如果有多个参数 要用&号分隔
 	        return strs[1]; // 返回第一个参数值
 	    }
-	
+
 	}
 
    var getUrlParams = function() {
@@ -4706,12 +4710,12 @@ function getLength(object) {
 }
 
 function Compare(objA, objB) {
-    if(!isObj(objA) || !isObj(objB)) 
+    if(!isObj(objA) || !isObj(objB))
     {
     	console.log("类型不符");
     	return false; //判断类型是否正确
     }
-    if(getLength(objA) != getLength(objB)) 
+    if(getLength(objA) != getLength(objB))
     {
     	console.log("长度不符");
     	return false; //判断长度是否一致
@@ -4756,22 +4760,22 @@ function CompareObj(objA, objB, flag) {
 
 <SCRIPT type="text/javascript" >
 	/********************** zTree设置与接口**********************************/
-	
+
 	//右键点击所在的zTreeNode：用于右键菜单相关的操作:rename, remove, 新建,上传,下载
 	var curRightClickedTreeNode = null;
 	var gCopiedNodes = null;	//右键复制操作选中的节点
 	var gParentNodeForUpload = null; //用于保存右键选择上传的父节点
-	
+
 	//zTree's setting
 	var setting = {
 		//异步加载的工作原理
-		async : {  
-    		enable : true,//设置 zTree 是否开启异步加载模式  
+		async : {
+    		enable : true,//设置 zTree 是否开启异步加载模式
             url : "/DocSystem/Repos/getSubDocList.do",
             type : "post",
     		autoParam : ["id"],	//zTree会自动根据用户双击的节点设置参数为id=treeId，自动传递的参数必须符合zTree的规则，这也是为什么不得不把后台参数名parentId改为id的原因
-    		otherParam:{"vid":gReposId}, //这里设置的参数是固定的，如果需要修改的话需要修改配置文件，我就是这么做的，详见getReposInfo函数	
-    		dataFilter: asyncDataFilter, 
+    		otherParam:{"vid":gReposId}, //这里设置的参数是固定的，如果需要修改的话需要修改配置文件，我就是这么做的，详见getReposInfo函数
+    		dataFilter: asyncDataFilter,
 		},
 	   	//可编辑功能设置
 		edit: {
@@ -4832,11 +4836,11 @@ function CompareObj(objA, objB, flag) {
        console.log(docList);
 	   return docList;
 	}
-	
-    function zTreeBeforeAsync() {  
+
+    function zTreeBeforeAsync() {
     	console.log("zTreeBeforeAsync");
-    }  
-      
+    }
+
     function zTreeOnAsyncSuccess(event, treeId, treeNode, msg) {
     	console.log("zTreeOnAsyncSuccess treeId:" + treeId);
     }
@@ -4845,17 +4849,17 @@ function CompareObj(objA, objB, flag) {
 	function zTreeBeforeRightClick(treeId, treeNode) {
 		//alert(treeNode ? treeNode.tId + ", " + treeNode.name : "isRoot");
 		curRightClickedTreeNode = treeNode;
-    	return true;	
+    	return true;
 	};
-		
+
 	//This function will replace all righot click, so i did not use it
 	function zTreeOnRightClick(event, treeId, treeNode) {
     	alert(treeNode ? treeNode.tId + ", " + treeNode.name : "isRoot");
 	};
-		
+
 	//Drag and Drop Implementation Start: curDragNhodes was used to remember DragNodes
-    var className = "dark", curDragNodes, autoExpandNode;        
-    //拖动前的检查 
+    var className = "dark", curDragNodes, autoExpandNode;
+    //拖动前的检查
     function zTreeBeforeDrag(treeId, treeNodes) {
         console.log("zTreeBeforeDrag");
         className = (className === "dark" ? "":"dark");
@@ -4871,20 +4875,20 @@ function CompareObj(objA, objB, flag) {
         curDragNodes = treeNodes;
         return true;
     }
-        
+
     function zTreeBeforeDragOpen(treeId, treeNode) {
         console.log("zTreeBeforeDragOpen");
         autoExpandNode = treeNode;
         return true;
     }
-    
+
     //zTree拖动处理接口
     function zTreeOnDrag()
     {
     	console.log("zTreeOnDrag");
      	//updateMenu();
     }
-        
+
     //dropPre Next and Inner was use to check if it was allowed to drop
 	function dropPrev(treeId, nodes, targetNode) {
 		console.log("dropPrev");
@@ -4935,23 +4939,23 @@ function CompareObj(objA, objB, flag) {
           }
           return true;
       }
-		
+
 	  //drop前检查函数
       function zTreeBeforeDrop(treeId, treeNodes, targetNode, moveType, isCopy) {
           console.log("zTreeBeforeDrop");
-          
+
           //move this confirm to dropInner, it will be better
           //if (targetNode && targetNode.isParent !== true) { //leaf node can not drop
           //	console.log("can not drop to leaf node");
           //	return false;
           //}
-		            
+
           if(targetNode.drop === false)
           {
           	console.log("drop was not allowed for this node");
           	return false;
           }
-          
+
           	//get targe parentNode
       		var parentNode = targetNode;
       		if(targetNode)
@@ -4970,22 +4974,22 @@ function CompareObj(objA, objB, flag) {
       			showErrorMessage("targetNode is null,理论上不该出现");
       			return;
       		}
-           
+
           	className = (className === "dark" ? "":"dark");
           	return true;
       }
-      
+
       //Drop处理函数
       function zTreeOnDrop(event, treeId, treeNodes, targetNode, moveType, isCopy)
       {
       		console.log("zTreeOnDrop");
-      		
+
       		if(moveType == null)	//无效拖放，不处理
 			{
 				//alert("Invalid drag and drop!");
 				return;
 			}
-      		
+
       		//get targe parentNode
       		var parentNode = targetNode;
       		if(targetNode)
@@ -5012,9 +5016,9 @@ function CompareObj(objA, objB, flag) {
       			showErrorMessage("targetNode is null,理论上不该出现");
       			return;
       		}
-			
+
 			var vid = gReposId;
- 	 		
+
  	 		//确定是copy还是move,如果是move调用后台move操作，否则调用后台copy操作
 	      	if(isCopy == true) //copy: 复制文件，并新建doc记录
 	      	{
@@ -5022,19 +5026,19 @@ function CompareObj(objA, objB, flag) {
 	      	}
 	      	else	//move: 移动文件，并修改doc的parenID和path
 	      	{
-	      		DocMove.moveDocs(treeNodes,parentNode,vid); 
+	      		DocMove.moveDocs(treeNodes,parentNode,vid);
 	      	}
       }
       //Drag and Drop Implementation End
-      
+
       //zTree API没有onChange事件定义啊，汗，大概就zTree发送变化时的处理函数
       function zTreeOnChange()
       {
        	console.log("zTreeOnChange");
       }
-        
+
       //为了能够让外部接口能够调用zTree的callback，需要记录当前treeNode等变量
-      function zTreeOnClick(event, treeId, treeNode) 
+      function zTreeOnClick(event, treeId, treeNode)
       {
           if(gDocId != treeNode.id)
           {
@@ -5044,64 +5048,64 @@ function CompareObj(objA, objB, flag) {
               	exitEdit(gDocId,treeNode.id);
              }
              else
-             {              
+             {
             	 gDocId = treeNode.id;
               	 var pId = getParentNodeIdByNode(treeNode);
 
               	 //showDocList
            		 showDocList(pId);
-           	     
+
              	 //show Doc
             	 getDoc(gDocId,false);
              }
           }
       }
-      
+
       //Double Click 对于文件应该是编辑，对于目录应该是打开
 
 	//判断当前目录下名字为 name的Node是否已经存在，parentNode是null表示根目录
 	function isNodeExist(name,parentNode)
 	{
 		var parentId = null;
-		if(parentNode && parentNode.id) 
+		if(parentNode && parentNode.id)
 		{
 			parentId =  parentNode.id;
 		}
-		
+
 		var treeObj = $.fn.zTree.getZTreeObj("doctree");
 		var nodes = treeObj.getNodesByParam("name", name, parentNode);
 		for (var i=0,l=nodes.length; i<l; i++)
 		{
 			if(nodes[i].pId == parentId)
-			{	
+			{
 				//alert(name + " 已存在");
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	//get the treeNode under parentNode with name
 	function getNodeByName(name,parentNode)
 	{
 		var parentId = null;
-		if(parentNode && parentNode.id) 
+		if(parentNode && parentNode.id)
 		{
 			parentId =  parentNode.id;
 		}
-		
+
 		var treeObj = $.fn.zTree.getZTreeObj("doctree");
 		var nodes = treeObj.getNodesByParam("name", name, parentNode);
 		for (var i=0,l=nodes.length; i<l; i++)
 		{
 			if(nodes[i].pId == parentId)
-			{	
+			{
 				return nodes[i];
 			}
 		}
 		return null;
 	}
-	
+
 	//获取Node的路径
 	function getNodePath(treeNode)
 	{
@@ -5109,19 +5113,19 @@ function CompareObj(objA, objB, flag) {
 		if(treeNode)
 		{
 			var nodes = treeNode.getPath();	//获取当前节点的所有父节
-			console.log("getNodePath() nodes ",nodes);	
+			console.log("getNodePath() nodes ",nodes);
 			for( var i = 0 ; i < nodes.length-1; i++ )
 			{
-				remoteDir += nodes[i].name + "/"; 
+				remoteDir += nodes[i].name + "/";
 			}
-			
+
 			if(true == treeNode.isParent)
 			{
 				remoteDir += treeNode.name + "/";
 			}
 			else
 			{
-				remoteDir += treeNode.name;				
+				remoteDir += treeNode.name;
 			}
 		}
 		return remoteDir;
@@ -5135,7 +5139,7 @@ function CompareObj(objA, objB, flag) {
 			//alert("isCancel");
 			return true;
 		}
-		
+
 		//文件同名表示放弃修改
 		var treeObj = $.fn.zTree.getZTreeObj("doctree");
 		if(treeNode.name == newName)
@@ -5145,7 +5149,7 @@ function CompareObj(objA, objB, flag) {
 			treeObj.cancelEditName();
 			return false;
 		}
-			
+
 		//检查同名文件是否已存在
 		var parentNode = treeNode.getParentNode();
 		if(isNodeExist(newName,parentNode) == true)
@@ -5155,7 +5159,7 @@ function CompareObj(objA, objB, flag) {
 			treeObj.cancelEditName();
 			return false;
 		}
-		
+
 		//确认是否修改
 		if(confirm("确定修改?") == false)
 		{
@@ -5176,26 +5180,26 @@ function CompareObj(objA, objB, flag) {
         	//alert("取消修改");
            	return;
         }
-        
+
         renameDoc(treeNode.id,treeNode.name);
     }
-    
+
 	/* I will call doDelete to delete treeNodes
-	function zTreeBeforeRemove(treeId, treeNode) {	
+	function zTreeBeforeRemove(treeId, treeNode) {
 		if(treeNode)
 		{
 			if(treeNode.isParent == true)
 			{
-				return confirm("警告：是否删除整个目录，请确认？");			
+				return confirm("警告：是否删除整个目录，请确认？");
 			}
 			else
 			{
-				return confirm("是否删除文件");		
+				return confirm("是否删除文件");
 			}
 		}
 		return false;
 	}
-	
+
     function zTreeOnRemove(event, treeId, treeNode) {
     	console.log("zTreeOnRemove()");
     	var treeNodes = [];
@@ -5203,34 +5207,34 @@ function CompareObj(objA, objB, flag) {
 		DocDelete.deleteDocs(treeNodes);
     }
 	*/
-	
-    //Rename and Delete Implemenation End	
+
+    //Rename and Delete Implemenation End
 
     //该接口是为了避免新增Node时触发的异步加载导致出现多个Node
 	function addTreeNode(node,parentNode)
 	{
 		console.log("addTreeNode() node:",node);
 		console.log("addTreeNode() parentNode",parentNode);
-		
+
 		var isParent = false;
 		if(node.type == 2)
 		{
 			isParent = true;
-		}	
+		}
 		var nodeName = node.name;
-		
+
 		var parentDocId = 0;
 		if(parentNode != null)
 		{
 			parentDocId = parentNode.id;
 		}
-				
+
 		//Add zTree Node
 		//parentNode处于展开状态时，需要手动addTreeNode以保证与后台同步，否则只要触发异步加载即可
 		if(parentNode == null || parentNode.open == true)
 		{
 			console.log("addTreeNode() parentNode is open");
-			
+
 			var pId = parentDocId;
 			if(parentDocId == 0)
 			{
@@ -5254,7 +5258,7 @@ function CompareObj(objA, objB, flag) {
 			var treeObj = $.fn.zTree.getZTreeObj("doctree");
 			treeObj.expandNode(parentNode, true, false, true);
 		}
-		
+
 		//Add DocList Node
 		console.log("parentDocId:" + parentDocId + " DocListParentDocId:" + DocListParentDocId );
 		if(parentDocId == DocListParentDocId)
@@ -5265,30 +5269,30 @@ function CompareObj(objA, objB, flag) {
 			}
 		}
 	}
-	
+
 	//zTree初始化接口:根据data和setting生成zTree
 	function zTreeInit(data) {
 	    console.log("zTreeInit");
 	    //console.log(setting);
-	
+
 	    var doctree = zTree.init($("#doctree"), setting, data);
 	    //doctree.expandAll(true); //考虑只自动展开根目录下目录
 	}
-	
+
 	//PageInit
 	var login_user = "";	//用来保存刚注册的用户、或刚才登录的用户
 	function SysInit()
 	{
 		console.log("SysInit");
-    	
+
 		//Set the event handler for keydown
 		document.onkeydown=function(event)
 		{
 			//浏览器兼容性处理
 			var e = event || window.event || arguments.callee.caller.arguments[0];
-			EnterKeyListenerForSearchDoc(e);	
+			EnterKeyListenerForSearchDoc(e);
 		}
-		
+
     	//确定当前登录用户是否已登录e
     	$.ajax({
             url : "/DocSystem/getLoginUser.do",
@@ -5302,17 +5306,17 @@ function CompareObj(objA, objB, flag) {
                 	login_user = user;
                 	//显示用户信息
                 	ShowUserInfo(user);
-                	
+
                 	//获取仓库信息
             		getReposInfo(InitMenu);
                 }
-                else 
+                else
                 {
                 	console.log(ret.msgInfo);
                 	alert(ret.msgInfo);
                 	//Jump to index.html
                     //window.location.href = "index.html";
-                    
+
                 	//Show Login Dialog
                     //showLoginPanel();
                 }
@@ -5320,23 +5324,23 @@ function CompareObj(objA, objB, flag) {
             error : function () {
             	showErrorMessage("服务器异常:获取用户信息失败");
             }
-        });		
+        });
 	}
-	
+
 	//将后台Menu,同步回前台
 	function InitMenu()
 	{
 		console.log("InitMenu");
 	    getMenu(reDrawMenu,showDoc);
 	}
-	
+
 	//将后台Menu,同步回前台
 	function syncUpMenu(callback)
 	{
 		console.log("syncUpMenu");
 	    getMenu(reDrawMenu,callback);
 	}
-	
+
 	function reDrawMenu(data)
 	{
 		if( window.menu != data ){
@@ -5347,12 +5351,12 @@ function CompareObj(objA, objB, flag) {
 	        drawMenu(data);
 	    }
 	}
-	
+
 	//绘制zTree with the data:强制绘制，判断的东西不应该放在这里
 	function drawMenu(data) {
 		console.log("drawMenu");
 		window.menu = data;
-	    //data = JSON.parse('"' + data + '"'); //We need to use JSON parse one more time here  
+	    //data = JSON.parse('"' + data + '"'); //We need to use JSON parse one more time here
 	    //var menu = JSON.parse(data);
 	    var menu = data;
 	    //遍历jason_arry
@@ -5365,11 +5369,11 @@ function CompareObj(objA, objB, flag) {
 	   //console.log(menu);
 	   zTreeInit(menu);
 	}
-	
+
 	//DocList类
 	var DocListState = 0;
 	var DocListParentDocId = 0;
-	var DocList = (function () {    	
+	var DocList = (function () {
     	//Draw DocList
     	function showList(data){
      	 	var str="";
@@ -5381,16 +5385,16 @@ function CompareObj(objA, objB, flag) {
      	           var docName = data[i].name;
      	           if(data[i].state != 0)
      	           {
-     	        		str+='<li dataId='+docId+' dataType='+docType +' dataName="'+docName+'"'+' class="second-listBox" onmousedown="docListOnMouseDown(this,event)"><div onclick="secondGetDoc(this)" class="filename pull-left" style="color:red">'+iconType + docName+'</div><div class="filedate pull-right">'+formatDate(data[i].latestEditTime)+'</div><div class="handle pull-right"><i class="glyphicon glyphicon-new-window" onclick="fx(this,event)"></i><i class="glyphicon glyphicon-download-alt" onclick="xz(this,event)"></i><i onclick="sc(this,event)" class="glyphicon glyphicon-trash"></i><i onclick="showContextMenu(this,event)" class="glyphicon glyphicon-list"></i></div></li>';   
+     	        		str+='<li dataId='+docId+' dataType='+docType +' dataName="'+docName+'"'+' class="second-listBox" onmousedown="docListOnMouseDown(this,event)"><div onclick="secondGetDoc(this)" class="filename pull-left" style="color:red">'+iconType + docName+'</div><div class="filedate pull-right">'+formatDate(data[i].latestEditTime)+'</div><div class="handle pull-right"><i class="glyphicon glyphicon-new-window" onclick="fx(this,event)"></i><i class="glyphicon glyphicon-download-alt" onclick="xz(this,event)"></i><i onclick="sc(this,event)" class="glyphicon glyphicon-trash"></i><i onclick="showContextMenu(this,event)" class="glyphicon glyphicon-list"></i></div></li>';
      	           }
      	           else
      	           {
      	           	   str+='<li dataId='+docId+' dataType='+docType +' dataName="'+docName+'"'+' class="second-listBox" onmousedown="docListOnMouseDown(this,event)"><div onclick="secondGetDoc(this)" class="filename pull-left">'+iconType + docName+'</div><div class="filedate pull-right">'+formatDate(data[i].latestEditTime)+'</div><div class="handle pull-right"><i class="glyphicon glyphicon-new-window" onclick="fx(this,event)"></i><i class="glyphicon glyphicon-download-alt" onclick="xz(this,event)"></i><i onclick="sc(this,event)" class="glyphicon glyphicon-trash"></i><i onclick="showContextMenu(this,event)" class="glyphicon glyphicon-list"></i></div></li>';
-     	           }	 
+     	           }
      	    }
            	$("#secondList").html(str);
      	}
-    	
+
     	//Check if node exists
 		function isNodeExists(docId)
 		{
@@ -5400,7 +5404,7 @@ function CompareObj(objA, objB, flag) {
 			}
 			return false;
 		}
-    	
+
     	//Add Node
 		function addNode(docId,docType,docName,latestEditTime)
 		{
@@ -5418,7 +5422,7 @@ function CompareObj(objA, objB, flag) {
     			obj.remove();
     		}
 		}
-    	
+
     	//Rename Node
 		function renameNode(docId,newName)
 		{
@@ -5431,7 +5435,7 @@ function CompareObj(objA, objB, flag) {
 				firstDivObj.text(newName);
     		}
 		}
-		
+
 		//Delete Node
 		function focusNode(docId)
 		{
@@ -5449,7 +5453,7 @@ function CompareObj(objA, objB, flag) {
             },
     		isNodeExists: function (docId)
     		{
-    			return isNodeExists(docId);	
+    			return isNodeExists(docId);
     		},
     		addNode: function(docId,docType,docName,latestEditTime){
         		addNode(docId,docType,docName,latestEditTime);
@@ -5464,8 +5468,8 @@ function CompareObj(objA, objB, flag) {
             	focusNode(docId);
             },
         };
-    })();		
-      		
+    })();
+
 	var curRightClickedDocListNode = [];
     function docListOnMouseDown(obj,ev)
     {
@@ -5477,12 +5481,12 @@ function CompareObj(objA, objB, flag) {
    	 	curRightClickedDocListNode.docName = docName;
    	 	console.log("docListOnMouseDown on doc:",curRightClickedDocListNode);
     }
-	
+
  	function secondGetDoc(obj){
  		var docId = $(obj).parents('li').attr('dataId');
  		var type = $(obj).parents('li').attr('dataType');
  		console.log("type:" + type);
- 		
+
  		if(gDocId != docId)
  		{
 	 		//Change curent gDocId to docId
@@ -5498,7 +5502,7 @@ function CompareObj(objA, objB, flag) {
 				var zTree = $.fn.zTree.getZTreeObj("doctree");
 				//select this node in zTree
 		 		zTree.selectNode(node);
-				
+
 				if(type == 1)	//For File, show RightDiv
 		 		{
 		 			showRightDiv();
@@ -5507,21 +5511,21 @@ function CompareObj(objA, objB, flag) {
 		 		{
 		 			//Open the dir in zTree
 					zTree.reAsyncChildNodes(node, "refresh",true);
-		      		
+
 		 			//show DocList under this dir
 		 			showDocList(docId);
 		 		}
 			}
-			
+
 			//ShowDoc
 			getDoc(docId,false);
  		}
  	}
- 	
+
  	function fx(obj,event){
  		var id = $(obj).parents('li').attr('dataId');
  		//alert('分享'+id);
- 		
+
  		var vid = gReposId;
  		var href = "/DocSystem/web/project.html?vid="+vid+"&doc="+id;
  		console.log(href);
@@ -5538,10 +5542,10 @@ function CompareObj(objA, objB, flag) {
  			type : 'success',
  			time : 1000,
  		});
- 		
+
  		event.stopPropagation();
  	}
- 	
+
  	function xz(obj,event){
  		var id = $(obj).parents('li').attr('dataId');
  		var name = $(obj).parents('li').attr('dataName');
@@ -5549,11 +5553,11 @@ function CompareObj(objA, objB, flag) {
  		downloadDoc(id,name,true);
  		event.stopPropagation();
  	}
- 	
+
  	function sc(obj,event){
  		var id = $(obj).parents('li').attr('dataId');
  		//alert('删除'+id);
- 		
+
  		var zTree = $.fn.zTree.getZTreeObj("doctree");
 		var node = zTree.getNodeByParam("id",id);
 		if(node == null)
@@ -5568,37 +5572,37 @@ function CompareObj(objA, objB, flag) {
 		}
 		event.stopPropagation();
  	}
- 	
+
  	function showContextMenu(obj,event){
  		event.stopPropagation();
  		var xOffset = 0;
  		if(gIsPC == false)
  		{
- 			xOffset = -120;	
+ 			xOffset = -120;
  		}
  		context.show('#secondList',event,xOffset);
  	}
- 	
+
  	function formatDate(date) {
  		var now = new Date(date);
- 		var year=now.getFullYear(); 
+ 		var year=now.getFullYear();
  		var month=now.getMonth()+1;
- 		var date=now.getDate(); 
- 		return year+"-"+month+"-"+date; 
+ 		var date=now.getDate();
+ 		return year+"-"+month+"-"+date;
  	}
- 	
+
  	function formatTime(time){
  		var now = new Date(time);
- 		var year=now.getFullYear(); 
+ 		var year=now.getFullYear();
  		var month=now.getMonth()+1;
- 		var date=now.getDate(); 
- 		var hh=now.getHours(); 
- 		var mm=now.getMinutes(); 
- 		var ss=now.getSeconds(); 
- 		
- 		return year+"-"+month+"-"+date + " " + hh+":"+mm+":"+ss; 
+ 		var date=now.getDate();
+ 		var hh=now.getHours();
+ 		var mm=now.getMinutes();
+ 		var ss=now.getSeconds();
+
+ 		return year+"-"+month+"-"+date + " " + hh+":"+mm+":"+ss;
  	}
- 	
+
 	function showDoc()
 	{
 		console.log("showDoc gDocId:" + gDocId);
@@ -5611,7 +5615,7 @@ function CompareObj(objA, objB, flag) {
 			 if(node != null)
 			 {
 				 zTree.selectNode(node);
-			
+
 				//showDocList
 				if(node.isParent)
 				{
@@ -5622,7 +5626,7 @@ function CompareObj(objA, objB, flag) {
 					var parentNode = node.getParentNode();
 					if(parentNode && parentNode.id)
 					{
-	          			pId = parentNode.id;          		
+	          			pId = parentNode.id;
 					}
 					else
 					{
@@ -5631,14 +5635,14 @@ function CompareObj(objA, objB, flag) {
 				}
 			 }
 	   	}
-		
+
 		//showDocList
 		showDocList(pId);
-		
+
 		//获取DocContent
 		getDoc(gDocId,gEdit);
 	}
-	
+
 	function showDocList(parentDocId)
 	{
 		console.log("showDocList() parentDocId:" + parentDocId);
@@ -5670,14 +5674,14 @@ function CompareObj(objA, objB, flag) {
             }
         });
 	}
-	
+
 	function backToParentDoc()
 	{
 		console.log("backToParentDoc() gDocId:" + gDocId);
 		var zTree = $.fn.zTree.getZTreeObj("doctree");
 		var node = zTree.getNodeByParam("id",gDocId);
 		var pId = 0;
-		
+
 		//current Doc not exists, update gDocId and URL and showDocList under root dir
 		if(node == null)
 		{
@@ -5691,7 +5695,7 @@ function CompareObj(objA, objB, flag) {
 			if(parentNode && parentNode.id)
 			{
 				zTree.selectNode(parentNode);
-				
+
 				gDocId = parentNode.id;
 				pId = parentNode.id;
 			}
@@ -5700,38 +5704,38 @@ function CompareObj(objA, objB, flag) {
 				zTree.cancelSelectedNode(node);
 
 				gDocId = undefined;
-				pId = 0;	
+				pId = 0;
 			}
 		}
-		
+
 		//update URL
 		updateUrl(gReposId,gDocId);
-		
+
 		//Show DocList
 		showDocList(pId);
-		
+
 		//Update doc preview zone
 		getDoc(gDocId,false);
 		return;
-   	}         
-	
-	//回车键监听函数，该event已经过兼容性处理 
+   	}
+
+	//回车键监听函数，该event已经过兼容性处理
 	function EnterKeyListenerForSearchDoc(event){
 		console.log("enter key listener for SearchDoc");
-		if (event.keyCode == 13){  
-			var isFocus=$("#searchWord").is(":focus");  
+		if (event.keyCode == 13){
+			var isFocus=$("#searchWord").is(":focus");
 			if(isFocus)
 			{
 				searchDoc();
 			}
-	 	}  
+	 	}
 	}
-	
+
 	function searchDoc()
 	{
 		var searchWord = $("#searchWord").val();
 		var sort = "";
-	
+
        	$.ajax({
                url : "/DocSystem/Doc/searchDoc.do",
                type : "post",
@@ -5762,19 +5766,19 @@ function CompareObj(objA, objB, flag) {
                }
            });
 	}
-	
+
 	function previewDoc()
 	{
 		console.log("previewDoc gDocId:" + gDocId);
 		doPreviewDoc(gDocId);
 	}
-	
+
 	function doPreviewDoc(docId)
 	{
 		console.log("doPreviewDoc docId:" + docId);
 		if(docId)
 		{
-			//Convert doc to PDF and return the link, then show the pdf 
+			//Convert doc to PDF and return the link, then show the pdf
 		    $.ajax({
 		        url : "/DocSystem/Doc/DocToPDF.do",
 		        type : "post",
@@ -5787,11 +5791,11 @@ function CompareObj(objA, objB, flag) {
 		                var fileLink = ret.data;
 		                console.log("fileLink" + fileLink);
 		    			//在新的页面打开
-		    			window.open("/DocSystem/web/viewDoc.html?fileLink=" + fileLink); 
+		    			window.open("/DocSystem/web/viewDoc.html?fileLink=" + fileLink);
 		            }
 		            else
 		            {
-		            	showErrorMessage("文件预览失败：" + ret.msgInfo);              	
+		            	showErrorMessage("文件预览失败：" + ret.msgInfo);
 		            }
 		        },
 		        error : function () {
@@ -5801,28 +5805,28 @@ function CompareObj(objA, objB, flag) {
 	   	}
 		else
 		{
-			showErrorMessage("请选择需要预览的文件"); 
+			showErrorMessage("请选择需要预览的文件");
 		}
 	}
-	
+
 	function WikiEditBtnCtrl(edit)
 	{
 		 if(edit)
 	   	 {
 	      	$("#btnExitEdit").show();
-	      	$("#btnSaveWiki").show();  
+	      	$("#btnSaveWiki").show();
 	      	$("#btnEditWiki").hide();
 	      	//$("#btnViewDoc").hide();
 	     }
 	     else
 	     {
 		    $("#btnExitEdit").hide();
-	      	$("#btnSaveWiki").hide(); 
+	      	$("#btnSaveWiki").hide();
 	      	$("#btnEditWiki").show();
 	      	//$("#btnViewDoc").show();
 	     }
 	}
-	/************************** contextMenu 接口***************************/	
+	/************************** contextMenu 接口***************************/
 	//Get Node by NodeId
 	function getNodeByNodeId(nodeId)
 	{
@@ -5830,7 +5834,7 @@ function CompareObj(objA, objB, flag) {
 		var node = zTree.getNodeByParam("id",nodeId);
 		return node;
 	}
-	
+
 	//Get NodeId by Node
 	function getNodeIdByNode(node)
 	{
@@ -5840,7 +5844,7 @@ function CompareObj(objA, objB, flag) {
 		}
 		return 0;
 	}
-	
+
 	//Get ParentNode of Node(zTree)
 	function getParentNodeByNode(node)
 	{
@@ -5853,7 +5857,7 @@ function CompareObj(objA, objB, flag) {
 		}
 		return parentNode;
 	}
-	
+
 	//Get ParentNode of NodeId(zTree)
 	function getParentNodeByNodeId(nodeId)
 	{
@@ -5861,14 +5865,14 @@ function CompareObj(objA, objB, flag) {
 		var node = getNodeByNodeId(nodeId);
      	return getParentNodeByNode(node);
 	}
-	
+
 	//Get ParentNodeId of Node(zTree)
 	function getParentNodeIdByNode(node)
 	{
 		var parentNode = getParentNodeByNode(node);
      	return getNodeIdByNode(parentNode);
 	}
-	
+
 	//Get ParentNodeId of NodeId(zTree)
 	function getParentNodeIdByNodeId(nodeId)
 	{
@@ -5877,16 +5881,16 @@ function CompareObj(objA, objB, flag) {
      	var parentNode = getParentNodeByNode(node);
      	return getNodeIdByNode(parentNode);
 	}
-	
+
 	//add a new Doc
 	function newDocEx(type)
 	{
 		var parentNode = getParentNodeByNodeId(gDocId);
 		newDoc(type,parentNode);
 	}
-	
+
 	//add a new Doc: type 1: 文件  2:目录
-    function newDoc(type,parentNode) {         
+    function newDoc(type,parentNode) {
 		//计算 parentId remoteDir
 		var parentId = 0;
 		if(parentNode && parentNode.id)
@@ -5894,14 +5898,14 @@ function CompareObj(objA, objB, flag) {
 			parentId = parentNode.id;
 		}
 		var remoteDir = gReposName+ "::" + getNodePath(parentNode); //only for display
-        
+
         //对话框 title
         var title = "新建文件";
         if(type == 2)
         {
         	title = "新建目录";
         }
-          
+
         //显示新建对话框
         qiao.bs.dialog({
               id: "dialog-new-doc",
@@ -5911,7 +5915,7 @@ function CompareObj(objA, objB, flag) {
               qubtn: "取消",
               callback: function () {
                       $("#dialog-new-doc input[name='name']").focus();
-                      $("#dialog-new-doc input[name='remoteDir']").val(remoteDir);                
+                      $("#dialog-new-doc input[name='remoteDir']").val(remoteDir);
               }
         },function () {
 
@@ -5919,17 +5923,17 @@ function CompareObj(objA, objB, flag) {
               var content = $("#dialog-new-doc input[name='content']").val();
 			  //检查当前目录下是否有同名文件
 			  if(isNodeExist(name,parentNode) == true)
-			  {	
+			  {
 				showErrorMessage(name + " 已存在");
 			  	return false;
 			  }
 			  var vid = gReposId;
-			  
+
 			  //发送新建文件请求到后台
               if( name ){
             	  if(content && content != "")
             	  {
-            		  content = "#" + content; 
+            		  content = "#" + content;
             	  }
                   addDoc(name,type,content,parentNode,parentId,vid);
                   return true;
@@ -5939,18 +5943,18 @@ function CompareObj(objA, objB, flag) {
               }
           });
    	}
-	
+
 	//显示文件详情
-	function showDocDetail(node){         
+	function showDocDetail(node){
         //对话框 title
         var title = "详细信息";
-        
+
         var parentNode = node.getParentNode();
         var parentPath = getNodePath(parentNode);
-          
-        var createTime = formatTime(node.createTime);  
-        var lastEditTime = formatTime(node.latestEditTime);  
-        
+
+        var createTime = formatTime(node.createTime);
+        var lastEditTime = formatTime(node.latestEditTime);
+
         //显示新建对话框
         qiao.bs.dialog({
               id: "dialog-doc-detail",
@@ -5959,23 +5963,23 @@ function CompareObj(objA, objB, flag) {
               okbtn: "确定",
               callback: function () {
                       $("#dialog-doc-detail input[name='name']").val(node.name);
-                      $("#dialog-doc-detail input[name='size']").val(node.size);               
-                      $("#dialog-doc-detail input[name='position']").val(parentPath);                
-                      $("#dialog-doc-detail input[name='createTime']").val(createTime);                
-                      $("#dialog-doc-detail input[name='latestEditTime']").val(lastEditTime);                
+                      $("#dialog-doc-detail input[name='size']").val(node.size);
+                      $("#dialog-doc-detail input[name='position']").val(parentPath);
+                      $("#dialog-doc-detail input[name='createTime']").val(createTime);
+                      $("#dialog-doc-detail input[name='latestEditTime']").val(lastEditTime);
               }
         },function(){
         	return true;
-          });		
-	}	
-    
+          });
+	}
+
     //ShowCenter: hide left and right
     function showCenterDiv(){
     	if(gIsPC)
     	{
     		return;
     	}
-    	
+
         var oDiv=document.getElementById('line');
         oDiv.style.left=0;	//设置Line的位置
         $(".manual-left")[0].style.width=0;
@@ -5985,20 +5989,20 @@ function CompareObj(objA, objB, flag) {
         $(".second-line").css("left",$(".manual-left").width()+$(".second-table").width()+$("#line").width());
         $(".manual-right")[0].style.left=$(".manual-left").width()+$(".second-table").width()+3+'px';
     }
-    
+
     //ShowRight
 	function showRightDiv(){
     	if(gIsPC)
     	{
     		return;
     	}
-    	
+
     	$(".second-table")[0].style.width=0;
         //$(".second-table")[0].style.display="none";
         $(".second-line").css("left",0);
         $(".manual-right")[0].style.left=2+'px';
     }
-    
+
 	//Confirm if it is PC
 	var gIsPC = true;
 	function isPC() {
@@ -6014,29 +6018,29 @@ function CompareObj(objA, objB, flag) {
 	    }
 	   	return true;
 	}
-    
-    function isWeiXin(){ 
-        var ua = navigator.userAgent.toLowerCase(); 
-        if(ua.indexOf('micromessenger') != -1) { 
-            return true; 
-        } else { 
-            return false; 
-        } 
+
+    function isWeiXin(){
+        var ua = navigator.userAgent.toLowerCase();
+        if(ua.indexOf('micromessenger') != -1) {
+            return true;
+        } else {
+            return false;
+        }
     }
-    
+
 	//LockDoc and Download it
 	function checkOut(docId,docName)
 	{
 		console.log("checkOut()" + docId);
 		var vid = gReposId;
-		
+
 		$.ajax({
 			url : "/DocSystem/Doc/lockDoc.do",
 			type : "post",
 			dataType : "json",
 			data : {
 				lockType : 1, //lockType: CheckOut
-				reposId : vid, 
+				reposId : vid,
 				docId : docId,
 			},
 			success : function (ret) {
@@ -6052,14 +6056,14 @@ function CompareObj(objA, objB, flag) {
 					return;
 				}
 			},
-			error : function () 
+			error : function ()
 			{
 				showErrorMessage("checkOut 异常");
 				return;
 			}
 		});
 	}
-	
+
 	//UnlockDoc and Upload doc
 	var curCheckInDoc = [];
 	function checkIn(docId,docName)
@@ -6067,12 +6071,12 @@ function CompareObj(objA, objB, flag) {
 		console.log("checkIn()" + docId);
 		curCheckInDoc.id = docId;
 		curCheckInDoc.name = docName;
-		
+
 		gParentNodeForUpload = getParentNodeByNodeId(docId);
 		checkInFile();
 		return;
  	}
-    
+
 	//目录列表区域拖放功能：预览区和子目录区域需要一起变化
     var oDiv=document.getElementById('line');
     oDiv.onmousedown=function(ev){
@@ -6081,47 +6085,62 @@ function CompareObj(objA, objB, flag) {
             //console.log("left = " + left);
 
 		    oDiv.style.left = left+'px';	//设置Line的位置
-	    			    
+
 		  	$(".manual-left")[0].style.width = left + 'px';
 		 	$(".manual-right")[0].style.left = (left + 1) + 'px';
+
+            resizeThirdZone()
+
 		 	DocEdit.resize();
 		};
-		
+
 		document.onmouseup=function(ev){
 			document.onmousemove=null;
 			document.onmouseup=null;
 		};
     };
-    
+
+
+    function resizeThirdZone(left) {
+
+        if( undefined == left ){
+            left = $('.second-table').width();
+		}
+
+
+        var totalLeftWidth = $(".manual-right").width();
+        var secondDropZoneWidth = $("#secondDropZone").width()
+        $(".detail-container").css("left", left + 2).css("width", totalLeftWidth - secondDropZoneWidth -4 );
+    }
     var oDiv2=document.getElementById('second-line');
     oDiv2.onmousedown=function(ev){
     	var offsetX = oDiv.offsetLeft;
     	//console.log("offsetX = " + offsetX);
-    	
+
     	document.onmousemove=function(ev){
     		//console.log("ev.clientX = " + ev.clientX);
-        	
+
             var left = ev.clientX - offsetX;	//计算Line2的位置
             //console.log("left = " + left);
-        	
-            oDiv2.style.left = left+'px';	//设置Line2的位置
-    		
+
+            oDiv2.style.left = left + 1 + 'px';	//设置Line2的位置
+
        	   $('.second-table').width(left+'px');
-           $(".detail-container").css("left",left + 1);
+           resizeThirdZone( left )
            DocEdit.resize();
            return false;
    	  };
-    
+
    	  document.onmouseup=function(ev){
     	  document.onmousemove=null;
     	  document.onmouseup=null;
       };
     };
-    //页面加载完成处理函数    
+    //页面加载完成处理函数
     $(document).ready(function(){
         //Confirm if it is PC
     	if(true == isPC())
-        {	
+        {
         	gIsPC = true;
     	    console.log("It is PC");
         }
@@ -6131,7 +6150,7 @@ function CompareObj(objA, objB, flag) {
     	    console.log("It is MP");
     	    showCenterDiv();
         }
-    	
+
     	//初始化全局变量
     	gReposId = getQueryString("vid");
 		gDocId = getQueryString("doc");
@@ -6147,62 +6166,62 @@ function CompareObj(objA, objB, flag) {
             setting.edit = edit;
         }
         //设置异步加载的参数
-        var async =  {  
-    		enable : true,//设置 zTree 是否开启异步加载模式  
+        var async =  {
+    		enable : true,//设置 zTree 是否开启异步加载模式
             url : "/DocSystem/Repos/getSubDocList.do",
             type : "post",
-    		autoParam : ["id"],//异步加载时需要自动提交父节点属性的参数  
+    		autoParam : ["id"],//异步加载时需要自动提交父节点属性的参数
     		otherParam:{"vid":gReposId},
-    		dataFilter: asyncDataFilter, 
+    		dataFilter: asyncDataFilter,
 		};
 		setting.async = async;
-        
+
       	//拖拽上传:目录树区域
-    	var uuz = document.getElementById("uuz");  
-    	uuz.ondragenter = function(e){  
-            e.preventDefault();  
-        };  
-        uuz.ondragover = function(e){  
+    	var uuz = document.getElementById("uuz");
+    	uuz.ondragenter = function(e){
+            e.preventDefault();
+        };
+        uuz.ondragover = function(e){
             e.preventDefault();
             //判断现在所在的zTree Node并选中它
             if(e.target.tagName=="SPAN"){
             	e.target.parentNode.click();
             }
-        };  
-        uuz.ondrop = function(e){   
+        };
+        uuz.ondrop = function(e){
             console.log("uuz.ondrop() event:",e);
         	e.preventDefault();
-    	  	
+
         	//If File drop on the zTree Item, trigger the click event on it
     	  	console.log("uuz.ondrop() e.target:",e.target);
             if(e.target.tagName=="SPAN"){
             	e.target.parentNode.click();
             }
-            
+
             //Choose the selectNode as the place for upload
     	  	var treeObj = $.fn.zTree.getZTreeObj("doctree");
     		var selectedNode = treeObj.getSelectedNodes()[0];
     		console.log("uuz.ondrop() selectedNode",selectedNode);
     		var parentNode = selectedNode;
     		if(selectedNode && selectedNode.isParent === false)
-    		{	
+    		{
     			console.log("uuz.ondrop() selectedNode:" + selectedNode.name);
     			parentNode = selectedNode.getParentNode();
     		}
     		console.log("uuz.ondrop() parentNode:" + parentNode);
             dragUploadConfirm(e,parentNode);
         };
-        
+
     	//拖拽上传:子目录区域
     	//目标目录是当前选中的Doc
-    	var docListZone = document.getElementById("secondDropZone");  
-    	docListZone.ondragenter = function(e){  
-            e.preventDefault();  
-        };  
-        docListZone.ondragover = function(e){  
+    	var docListZone = document.getElementById("secondDropZone");
+    	docListZone.ondragenter = function(e){
             e.preventDefault();
-        };  
-        docListZone.ondrop = function(e){   
+        };
+        docListZone.ondragover = function(e){
+            e.preventDefault();
+        };
+        docListZone.ondrop = function(e){
             e.preventDefault();
     	  	//get the parentNode
     	  	var treeObj = $.fn.zTree.getZTreeObj("doctree");
@@ -6210,22 +6229,22 @@ function CompareObj(objA, objB, flag) {
     		console.log(selectedNode);
     		var parentNode = selectedNode;
     		if(selectedNode && selectedNode.isParent === false)
-    		{	
+    		{
     			console.log("selectedNode:" + selectedNode.name);
     			parentNode = selectedNode.getParentNode();
     		}
             dragUploadConfirm(e,parentNode);
         };
-        
+
         //文件预览区的拖拽上传
-        var docZone =  document.getElementById("doc");  
-        docZone.ondragenter = function(e){  
-            e.preventDefault();  
-        };  
-        docZone.ondragover = function(e){  
-            e.preventDefault();  
-        };  
-        docZone.ondrop = function(e){   
+        var docZone =  document.getElementById("doc");
+        docZone.ondragenter = function(e){
+            e.preventDefault();
+        };
+        docZone.ondragover = function(e){
+            e.preventDefault();
+        };
+        docZone.ondrop = function(e){
             e.preventDefault();
     	  	//get the parentNode
     	  	var treeObj = $.fn.zTree.getZTreeObj("doctree");
@@ -6233,7 +6252,7 @@ function CompareObj(objA, objB, flag) {
     		console.log(selectedNode);
     		var parentNode = selectedNode;
     		if(selectedNode && selectedNode.isParent === false)
-    		{	
+    		{
     			console.log("selectedNode:" + selectedNode.name);
     			parentNode = selectedNode.getParentNode();
     		}
@@ -6242,19 +6261,21 @@ function CompareObj(objA, objB, flag) {
 
 		//set the vid in upload form
 		$("#reposId").val(gReposId);
-        
+
 		//系统初始化
 		SysInit();
-		
+
+        resizeThirdZone();
+
 		//右键菜单实现：contextMenu Start
 		context.init({preventDoubleContext: true});
-		
+
 		//zTree外部的右键菜单
 		context.attach('#treeBody', [
 			{text: '新建', subMenu: [
 				{text: '文件',  action: function(e){
 						e.preventDefault();
-						curRightClickedTreeNode = null; 
+						curRightClickedTreeNode = null;
 						var parentNode = getParentNodeByNode(null);
 	        			newDoc(1,parentNode);
 					}
@@ -6278,17 +6299,17 @@ function CompareObj(objA, objB, flag) {
 				},
 				{text: '文件夹',  action: function(e){
 						e.preventDefault();
-						curRightClickedTreeNode = null; 
+						curRightClickedTreeNode = null;
 					    gParentNodeForUpload = null;	//uploadFiles is the trigger, so need to save the destination dir to gVar
 						uploadDir();
 					}
-				},	
+				},
 				]
 			},
 			{divider: true},
 			{text: '粘贴', action: function(e){
 						e.preventDefault();
-						curRightClickedTreeNode = null; 
+						curRightClickedTreeNode = null;
 						DoPaste(gCopiedNodes,null);
 					}
 			},
@@ -6296,7 +6317,7 @@ function CompareObj(objA, objB, flag) {
 			{text: '更多...', subMenu: [
 						{text: '查看仓库历史', action: function(e){
 									e.preventDefault();
-									curRightClickedTreeNode = null; 
+									curRightClickedTreeNode = null;
 				        			showDocHistory(null);
 								}
 						},
@@ -6333,7 +6354,7 @@ function CompareObj(objA, objB, flag) {
 						gParentNodeForUpload = getParentNodeByNode(curRightClickedTreeNode);	//uploadFiles is the trigger, so need to save the destination dir to gVar
 						uploadDir();
 					}
-				},	
+				},
 				]
 			},
 			{divider: true},
@@ -6415,13 +6436,13 @@ function CompareObj(objA, objB, flag) {
 									e.preventDefault();
 				        			copyUrl(curRightClickedTreeNode);
 								}
-						},	
+						},
 						{divider: true},
 						{text: 'CheckOut', action: function(e){
 								e.preventDefault();
 								var docType = curRightClickedDocListNode.type;
 								if(docType == 1)
-								{							
+								{
 									var docId = curRightClickedTreeNode.id;
 									var docName = curRightClickedTreeNode.name;
 									checkOut(docId,docName);
@@ -6452,7 +6473,7 @@ function CompareObj(objA, objB, flag) {
    				]
    			},
 		]);
-		
+
 		//secondList上的右键菜单
 		context.attach('#secondList', [
 			{text: '新建', subMenu: [
@@ -6484,7 +6505,7 @@ function CompareObj(objA, objB, flag) {
 						gParentNodeForUpload = getParentNodeByNode(node);
 	        			uploadDir();
 					}
-				},	
+				},
 				]
 			},
 			{divider: true},
@@ -6578,13 +6599,13 @@ function CompareObj(objA, objB, flag) {
 									var node = getNodeByNodeId(docId);
 				        			copyUrl(node);
 								}
-						},	
+						},
 						{divider: true},
 						{text: 'CheckOut', action: function(e){
 								e.preventDefault();
 								var docType = curRightClickedDocListNode.type;
 								if(docType == 1)
-								{							
+								{
 									var docId = curRightClickedDocListNode.docId;
 									var docName = curRightClickedDocListNode.docName;
 									checkOut(docId,docName);
@@ -6616,14 +6637,14 @@ function CompareObj(objA, objB, flag) {
    				]
    			},
 		]);
-		
+
 		context.settings({compress: true});
-		
+
 		$(document).on('mouseover', '.me-codesta', function(){
 		$('.finale h1:first').css({opacity:0});
 		$('.finale h1:last').css({opacity:1});
 		});
-	
+
 		$(document).on('mouseout', '.me-codesta', function(){
 			$('.finale h1:last').css({opacity:0});
 			$('.finale h1:first').css({opacity:1});
