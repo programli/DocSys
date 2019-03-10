@@ -103,6 +103,13 @@
 			fill: currentColor;
 			overflow: hidden;
 		}
+        .ztree li a {
+            height: 30px !important;
+            width: 100% !important;
+        }
+        .ztree li ul {
+            padding-left: 0 !important;
+        }
     </style>
 
 	<script src="static/scripts/iconfont.js"></script>
@@ -4830,6 +4837,7 @@ function CompareObj(objA, objB, flag) {
 	            //onRightClick: zTreeOnRightClick, //定义该回调将会屏蔽系统右击事件
 	    },
         view: {
+            showLine: false,
             addDiyDom: addDiyDom
         }
 	};
@@ -4841,11 +4849,24 @@ function CompareObj(objA, objB, flag) {
 		console.log("cs", cs)
 		cs.remove()
 		console.log( "treeNode" , treeNode)
+
+        var spaceWidth = 10;
+        var switchObj = $("#" + treeNode.tId + "_switch")
+        switchObj.remove()
+
+
+        //增加边距
+        //此处通过往a标签最前位置增加透明元素来实现层级的缩进，层级越高，缩进的距离越大。同时也需要将原本的css中控制缩进的padding删除掉
+        var spaceStr = "<span style='display: inline-block;width:" + (spaceWidth * treeNode.level+15)+ "px'></span>";
+
         var iType = getIconByNameAndType( treeNode.name , treeNode.type)
         var iconType = '<svg class="color-icon" aria-hidden="true">\n' +
             '  <use xlink:href="'+ iType + '"></use>\n' +
             '</svg>';
+
         aObj.prepend( iconType );
+        aObj.prepend( switchObj )
+        aObj.prepend( spaceStr )
     };
 
 	function asyncDataFilter(treeId, parentNode, responseData) {
