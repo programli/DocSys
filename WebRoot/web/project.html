@@ -94,9 +94,18 @@
     		width: 28px;
     		height: 28px;
     	}
+
+		.color-icon {
+			width: 1.5em;
+			height: 1.5em;
+			vertical-align: -0.3em;
+			margin-right: 0.5em;
+			fill: currentColor;
+			overflow: hidden;
+		}
     </style>
 
-
+	<script src="static/scripts/iconfont.js"></script>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -4820,8 +4829,24 @@ function CompareObj(objA, objB, flag) {
 	            beforeRightClick: zTreeBeforeRightClick
 	            //onRightClick: zTreeOnRightClick, //定义该回调将会屏蔽系统右击事件
 	    },
+        view: {
+            addDiyDom: addDiyDom
+        }
 	};
 
+    function addDiyDom(treeId, treeNode) {
+        var aObj = $("#" + treeNode.tId + "_a");
+        if ($("#diyBtn_"+treeNode.id).length>0) return;
+		var cs = $("#" + treeNode.tId + "_a > span")[0]
+		console.log("cs", cs)
+		cs.remove()
+		console.log( "treeNode" , treeNode)
+        var iType = getIconByNameAndType( treeNode.name , treeNode.type)
+        var iconType = '<svg class="color-icon" aria-hidden="true">\n' +
+            '  <use xlink:href="'+ iType + '"></use>\n' +
+            '</svg>';
+        aObj.prepend( iconType );
+    };
 
 	function asyncDataFilter(treeId, parentNode, responseData) {
 		console.log("asyncDataFilter");
@@ -5352,6 +5377,56 @@ function CompareObj(objA, objB, flag) {
 	    }
 	}
 
+	var fileTypeIconMap = {
+        doc : "#icon-doc",
+		docx : "#icon-doc",
+		jpg : "#icon-jpg",
+        jpeg : "#icon-jpg",
+		html : "#icon-html",
+        htm : "#icon-html",
+		mp3 : "#icon-icon_MP-",
+		png : "#icon-png",
+		dll : "#icon-dll",
+		ppt : "#icon-ppt",
+		mp4 : "#icon-mp4",
+		pdf : "#icon-pdf",
+    	gif : "#icon-gif",
+		exe : "#icon-exe",
+		mpg : "#icon-mpg",
+		psd : "#icon-psd",
+		mkv : "#icon-mkv",
+		xls : "#icon-xls",
+		rmvb : "#icon-rmvb",
+		txt : "#icon-txt",
+		wav : "#icon-wav",
+		swf : "#icon-swf",
+		avi : "#icon-avi",
+		zip : "#icon-zip",
+        rar : "#icon-zip",
+        "7z" : "#icon-zip"
+	}
+
+	function getIconByNameAndType( name, type ){
+	    if( type > 1){
+	        return "#icon-folder-"
+		}else {
+	        // 寻找最后一个点
+			var i = name.lastIndexOf(".")
+			if( i< 0 ){
+			    // 默认是文本类型
+			    return "#icon-txt"
+			}else {
+			    type = name.substring(i + 1 , name.length).toLowerCase()
+                type = fileTypeIconMap[type]
+				if ( undefined == type ){
+				    return "#icon-othe"
+				}else {
+				    return type
+				}
+			}
+		}
+	}
+
 	//绘制zTree with the data:强制绘制，判断的东西不应该放在这里
 	function drawMenu(data) {
 		console.log("drawMenu");
@@ -5379,17 +5454,20 @@ function CompareObj(objA, objB, flag) {
      	 	var str="";
            	for(var i=0; i<data.length; i++)
      	    {
-     	           var iconType = data[i].type===1?'<i class="type2 icons"></i>':'<i class="type1 icons"></i>';
+     	        	var iType = getIconByNameAndType( data[i].name , data[i].type)
+     	           var iconType = '<svg class="color-icon" aria-hidden="true">\n' +
+                       '  <use xlink:href="'+ iType + '"></use>\n' +
+                       '</svg>';
      	           var docId = data[i].id;
      	           var docType = data[i].type;
      	           var docName = data[i].name;
      	           if(data[i].state != 0)
      	           {
-     	        		str+='<li dataId='+docId+' dataType='+docType +' dataName="'+docName+'"'+' class="second-listBox" onmousedown="docListOnMouseDown(this,event)"><div onclick="secondGetDoc(this)" class="filename pull-left" style="color:red">'+iconType + docName+'</div><div class="filedate pull-right">'+formatDate(data[i].latestEditTime)+'</div><div class="handle pull-right"><i class="glyphicon glyphicon-new-window" onclick="fx(this,event)"></i><i class="glyphicon glyphicon-download-alt" onclick="xz(this,event)"></i><i onclick="sc(this,event)" class="glyphicon glyphicon-trash"></i><i onclick="showContextMenu(this,event)" class="glyphicon glyphicon-list"></i></div></li>';
+     	        		str+='<li iType='+ iType +' dataId='+docId+' dataType='+docType +' dataName="'+docName+'"'+' class="second-listBox" onmousedown="docListOnMouseDown(this,event)"><div onclick="secondGetDoc(this)" class="filename pull-left" style="color:#848184">'+iconType + docName+'</div><div class="filedate pull-right">'+formatDate(data[i].latestEditTime)+'</div><div class="handle pull-right"><i class="glyphicon glyphicon-new-window" onclick="fx(this,event)"></i><i class="glyphicon glyphicon-download-alt" onclick="xz(this,event)"></i><i onclick="sc(this,event)" class="glyphicon glyphicon-trash"></i><i onclick="showContextMenu(this,event)" class="glyphicon glyphicon-list"></i></div></li>';
      	           }
      	           else
      	           {
-     	           	   str+='<li dataId='+docId+' dataType='+docType +' dataName="'+docName+'"'+' class="second-listBox" onmousedown="docListOnMouseDown(this,event)"><div onclick="secondGetDoc(this)" class="filename pull-left">'+iconType + docName+'</div><div class="filedate pull-right">'+formatDate(data[i].latestEditTime)+'</div><div class="handle pull-right"><i class="glyphicon glyphicon-new-window" onclick="fx(this,event)"></i><i class="glyphicon glyphicon-download-alt" onclick="xz(this,event)"></i><i onclick="sc(this,event)" class="glyphicon glyphicon-trash"></i><i onclick="showContextMenu(this,event)" class="glyphicon glyphicon-list"></i></div></li>';
+     	           	   str+='<li iType='+ iType + ' dataId='+docId+' dataType='+docType +' dataName="'+docName+'"'+' class="second-listBox" onmousedown="docListOnMouseDown(this,event)"><div onclick="secondGetDoc(this)" class="filename pull-left">'+iconType + docName+'</div><div class="filedate pull-right">'+formatDate(data[i].latestEditTime)+'</div><div class="handle pull-right"><i class="glyphicon glyphicon-new-window" onclick="fx(this,event)"></i><i class="glyphicon glyphicon-download-alt" onclick="xz(this,event)"></i><i onclick="sc(this,event)" class="glyphicon glyphicon-trash"></i><i onclick="showContextMenu(this,event)" class="glyphicon glyphicon-list"></i></div></li>';
      	           }
      	    }
            	$("#secondList").html(str);
