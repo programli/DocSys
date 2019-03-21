@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 2019-03-21 14:29:56
+-- Generation Time: 2019-03-21 14:54:27
 -- 服务器版本： 10.1.33-MariaDB
 -- PHP Version: 7.2.6
 
@@ -108,7 +108,10 @@ CREATE TABLE `repos` (
   `INFO` varchar(1000) DEFAULT NULL COMMENT '项目简介',
   `PWD` varchar(20) DEFAULT NULL COMMENT '仓库访问密码',
   `OWNER` int(11) DEFAULT NULL COMMENT '仓库所有人',
-  `CREATE_TIME` bigint(20) DEFAULT '0' COMMENT '仓库创建时间'
+  `CREATE_TIME` bigint(20) DEFAULT '0' COMMENT '仓库创建时间',
+  `STATE` int(1) NOT NULL DEFAULT '0' COMMENT '0: unlock 1: lock',
+  `LOCK_BY` int(11) DEFAULT NULL COMMENT 'UserID用于给Repos上锁',
+  `LOCK_TIME` bigint(20) NOT NULL DEFAULT '0' COMMENT '仓库锁定时间，该参数用于Lock的自动解锁'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
