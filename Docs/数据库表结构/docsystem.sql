@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 2019-03-21 14:54:27
+-- Generation Time: 2019-03-22 01:51:54
 -- 服务器版本： 10.1.33-MariaDB
 -- PHP Version: 7.2.6
 
@@ -99,12 +99,14 @@ CREATE TABLE `repos` (
   `SVN_PATH` varchar(200) DEFAULT NULL COMMENT '远程版本仓库地址',
   `SVN_USER` varchar(50) DEFAULT NULL COMMENT '远程版本仓库访问用户名',
   `SVN_PWD` varchar(20) DEFAULT NULL COMMENT '远程版本仓库访问用户密码',
+  `REVISION` varchar(100) DEFAULT NULL COMMENT 'RealDoc版本仓库版本号',
   `VER_CTRL1` int(2) NOT NULL DEFAULT '0' COMMENT 'VirtualDoc版本控制: 0:无;  1: SVN; 2: GIT;',
   `IS_REMOTE1` int(1) NOT NULL DEFAULT '1' COMMENT '0:本地版本仓库 1:远程版本仓库',
   `LOCAL_SVN_PATH1` varchar(200) DEFAULT NULL COMMENT '本地版本仓库所在目录',
   `SVN_PATH1` varchar(200) DEFAULT NULL COMMENT '远程版本仓库地址',
   `SVN_USER1` varchar(50) DEFAULT NULL COMMENT '远程版本仓库访问用户名',
   `SVN_PWD1` varchar(20) DEFAULT NULL COMMENT '远程版本仓库访问用户密码',
+  `REVISION1` varchar(100) DEFAULT NULL COMMENT 'VirtualDoc版本仓库版本号',
   `INFO` varchar(1000) DEFAULT NULL COMMENT '项目简介',
   `PWD` varchar(20) DEFAULT NULL COMMENT '仓库访问密码',
   `OWNER` int(11) DEFAULT NULL COMMENT '仓库所有人',
