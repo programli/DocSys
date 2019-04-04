@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 2019-03-28 09:02:39
+-- Generation Time: 2019-04-04 04:37:13
 -- 服务器版本： 10.1.33-MariaDB
 -- PHP Version: 7.2.6
 
@@ -94,6 +94,7 @@ CREATE TABLE `repos` (
   `NAME` varchar(255) DEFAULT NULL COMMENT '项目名',
   `TYPE` int(10) DEFAULT '1' COMMENT '文件系统类型：0：虚拟文件系统 1-普通文件系统',
   `PATH` varchar(200) NOT NULL DEFAULT 'D:/DocSysReposes' COMMENT '仓库所在的目录',
+  `REAL_DOC_PATH` varchar(300) DEFAULT NULL COMMENT 'RealDoc的存储路径',
   `VER_CTRL` int(2) NOT NULL DEFAULT '0' COMMENT 'RealDoc版本控制：0：无版本控制；1：SVN；2：GIT',
   `IS_REMOTE` int(1) NOT NULL DEFAULT '1' COMMENT '0:本地版本仓库 1:远程版本仓库',
   `LOCAL_SVN_PATH` varchar(200) DEFAULT NULL COMMENT '本地版本仓库所在目录',
