@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 2019-04-23 09:54:59
+-- Generation Time: 2019-04-23 10:14:24
 -- 服务器版本： 10.1.33-MariaDB
 -- PHP Version: 7.2.6
 
@@ -69,8 +69,8 @@ CREATE TABLE `doc_auth` (
   `ADD_EN` int(1) DEFAULT NULL,
   `DELETE_EN` int(1) DEFAULT NULL,
   `HERITABLE` int(1) NOT NULL DEFAULT '0' COMMENT '0:不可继承  1:可继承',
-  `PATH` varchar(1000) CHARACTER SET utf8 NOT NULL COMMENT 'doc path',
-  `NAME` varchar(200) CHARACTER SET utf8 NOT NULL COMMENT 'doc name'
+  `DOC_PATH` varchar(1000) CHARACTER SET utf8 NOT NULL COMMENT 'doc path',
+  `DOC_NAME` varchar(200) CHARACTER SET utf8 NOT NULL COMMENT 'doc name'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
