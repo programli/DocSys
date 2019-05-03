@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 2019-04-23 12:23:33
+-- Generation Time: 2019-05-03 16:44:55
 -- 服务器版本： 10.1.33-MariaDB
 -- PHP Version: 7.2.6
 
@@ -32,7 +32,7 @@ CREATE TABLE `doc` (
   `ID` int(11) NOT NULL,
   `NAME` varchar(200) DEFAULT NULL COMMENT '文件或目录名称',
   `TYPE` int(10) DEFAULT NULL COMMENT '1：目录 2：文件',
-  `SIZE` int(10) UNSIGNED NOT NULL DEFAULT '0' COMMENT '文件大小',
+  `SIZE` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '文件大小',
   `CHECK_SUM` varchar(32) DEFAULT NULL COMMENT '文件的MD5校验值',
   `REVISION` varchar(100) DEFAULT NULL COMMENT 'RealDoc Revision',
   `CONTENT` longtext COMMENT 'doc''s virtual content',
