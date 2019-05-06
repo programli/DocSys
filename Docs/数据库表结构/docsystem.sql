@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 2019-05-03 16:44:55
+-- Generation Time: 2019-05-06 03:49:39
 -- 服务器版本： 10.1.33-MariaDB
 -- PHP Version: 7.2.6
 
@@ -37,16 +37,14 @@ CREATE TABLE `doc` (
   `REVISION` varchar(100) DEFAULT NULL COMMENT 'RealDoc Revision',
   `CONTENT` longtext COMMENT 'doc''s virtual content',
   `PATH` varchar(1000) NOT NULL DEFAULT '/' COMMENT '基于仓库目录的相对路径',
-  `PID` int(10) UNSIGNED DEFAULT NULL COMMENT 'Parent Node id',
-  `VID` int(10) UNSIGNED DEFAULT NULL COMMENT '所属仓库id',
+  `DOC_ID` bigint(20) DEFAULT NULL COMMENT 'Doc Node id',
+  `PID` bigint(20) DEFAULT NULL COMMENT 'Parent Node id',
+  `VID` int(11) DEFAULT NULL COMMENT '所属仓库id',
   `PWD` varchar(20) DEFAULT NULL,
   `CREATOR` int(11) DEFAULT NULL,
   `CREATE_TIME` bigint(20) NOT NULL DEFAULT '0' COMMENT 'Doc CreateTime',
   `LATEST_EDITOR` int(11) DEFAULT NULL,
-  `LATEST_EDIT_TIME` bigint(20) DEFAULT '0',
-  `STATE` int(1) NOT NULL DEFAULT '1' COMMENT 'Doc LockState 0:unlock  1:lock doc 2:lock doc and subDocs',
-  `LOCK_BY` int(11) UNSIGNED DEFAULT NULL COMMENT 'UserID用于给Doc上锁',
-  `LOCK_TIME` bigint(20) NOT NULL DEFAULT '0' COMMENT '文件锁定时间，该参数用于Lock的自动解锁'
+  `LATEST_EDIT_TIME` bigint(20) DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -61,7 +59,7 @@ CREATE TABLE `doc_auth` (
   `GROUP_ID` int(11) DEFAULT NULL COMMENT 'GROUP ID',
   `TYPE` int(1) DEFAULT NULL,
   `PRIORITY` int(1) NOT NULL DEFAULT '0' COMMENT '权限的优先级，值越大优先级越高',
-  `DOC_ID` int(11) NOT NULL,
+  `DOC_ID` bigint(20) DEFAULT NULL COMMENT 'Doc Node id',
   `REPOS_ID` int(11) NOT NULL DEFAULT '0' COMMENT '权限类型：1：User 2:Group 3: anyUser',
   `IS_ADMIN` int(1) DEFAULT NULL,
   `ACCESS` int(2) NOT NULL DEFAULT '0' COMMENT '0:不可见  1:只读',
@@ -69,9 +67,27 @@ CREATE TABLE `doc_auth` (
   `ADD_EN` int(1) DEFAULT NULL,
   `DELETE_EN` int(1) DEFAULT NULL,
   `HERITABLE` int(1) NOT NULL DEFAULT '0' COMMENT '0:不可继承  1:可继承',
-  `DOC_PATH` varchar(1000) CHARACTER SET utf8 DEFAULT NULL COMMENT 'doc path',
-  `DOC_NAME` varchar(200) CHARACTER SET utf8 DEFAULT NULL COMMENT 'doc name'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `DOC_PATH` varchar(1000) DEFAULT NULL COMMENT 'doc path',
+  `DOC_NAME` varchar(200) DEFAULT NULL COMMENT 'doc name'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `doc_lock`
+--
+
+CREATE TABLE `doc_lock` (
+  `ID` int(11) NOT NULL,
+  `NAME` varchar(200) DEFAULT NULL COMMENT '文件或目录名称',
+  `PATH` varchar(1000) NOT NULL DEFAULT '/' COMMENT '基于仓库目录的相对路径',
+  `DOC_ID` bigint(20) DEFAULT NULL COMMENT 'Doc Node id',
+  `PID` bigint(20) DEFAULT NULL COMMENT 'Parent Node id',
+  `VID` int(10) UNSIGNED DEFAULT NULL COMMENT '所属仓库id',
+  `STATE` int(1) NOT NULL DEFAULT '1' COMMENT 'Doc LockState 0:unlock  1:lock doc 2:lock doc and subDocs',
+  `LOCK_BY` int(11) UNSIGNED DEFAULT NULL COMMENT 'UserID用于给Doc上锁',
+  `LOCK_TIME` bigint(20) NOT NULL DEFAULT '0' COMMENT '文件锁定时间，该参数用于Lock的自动解锁'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -83,7 +99,7 @@ CREATE TABLE `group_member` (
   `ID` int(11) NOT NULL COMMENT 'GroupMember ID',
   `GROUP_ID` int(11) DEFAULT NULL COMMENT 'GROUP ID',
   `USER_ID` int(11) DEFAULT NULL COMMENT 'USER ID'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -139,7 +155,7 @@ CREATE TABLE `repos_auth` (
   `ADD_EN` int(2) DEFAULT NULL,
   `DELETE_EN` int(2) DEFAULT NULL,
   `HERITABLE` int(1) NOT NULL DEFAULT '0' COMMENT '0:不可继承  1:可继承'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -149,9 +165,9 @@ CREATE TABLE `repos_auth` (
 
 CREATE TABLE `role` (
   `ID` int(11) NOT NULL,
-  `NAME` varchar(50) CHARACTER SET utf8 NOT NULL,
+  `NAME` varchar(50) NOT NULL,
   `ROLE_ID` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -163,7 +179,7 @@ CREATE TABLE `sys_config` (
   `ID` int(11) NOT NULL,
   `REG_ENABLE` int(2) NOT NULL DEFAULT '1',
   `PRIVATE_REPOS_ENABLE` int(2) NOT NULL DEFAULT '1'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -200,13 +216,13 @@ CREATE TABLE `user` (
 
 CREATE TABLE `user_group` (
   `ID` int(11) NOT NULL,
-  `NAME` varchar(200) CHARACTER SET utf8 DEFAULT NULL COMMENT 'GroupName',
+  `NAME` varchar(200) DEFAULT NULL COMMENT 'GroupName',
   `TYPE` int(1) DEFAULT NULL COMMENT 'Group Type: reserved',
-  `INFO` varchar(1000) CHARACTER SET utf8 DEFAULT NULL COMMENT 'Group Description',
-  `IMG` varchar(200) CHARACTER SET utf8 DEFAULT NULL COMMENT 'Group IMG',
+  `INFO` varchar(1000) DEFAULT NULL COMMENT 'Group Description',
+  `IMG` varchar(200) DEFAULT NULL COMMENT 'Group IMG',
   `PRIORITY` int(2) DEFAULT NULL COMMENT 'Group Priority: reserved',
-  `CREATE_TIME` varchar(50) CHARACTER SET utf8 DEFAULT NULL COMMENT 'Group create time'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+  `CREATE_TIME` varchar(50) DEFAULT NULL COMMENT 'Group create time'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Indexes for dumped tables
@@ -222,6 +238,12 @@ ALTER TABLE `doc`
 -- Indexes for table `doc_auth`
 --
 ALTER TABLE `doc_auth`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `doc_lock`
+--
+ALTER TABLE `doc_lock`
   ADD PRIMARY KEY (`ID`);
 
 --
@@ -281,6 +303,12 @@ ALTER TABLE `doc`
 -- 使用表AUTO_INCREMENT `doc_auth`
 --
 ALTER TABLE `doc_auth`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- 使用表AUTO_INCREMENT `doc_lock`
+--
+ALTER TABLE `doc_lock`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
