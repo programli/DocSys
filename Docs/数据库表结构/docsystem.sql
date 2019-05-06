@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 2019-05-06 03:49:39
+-- Generation Time: 2019-05-06 07:20:07
 -- 服务器版本： 10.1.33-MariaDB
 -- PHP Version: 7.2.6
 
@@ -79,6 +79,7 @@ CREATE TABLE `doc_auth` (
 
 CREATE TABLE `doc_lock` (
   `ID` int(11) NOT NULL,
+  `TYPE` int(10) DEFAULT NULL COMMENT '1：目录 2：文件',
   `NAME` varchar(200) DEFAULT NULL COMMENT '文件或目录名称',
   `PATH` varchar(1000) NOT NULL DEFAULT '/' COMMENT '基于仓库目录的相对路径',
   `DOC_ID` bigint(20) DEFAULT NULL COMMENT 'Doc Node id',
