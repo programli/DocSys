@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 2019-05-16 05:21:38
+-- Generation Time: 2019-05-16 07:42:32
 -- 服务器版本： 10.1.33-MariaDB
 -- PHP Version: 7.2.6
 
@@ -36,9 +36,9 @@ CREATE TABLE `doc` (
   `CHECK_SUM` varchar(32) DEFAULT NULL COMMENT '文件的MD5校验值',
   `REVISION` varchar(100) DEFAULT NULL COMMENT 'RealDoc Revision',
   `CONTENT` longtext COMMENT 'doc''s virtual content',
-  `PATH` varchar(1000) NOT NULL DEFAULT '/' COMMENT '基于仓库目录的相对路径',
+  `PATH` varchar(2000) NOT NULL DEFAULT '' COMMENT '基于仓库目录的相对路径',
   `DOC_ID` bigint(20) DEFAULT NULL COMMENT 'Doc Node id',
-  `PID` bigint(20) DEFAULT NULL COMMENT 'Parent Node id',
+  `PID` bigint(20) NOT NULL DEFAULT '0' COMMENT 'Parent Node id',
   `VID` int(11) DEFAULT NULL COMMENT '所属仓库id',
   `PWD` varchar(20) DEFAULT NULL,
   `CREATOR` int(11) DEFAULT NULL,
