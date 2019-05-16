@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 2019-05-06 07:20:07
+-- Generation Time: 2019-05-16 05:21:38
 -- 服务器版本： 10.1.33-MariaDB
 -- PHP Version: 7.2.6
 
@@ -86,6 +86,7 @@ CREATE TABLE `doc_lock` (
   `PID` bigint(20) DEFAULT NULL COMMENT 'Parent Node id',
   `VID` int(10) UNSIGNED DEFAULT NULL COMMENT '所属仓库id',
   `STATE` int(1) NOT NULL DEFAULT '1' COMMENT 'Doc LockState 0:unlock  1:lock doc 2:lock doc and subDocs',
+  `LOCKER` varchar(200) DEFAULT NULL COMMENT 'LockerName',
   `LOCK_BY` int(11) UNSIGNED DEFAULT NULL COMMENT 'UserID用于给Doc上锁',
   `LOCK_TIME` bigint(20) NOT NULL DEFAULT '0' COMMENT '文件锁定时间，该参数用于Lock的自动解锁'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
