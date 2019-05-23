@@ -1,0 +1,4 @@
+#NOTE: This is an Aether internal implementation file, its format can be changed without prior notice.
+#Wed Jul 11 12:26:51 CST 2018
+@default-central-https\://repo.maven.apache.org/maven2/.lastUpdated=1531283211097
+https\://repo.maven.apache.org/maven2/.error=Could not transfer artifact org.codehaus.jackson\:jackson-mapper-asl\:pom\:1.9.11 from/to central (https\://repo.maven.apache.org/maven2)\: connect timed out
