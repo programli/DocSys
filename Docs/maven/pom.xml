@@ -28,52 +28,79 @@
 	<!-- Lucene -->
 	<!-- Lucene 版本号 -->  
 	<lucene.version>4.6.0</lucene.version>  
+	<!--ikanalyzer 版本号-->
+	<ikanalyzer.version>2012_u6</ikanalyzer.version>
 	<!-- poi 版本号 -->  
 	<poi.version>4.0.0</poi.version>  
 
 	<!-- jodconverter 版本号 -->  
 	<jodconverter.version>2.2.1</jodconverter.version>  
+	
+	<!--commons-->
+	<!-- commons-compress 版本号 -->  
+	<commons-compress.version>1.18</commons-compress.version>  
+	<!-- commons-logging 版本号 -->  
+	<commons-logging.version>1.2</commons-logging.version>  
+	
   </properties> 
 	
   <dependencies>	
+	<!-- https://mvnrepository.com/artifact/commons-logging/commons-logging -->
+	<!--<dependency>
+		<groupId>commons-logging</groupId>
+		<artifactId>commons-logging</artifactId>
+		<version>${commons-logging.version}</version>
+	</dependency>-->
+
+	<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-compress -->
+	<!--<dependency>
+		<groupId>org.apache.commons</groupId>
+		<artifactId>commons-compress</artifactId>
+		<version>${commons-compress.version}</version>
+	</dependency>-->
 	
 	<!-- https://mvnrepository.com/artifact/org.tmatesoft.svnkit/svnkit -->
-	<dependency>
+	<!--<dependency>
 	    <groupId>org.tmatesoft.svnkit</groupId>
 	    <artifactId>svnkit</artifactId>
 	    <version>${svnkit.version}</version>
-	</dependency>
+	</dependency>-->
 	
 	<!-- https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit -->
-	<dependency>
+	<!--<dependency>
 		<groupId>org.eclipse.jgit</groupId>
 		<artifactId>org.eclipse.jgit</artifactId>
 		<version>${jgit.version}</version>
-	</dependency>
+	</dependency>-->
 	
 	<!-- Lucene -->
 	<!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-core -->
-	<dependency>
+	<!--<dependency>
 		<groupId>org.apache.lucene</groupId>
 		<artifactId>lucene-core</artifactId>
 		<version>${lucene.version}</version>
-	</dependency>
+	</dependency>-->
 	<!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-queryparser -->
-	<dependency>
+	<!--<dependency>
 		<groupId>org.apache.lucene</groupId>
 		<artifactId>lucene-queryparser</artifactId>
 		<version>${lucene.version}</version>
-	</dependency>
+	</dependency>-->
 	<!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-analyzers-common -->
-	<dependency>
+	<!--<dependency>
 		<groupId>org.apache.lucene</groupId>
 		<artifactId>lucene-analyzers-common</artifactId>
 		<version>${lucene.version}</version>
-	</dependency>
-
+	</dependency>-->
+	<!-- https://mvnrepository.com/artifact/com.janeluo/ikanalyzer -->
+	<!--<dependency>
+		<groupId>com.janeluo</groupId>
+		<artifactId>ikanalyzer</artifactId>
+		<version>${ikanalyzer.version}</version>
+	</dependency>-->
 	<!-- POI -->
 	<!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
-	<dependency>
+	<!--<dependency>
 		<groupId>org.apache.poi</groupId>
 		<artifactId>poi</artifactId>
 		<version>${poi.version}</version>
@@ -102,14 +129,15 @@
 		<groupId>org.apache.poi</groupId>
 		<artifactId>poi-scratchpad</artifactId>
 		<version>${poi.version}</version>
-	</dependency>
+	</dependency>-->
 	
 	<!-- https://mvnrepository.com/artifact/com.artofsolving/jodconverter -->
-	<dependency>
+	<!--<dependency>
 		<groupId>com.artofsolving</groupId>
 		<artifactId>jodconverter</artifactId>
 		<version>${jodconverter.version}</version>
-	</dependency>
+	</dependency>-->
+	
 	<!-- springframework -->  
 	<!--<dependency>  
 		<groupId>org.springframework</groupId>  
@@ -213,17 +241,17 @@
 	</dependency>-->
 	
 	<!-- mybatis -->  
-	<dependency>  
+	<!--<dependency>  
 		<groupId>org.mybatis</groupId>  
 		<artifactId>mybatis</artifactId>  
 		<version>${mybatis.version}</version>  
-	</dependency>  
+	</dependency>-->  
 	<!-- mybatis-spring -->  
-	<dependency>  
+	<!--<dependency>  
 		<groupId>org.mybatis</groupId>  
 		<artifactId>mybatis-spring</artifactId>  
 		<version>${mybatis-spring.version}</version>  
-	</dependency> 
+	</dependency>--> 
   </dependencies>
   <build>
     <finalName>maven</finalName>
