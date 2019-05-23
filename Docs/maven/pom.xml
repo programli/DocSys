@@ -31,6 +31,8 @@
 	<!-- poi 版本号 -->  
 	<poi.version>4.0.0</poi.version>  
 
+	<!-- jodconverter 版本号 -->  
+	<jodconverter.version>2.2.1</jodconverter.version>  
   </properties> 
 	
   <dependencies>	
@@ -102,6 +104,12 @@
 		<version>${poi.version}</version>
 	</dependency>
 	
+	<!-- https://mvnrepository.com/artifact/com.artofsolving/jodconverter -->
+	<dependency>
+		<groupId>com.artofsolving</groupId>
+		<artifactId>jodconverter</artifactId>
+		<version>${jodconverter.version}</version>
+	</dependency>
 	<!-- springframework -->  
 	<!--<dependency>  
 		<groupId>org.springframework</groupId>  
