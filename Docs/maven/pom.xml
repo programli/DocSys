@@ -43,18 +43,18 @@
 	
   <dependencies>	
 	<!-- https://mvnrepository.com/artifact/commons-logging/commons-logging -->
-	<dependency>
+	<!--<dependency>
 		<groupId>commons-logging</groupId>
 		<artifactId>commons-logging</artifactId>
 		<version>${commons-logging.version}</version>
-	</dependency>
+	</dependency>-->
 
 	<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-compress -->
-	<!--<dependency>
+	<dependency>
 		<groupId>org.apache.commons</groupId>
 		<artifactId>commons-compress</artifactId>
 		<version>${commons-compress.version}</version>
-	</dependency>-->
+	</dependency>
 	
 	<!-- https://mvnrepository.com/artifact/org.tmatesoft.svnkit/svnkit -->
 	<!--<dependency>
