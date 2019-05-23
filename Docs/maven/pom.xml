@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.gray4java</groupId>
+  <groupId>com.DocSystem</groupId>
   <artifactId>maven</artifactId>
   <packaging>war</packaging>
   <version>0.0.1-SNAPSHOT</version>
@@ -46,11 +46,11 @@
 	
   <dependencies>	
 	<!-- https://mvnrepository.com/artifact/commons-logging/commons-logging -->
-	<!--<dependency>
+	<dependency>
 		<groupId>commons-logging</groupId>
 		<artifactId>commons-logging</artifactId>
 		<version>${commons-logging.version}</version>
-	</dependency>-->
+	</dependency>
 
 	<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-compress -->
 	<!--<dependency>
@@ -254,6 +254,6 @@
 	</dependency>--> 
   </dependencies>
   <build>
-    <finalName>maven</finalName>
+    <finalName>DocSys</finalName>
   </build>
 </project>
