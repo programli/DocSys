@@ -1,4 +1,0 @@
-#NOTE: This is an Aether internal implementation file, its format can be changed without prior notice.
-#Wed Jul 11 12:28:11 CST 2018
-@default-central-https\://repo.maven.apache.org/maven2/.lastUpdated=1531283291618
-https\://repo.maven.apache.org/maven2/.error=Could not transfer artifact jstl\:jstl\:pom\:1.2 from/to central (https\://repo.maven.apache.org/maven2)\: connect timed out
