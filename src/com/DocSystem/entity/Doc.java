@@ -2,7 +2,9 @@ package com.DocSystem.entity;
 
 public class Doc  implements Comparable<Doc>{
     private Integer id;	//id in dataBase
-        		
+    
+    private String path;
+
     private String name;
 
     private Integer type;	//0:不存在  1:文件  2:目录
@@ -12,9 +14,7 @@ public class Doc  implements Comparable<Doc>{
     private String checkSum;
 
     private String revision;
-
-    private String path;
-
+    
     private Long docId;
 
     private Long pid;
@@ -49,6 +49,10 @@ public class Doc  implements Comparable<Doc>{
     
     private boolean isRealDoc = true;
 
+    private String vPath;	//For VDoc
+
+    private String vName;	//For VDoc
+
     public Integer getId() {
         return id;
     }
@@ -64,7 +68,7 @@ public class Doc  implements Comparable<Doc>{
     public void setName(String name) {
         this.name = name == null ? null : name.trim();
     }
-
+    
     public Integer getType() {
         return type;
     }
@@ -221,6 +225,22 @@ public class Doc  implements Comparable<Doc>{
         this.isRealDoc = isRealDoc;
     }    
 
+    public String getVName() {
+        return vName;
+    }
+
+    public void setVName(String vName) {
+        this.vName = vName == null ? null : vName.trim();
+    }
+
+    public String getVPath() {
+        return vPath;
+    }
+
+    public void setVPath(String vPath) {
+        this.vPath = vPath == null ? null : vPath.trim();
+    }
+    
 	public void setSortIndex(int sortIndex) {
 		this.sortIndex = sortIndex;
 	}
