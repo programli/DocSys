@@ -137,7 +137,7 @@ public class BaseFunction{
 	    {
 	    	File localEntry = tmp[i];
 	    	int subDocType = localEntry.isFile()? 1: 2;
-	    	Doc subDoc = buildBasicDoc(doc.getVid(), null, doc.getDocId(), subParentPath, localEntry.getName(), subDocLevel, subDocType, doc.getIsRealDoc(), doc.getLocalRootPath(), doc.getLocalVRootPath(), localEntry.length(), "");
+	    	Doc subDoc = buildSubDoc(doc, subParentPath, localEntry.getName(), subDocLevel, subDocType, localEntry.length(), "");
 	    	if(localEntry.isDirectory())
 	    	{	
 	    		insertAddDirAction(subActionList,subDoc,true);
@@ -156,6 +156,23 @@ public class BaseFunction{
     	actionList.add(action);    	
 	}
 	
+	private Doc buildSubDoc(Doc doc, String subDocParentPath, String subDocName, int subDocLevel, int subDocType, long size, String checkSum) {
+		
+		Doc subDoc = null;
+		if(doc.getIsRealDoc())
+		{
+			subDoc = buildBasicDoc(doc.getVid(), null, doc.getDocId(), subDocParentPath, subDocName, subDocLevel, subDocType, doc.getIsRealDoc(), doc.getLocalRootPath(), doc.getLocalVRootPath(), size, "");
+		}
+		else	//VDoc
+		{
+			subDoc = buildBasicDoc(doc.getVid(), doc.getDocId(), doc.getPid(), doc.getPath(), doc.getName(), doc.getLevel(), doc.getType(), doc.getIsRealDoc(), doc.getLocalRootPath(), doc.getLocalVRootPath(), doc.getSize(), doc.getCheckSum());
+			subDoc.setVPath(subDocParentPath);
+			subDoc.setVName(subDocName);			
+		}
+		
+		return subDoc;
+	}
+
 	protected void insertDeleteAction(List<CommitAction> actionList, Doc doc) {
     	CommitAction action = new CommitAction();
     	action.setAction(2);
@@ -186,25 +203,8 @@ public class BaseFunction{
 		}
 		
 		Doc doc = new Doc();
-		
-		//Build vDoc
-		//对于VDoc而言 path\name\level\type\localRootPath都是指VDoc的信息
-		if(isRealDoc == false)
-		{
-			doc.setVid(reposId);
-			doc.setDocId(docId);
-			doc.setPid(pid);
-
-			doc.setPath(path);
-			doc.setName(name);
-			doc.setLevel(level);
-			doc.setType(type);
-			doc.setIsRealDoc(false);
-			doc.setLocalRootPath(localRootPath);
-			printObject("buildBasicDoc() 虚文件:", doc);
-			return doc;
-		}
-		
+		doc.setIsRealDoc(isRealDoc);
+						
 		//To support user call the interface by entryPath
 		if(name.isEmpty())
 		{
@@ -258,18 +258,21 @@ public class BaseFunction{
 		doc.setLocalVRootPath(localVRootPath);
 		doc.setSize(size);
 		doc.setCheckSum(checkSum);
-		printObject("buildBasicDoc() 实文件:", doc);
+		
+		//VDoc Info
+		if(isRealDoc == false)
+		{
+			String vPath = "";
+			String vName = getVDocName(doc);
+			
+			doc.setVPath(vPath);
+			doc.setVName(vName);
+		}
+		
+		printObject("buildBasicDoc() doc:", doc);
 		return doc;
 	}
-	
-	//VirtualDoc 的vid docId pid level都是和RealDoc一样的
-	protected Doc buildVDoc(Repos repos, Doc doc) 
-	{
-		Doc vDoc = buildBasicDoc(doc.getVid(), doc.getDocId(), doc.getPid(), "", getVDocName(doc), 0, 2, false, doc.getLocalVRootPath(), null, null, null); 
-		vDoc.setContent(doc.getContent());
-		return vDoc;
-	}
-	
+		
 	protected int getLevelByParentPath(String path) 
 	{
 		if(path == null || path.isEmpty())

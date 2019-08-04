@@ -509,7 +509,7 @@ public class SVNUtil  extends BaseController{
 	//modifyEnable: 表示是否commit已经存在的文件
 	//localRefRootPath是存放参考文件的根目录，如果对应文件存在且modifyEnable=true的话，则增量commit
 	//subDocCommitFalg: 0:不Commit 1:Commit但不继承 2:Commit所有文件
-	public String doAutoCommit(Doc doc, String commitMsg,String commitUser, boolean modifyEnable, HashMap<Long, Doc> commitHashMap, int subDocCommitFlag){
+	public String doAutoCommit(Doc doc, String commitMsg,String commitUser, boolean modifyEnable, HashMap<String, Doc> commitHashMap, int subDocCommitFlag){
 		
 		String localRootPath = doc.getLocalRootPath();
 		String localRefRootPath = doc.getLocalRefRootPath();
@@ -881,7 +881,7 @@ public class SVNUtil  extends BaseController{
     	}
 	}
 
-	public void scheduleForCommit(List<CommitAction> actionList, Doc doc, String localRootPath, String localRefRootPath,boolean modifyEnable,boolean isSubAction, HashMap<Long, Doc> commitHashMap, int subDocCommitFlag)
+	public void scheduleForCommit(List<CommitAction> actionList, Doc doc, String localRootPath, String localRefRootPath,boolean modifyEnable,boolean isSubAction, HashMap<String, Doc> commitHashMap, int subDocCommitFlag)
 	{	
 		System.out.println("scheduleForCommit()  parentPath:" + doc.getPath() + " entryName:" + doc.getName() + " localRootPath:" + localRootPath + " localRefRootPath:" + localRefRootPath + " modifyEnable:" + modifyEnable + " subDocCommitFlag:" + subDocCommitFlag);
 		
@@ -982,7 +982,7 @@ public class SVNUtil  extends BaseController{
 
 	private void scanForSubDocCommit(List<CommitAction> actionList, Doc doc,
 			String localRootPath, String localRefRootPath, boolean modifyEnable, boolean isSubAction,
-			HashMap<Long, Doc> commitHashMap, int subDocCommitFlag) {
+			HashMap<String, Doc> commitHashMap, int subDocCommitFlag) {
 
 		System.out.println("scanForSubDocCommit()  parentPath:" + doc.getPath() + doc.getName() + " localRootPath:" + localRootPath + " localRefParentPath:" + localRefRootPath + " modifyEnable:" + modifyEnable + " subDocCommitFlag:" + subDocCommitFlag);
 		

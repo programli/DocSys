@@ -1412,7 +1412,6 @@ public class DocController extends BaseController{
 		
 		String targetName = doc.getName() + "_" + commitId;
 		String entryPath = doc.getPath() + doc.getName();
-		
 		if(historyType != null && historyType == 2)
 		{
 			doc.setIsRealDoc(false);	
@@ -1895,13 +1894,12 @@ public class DocController extends BaseController{
 		String localRootPath = getReposRealPath(repos);
 		String localVRootPath = getReposVirtualPath(repos);
 
-		Doc doc = buildBasicDoc(reposId, docId, pid, path, name, level, type, true, localRootPath, localVRootPath, null, null);
-		
 		boolean isRealDoc = true;
 		if(historyType != null && historyType == 1)	//0: For RealDoc 1: For VirtualDoc 
 		{
 			isRealDoc = false;
 		}
+		Doc doc = buildBasicDoc(reposId, docId, pid, path, name, level, type, isRealDoc, localRootPath, localVRootPath, null, null);
 
 		List<ChangedItem> changedItemList = verReposGetHistoryDetail(repos, isRealDoc, doc, commitId);
 		

@@ -2072,7 +2072,7 @@ public class BaseController  extends BaseFunction{
 		}
 		else
 		{
-			HashMap<Long, Doc> commitHashMap = new HashMap<Long, Doc>();
+			HashMap<String, Doc> commitHashMap = new HashMap<String, Doc>();
 			SyncUpSubDocs_FS(repos, doc, login_user, rt, commitHashMap, 1);
 			
 			if(commitHashMap.size() > 0)
@@ -2201,7 +2201,7 @@ public class BaseController  extends BaseFunction{
 		return true;
 	}
 	
-	private boolean syncupForDocChange_FS(Repos repos, Doc doc, List<Doc> dbDocList, List<Doc> localEntryList, List<Doc> remoteEntryList, User login_user, ReturnAjax rt, HashMap<Long,Doc> commitHashMap, int subDocSyncFlag) 
+	private boolean syncupForDocChange_FS(Repos repos, Doc doc, List<Doc> dbDocList, List<Doc> localEntryList, List<Doc> remoteEntryList, User login_user, ReturnAjax rt, HashMap<String,Doc> commitHashMap, int subDocSyncFlag) 
 	{
 		printObject("syncupForDocChange_FS() " + doc.getDocId() + " " + doc.getPath() + doc.getName() + " ", doc);
 
@@ -2234,7 +2234,7 @@ public class BaseController  extends BaseFunction{
 		case 13: 	//localFileChanged
 		case 14:	//localTypeChanged(From File to Dir)
 		case 15:	//localTypeChanged(From Dir to File)
-			commitHashMap.put(doc.getDocId(), doc);
+			commitHashMap.put(doc.getPath() + doc.getName(), doc);
 			break;
 		
 		case 21:	//remoteAdd
@@ -2405,7 +2405,7 @@ public class BaseController  extends BaseFunction{
 		return null;
 	}
 
-	private boolean SyncUpSubDocs_FS(Repos repos, Doc doc, User login_user, ReturnAjax rt, HashMap<Long, Doc> commitHashMap, int subDocSyncFlag) 
+	private boolean SyncUpSubDocs_FS(Repos repos, Doc doc, User login_user, ReturnAjax rt, HashMap<String, Doc> commitHashMap, int subDocSyncFlag) 
 	{
 		System.out.println("************************ SyncUpSubDocs_FS()  " + doc.getDocId() + " " + doc.getPath() + doc.getName() + " subDocSyncFlag:" + subDocSyncFlag);
 
@@ -4901,12 +4901,6 @@ public class BaseController  extends BaseFunction{
 	
 	//Get History Detail
 	protected List<ChangedItem> verReposGetHistoryDetail(Repos repos,boolean isRealDoc, Doc doc, String commitId) {
-		if(isRealDoc == false)
-		{
-			//Convert doc to vDoc
-			doc = buildVDoc(repos, doc);
-		}
-		
 		if(repos.getVerCtrl() == 1)
 		{
 			return svnGetHistoryDetail(repos, isRealDoc, doc, commitId);
@@ -4919,12 +4913,6 @@ public class BaseController  extends BaseFunction{
 	}
 	
 	protected List<ChangedItem> svnGetHistoryDetail(Repos repos,boolean isRealDoc, Doc doc, String commitId) {
-		if(isRealDoc == false)
-		{
-			//Convert doc to vDoc
-			doc = buildVDoc(repos, doc);
-		}		
-		
 		SVNUtil svnUtil = new SVNUtil();
 		if(false == svnUtil.Init(repos, isRealDoc, null))
 		{
@@ -4947,13 +4935,11 @@ public class BaseController  extends BaseFunction{
 		return gitUtil.getHistoryDetail(doc, commitId);
 	}
 	
-	protected String verReposDocCommit(Repos repos, boolean isRealDoc, Doc doc, String commitMsg, String commitUser, ReturnAjax rt, boolean modifyEnable, HashMap<Long, Doc> commitHashMap, int subDocCommitFlag) 
+	protected String verReposDocCommit(Repos repos, boolean isRealDoc, Doc doc, String commitMsg, String commitUser, ReturnAjax rt, boolean modifyEnable, HashMap<String, Doc> commitHashMap, int subDocCommitFlag) 
 	{	
 		int verCtrl = repos.getVerCtrl();
 		if(isRealDoc == false)
 		{
-			//Convert doc to vDoc
-			doc = buildVDoc(repos, doc);
 			verCtrl = repos.getVerCtrl1();
 		}
 		
@@ -4969,7 +4955,7 @@ public class BaseController  extends BaseFunction{
 		return null;
 	}
 	
-	protected String svnDocCommit(Repos repos, Doc doc, String commitMsg, String commitUser, ReturnAjax rt, boolean modifyEnable, HashMap<Long, Doc> commitHashMap, int subDocCommitFlag)
+	protected String svnDocCommit(Repos repos, Doc doc, String commitMsg, String commitUser, ReturnAjax rt, boolean modifyEnable, HashMap<String, Doc> commitHashMap, int subDocCommitFlag)
 	{			
 		boolean isRealDoc = doc.getIsRealDoc();
 		
@@ -4982,7 +4968,7 @@ public class BaseController  extends BaseFunction{
 		return verReposUtil.doAutoCommit(doc, commitMsg,commitUser,modifyEnable, commitHashMap, subDocCommitFlag);
 	}
 	
-	protected String gitDocCommit(Repos repos, Doc doc,	String commitMsg, String commitUser, ReturnAjax rt, boolean modifyEnable, HashMap<Long, Doc> commitHashMap, int subDocCommitFlag) 
+	protected String gitDocCommit(Repos repos, Doc doc,	String commitMsg, String commitUser, ReturnAjax rt, boolean modifyEnable, HashMap<String, Doc> commitHashMap, int subDocCommitFlag) 
 	{
 		boolean isRealDoc = doc.getIsRealDoc();
 		
@@ -5000,8 +4986,6 @@ public class BaseController  extends BaseFunction{
 		int verCtrl = repos.getVerCtrl();
 		if(doc.getIsRealDoc() == false)
 		{
-			//Convert doc to vDoc
-			doc = buildVDoc(repos, doc);
 			verCtrl = repos.getVerCtrl1();
 		}
 		
@@ -5052,9 +5036,6 @@ public class BaseController  extends BaseFunction{
 		int verCtrl = repos.getVerCtrl();
 		if(srcDoc.getIsRealDoc() == false)
 		{
-			//Convert doc to vDoc
-			srcDoc = buildVDoc(repos, srcDoc);
-			dstDoc = buildVDoc(repos, dstDoc);
 			verCtrl = repos.getVerCtrl1();
 		}
 		
@@ -5100,9 +5081,6 @@ public class BaseController  extends BaseFunction{
 		int verCtrl = repos.getVerCtrl();
 		if(srcDoc.getIsRealDoc() == false)
 		{
-			//Convert doc to vDoc
-			srcDoc = buildVDoc(repos, srcDoc);
-			dstDoc = buildVDoc(repos, dstDoc);
 			verCtrl = repos.getVerCtrl1();
 		}
 		

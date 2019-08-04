@@ -954,38 +954,48 @@ public class GITUtil  extends BaseController{
 		return null;
 	}
 
-	public String doAutoCommit(Doc doc, String commitMsg,String commitUser, boolean modifyEnable, HashMap<Long, Doc> commitHashMap, int subDocCommitFlag) 
-	{		
+	public String doAutoCommit(Doc doc, String commitMsg,String commitUser, boolean modifyEnable, HashMap<String, Doc> commitHashMap, int subDocCommitFlag) 
+	{	
+		String path  = doc.getPath();
+		String name = doc.getName();
 		String localRootPath = doc.getLocalRootPath();
 		String localRefRootPath = doc.getLocalRefRootPath();
+		if(doc.getIsRealDoc() == false)
+		{
+			path = doc.getVPath();
+			name = doc.getVName();
+			localRootPath = doc.getLocalVRootPath();
+			localRefRootPath = null;			
+		}
 		
-		System.out.println("doAutoCommit()" + " parentPath:" + doc.getPath() +" entryName:" + doc.getName() +" localRootPath:" + localRootPath + " commitMsg:" + commitMsg +" modifyEnable:" + modifyEnable + " localRefRootPath:" + localRefRootPath);
+		System.out.println("doAutoCommit()" + " parentPath:" + path +" entryName:" + name +" localRootPath:" + localRootPath + " commitMsg:" + commitMsg +" modifyEnable:" + modifyEnable + " localRefRootPath:" + localRefRootPath);
     	
-    	File localParentDir = new File(localRootPath+doc.getPath());
+    	File localParentDir = new File(localRootPath+path);
 		if(!localParentDir.exists())
 		{
-			System.out.println("doAutoCommit() localParentPath " + localRootPath+doc.getPath() + " not exists");
+			System.out.println("doAutoCommit() localParentPath " + localRootPath+path + " not exists");
 			return null;
 		}
+		
 		if(!localParentDir.isDirectory())
 		{
-			System.out.println("doAutoCommit() localParentPath " + localRootPath+doc.getPath()  + " is not directory");
+			System.out.println("doAutoCommit() localParentPath " + localRootPath+path  + " is not directory");
 			return null;
 		}
 		
 		//If remote parentPath not exists, need to set the autoCommit entry to parentPath
-		Integer type = checkPath(doc.getPath(), null);
+		Integer type = checkPath(path, null);
 		if(type == null)
 		{
-			System.err.println("doAutoCommit() checkPath for " + doc.getPath() + " 异常");
+			System.err.println("doAutoCommit() checkPath for " + path + " 异常");
 			return null;
 		}
 		
 		if(type == 0)
 		{
-			if(!doc.getPath().isEmpty())
+			if(!path.isEmpty())
 			{
-				System.err.println("doAutoCommit() parent entry " + doc.getPath() + " not exists, do commit parent");
+				System.err.println("doAutoCommit() parent entry " + path + " not exists, do commit parent");
 				return doAutoCommitParent(doc, commitMsg, commitUser, modifyEnable);
 			}
 		}	
@@ -993,7 +1003,7 @@ public class GITUtil  extends BaseController{
 		
 		List <CommitAction> commitActionList = new ArrayList<CommitAction>();
 		
-		String entryPath = doc.getPath() + doc.getName();			
+		String entryPath = path + name;			
 		File localEntry = new File(localRootPath + entryPath);
 		
 		//LocalEntry does not exist
@@ -1028,12 +1038,12 @@ public class GITUtil  extends BaseController{
 			    }
 			    if(type == 0)
 			    {
-	        		System.out.println("doAutoCommit() 新增文件:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
+	        		System.out.println("doAutoCommit() 新增文件:" + doc.getDocId() + " " + path + name);
 	    			insertAddFileAction(commitActionList,doc,false);
 			    }
 			    else if(type != 1)
 			    {
-			    	System.out.println("doAutoCommit() 文件类型变更(目录->文件):" + doc.getDocId() + " " + doc.getPath() + doc.getName());
+			    	System.out.println("doAutoCommit() 文件类型变更(目录->文件):" + doc.getDocId() + " " + path + name);
 		    		insertDeleteAction(commitActionList,doc);
 	    			insertAddFileAction(commitActionList,doc,false);
 			    }
@@ -1044,7 +1054,7 @@ public class GITUtil  extends BaseController{
 		    		{
 			            if(modifyEnable)
 			            {
-		            		System.out.println("doAutoCommit() 文件内容变更:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
+		            		System.out.println("doAutoCommit() 文件内容变更:" + doc.getDocId() + " " + path + name);
 		            		insertModifyFile(commitActionList,doc);
 		            	}
 		    		}
@@ -1053,7 +1063,7 @@ public class GITUtil  extends BaseController{
 		    			Doc tempDoc = commitHashMap.get(doc.getDocId());
 		    			if(tempDoc != null)
 		    			{
-		            		System.out.println("doAutoCommit() 文件内容变更（commitHashMap）:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
+		            		System.out.println("doAutoCommit() 文件内容变更（commitHashMap）:" + doc.getDocId() + " " + path + name);
 		            		insertModifyFile(commitActionList,doc);
 		    			}
 		    		}
@@ -1433,16 +1443,25 @@ public class GITUtil  extends BaseController{
 		return true;
 	}
   	
-	private void scheduleForCommit(List<CommitAction> actionList, Doc doc, String localRootPath, String localRefRootPath,boolean modifyEnable,boolean isSubAction, HashMap<Long, Doc> commitHashMap, int subDocCommitFlag) {
-		System.out.println("scheduleForCommit()  parentPath:" + doc.getPath() + " entryName:" + doc.getName() + " localRootPath:" + localRootPath + " localRefRootPath:" + localRefRootPath + " modifyEnable:" + modifyEnable + " subDocCommitFlag:" + subDocCommitFlag);
+	private void scheduleForCommit(List<CommitAction> actionList, Doc doc, String localRootPath, String localRefRootPath,boolean modifyEnable,boolean isSubAction, HashMap<String, Doc> commitHashMap, int subDocCommitFlag) {
 		
-    	if(doc.getName().isEmpty())
+		String path = doc.getPath();
+		String name = doc.getName();
+		if(doc.getIsRealDoc() == false)
+		{
+			path = doc.getVPath();
+			name = doc.getVName();
+		}
+
+		System.out.println("scheduleForCommit()  parentPath:" + path + " entryName:" + name + " localRootPath:" + localRootPath + " localRefRootPath:" + localRefRootPath + " modifyEnable:" + modifyEnable + " subDocCommitFlag:" + subDocCommitFlag);
+		
+		String entryPath = path + name;
+    	if(entryPath.isEmpty())
     	{
     		scanForSubDocCommit(actionList, doc, localRootPath, localRefRootPath, modifyEnable, isSubAction, commitHashMap, subDocCommitFlag);
     		return;
     	}
  	
-    	String entryPath = doc.getPath() + doc.getName();
     	String localEntryPath = localRootPath + entryPath;    	
     	File localEntry = new File(localEntryPath);
 
@@ -1495,7 +1514,7 @@ public class GITUtil  extends BaseController{
     		}
     		else
     		{
-    			Doc tempDoc = commitHashMap.get(doc.getDocId());
+    			Doc tempDoc = commitHashMap.get(entryPath);
     			if(tempDoc != null)
     			{
         			System.out.println("scheduleForCommit() insert " + entryPath + " to actionList for Modify" );
@@ -1526,7 +1545,7 @@ public class GITUtil  extends BaseController{
 	}
 
 	private void scanForSubDocCommit(List<CommitAction> actionList, Doc doc, String localRootPath,
-			String localRefRootPath, boolean modifyEnable, boolean isSubAction, HashMap<Long, Doc> commitHashMap,
+			String localRefRootPath, boolean modifyEnable, boolean isSubAction, HashMap<String, Doc> commitHashMap,
 			int subDocCommitFlag) {
 
 		System.out.println("scanForSubDocCommit()  parentPath:" + doc.getPath() + doc.getName() + " localRootPath:" + localRootPath + " localRefParentPath:" + localRefRootPath + " modifyEnable:" + modifyEnable + " subDocCommitFlag:" + subDocCommitFlag);
@@ -1594,11 +1613,16 @@ public class GITUtil  extends BaseController{
 
 	private String doAutoCommitParent(Doc doc, String commitMsg,String commitUser, boolean modifyEnable)
     {
-    	String parentPath = doc.getPath();
-        System.out.println("doAutoCommitParent() parentPath:" + parentPath);
-    	if(parentPath.isEmpty())
+    	String path = doc.getPath();
+    	if(doc.getIsRealDoc() == false)
     	{
-    		Doc rootDoc = buildBasicDoc(doc.getVid(), 0L, -1L, "", "", 0, 2, doc.getIsRealDoc(), doc.getLocalRootPath(), doc.getLocalVRootPath(), null, null);
+    		path = doc.getVPath();
+    	}
+    	
+        System.out.println("doAutoCommitParent() parentPath:" + path);
+    	if(path.isEmpty())
+    	{
+    		Doc rootDoc = buildParentDoc(doc,"","");
 			List <CommitAction> commitActionList = new ArrayList<CommitAction>();
     		insertAddDirAction(commitActionList, rootDoc, false);
     		
@@ -1624,27 +1648,27 @@ public class GITUtil  extends BaseController{
     	    {
     	    	//Do rollBack
     			//Do roll back Index
-    			rollBackIndex(git, parentPath, null);
+    			rollBackIndex(git, path, null);
     			rollBackWcDir(commitActionList);	//删除actionList中新增的文件和目录	
     	    	return null;
     	    }
     	    return newRevision;
     	}
     	
-    	String [] paths = parentPath.split("/");
+    	String [] paths = path.split("/");
     	
-    	String path = "";
-    	String name = "";
+    	String tmpPath = "";
+    	String tmpName = "";
     	try {
 	    	for(int i=0; i< paths.length; i++)
 	    	{
-	    		name = paths[i];
-	    		if(name.isEmpty())
+	    		tmpName = paths[i];
+	    		if(tmpName.isEmpty())
 	    		{
 	    			continue;
 	    		}
 	    		
-	    		Integer type = checkPath(path + name, null);
+	    		Integer type = checkPath(tmpPath + tmpName, null);
 	    		if(type == null)
 	    		{
 	    			return null;
@@ -1652,15 +1676,31 @@ public class GITUtil  extends BaseController{
 	    		
 	    		if(type == 0)
 	    		{
-	    			Doc tempDoc = buildBasicDoc(doc.getVid(), null, null, path, name, null, 2, doc.getIsRealDoc(), doc.getLocalRootPath(), doc.getLocalVRootPath(), null, null);
+	    			Doc tempDoc = buildParentDoc(doc, tmpPath, tmpName);
 	    			return doAutoCommit(tempDoc, commitMsg, commitUser, modifyEnable,null, 2);
 	    		}
-	    		path = path + name + "/";  		
+	    		tmpPath = tmpPath + tmpName + "/";  		
 	    	}
     	} catch (Exception e) {
     		System.out.println("doAutoCommitParent() Exception");
     		e.printStackTrace();
     	}
     	return null;
+	}
+
+	private Doc buildParentDoc(Doc doc, String parentPath, String parentName) 
+	{
+		Doc parentDoc = null;
+		if(doc.getIsRealDoc())
+		{
+			parentDoc = buildBasicDoc(doc.getVid(), doc.getPid(), null, parentPath, parentName, doc.getLevel()-1, 2, doc.getIsRealDoc(), doc.getLocalRootPath(), doc.getLocalVRootPath(), null, null);
+		}
+		else
+		{
+			parentDoc = buildBasicDoc(doc.getVid(), doc.getDocId(), doc.getPid(), doc.getPath(), doc.getName(), doc.getLevel(), doc.getType(), doc.getIsRealDoc(), doc.getLocalRootPath(), doc.getLocalVRootPath(), doc.getSize(), doc.getCheckSum());
+			parentDoc.setVPath(parentPath);
+			parentDoc.setVName(parentName);
+		}
+		return null;
 	}
 }
