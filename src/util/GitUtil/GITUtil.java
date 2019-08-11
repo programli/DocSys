@@ -850,20 +850,25 @@ public class GITUtil  extends BaseController{
 			{
 				if(localEntry.exists())
 				{
-					System.out.println("getEntry() " + localParentPath + targetName + " 已存在"); 					
-					return null;
+					if(localEntry.isFile())
+					{
+						System.out.println("getEntry() " + localParentPath + targetName + " 是文件，已存在"); 					
+						return null;
+					}
 				}
-				
-				if(localEntry.mkdir() == false)
+				else
 				{
-					System.out.println("getEntry() mkdir failed:" + localParentPath + targetName); 					
-					return null;
+					if(localEntry.mkdir() == false)
+					{
+						System.out.println("getEntry() mkdir failed:" + localParentPath + targetName); 					
+						return null;
+					}
+					
+			        //Add to success Doc to Checkout list	
+			        doc.setType(2);
+					doc.setRevision(remoteDoc.getRevision());
+					successDocList.add(doc);
 				}
-				
-		        //Add to success Doc to Checkout list	
-		        doc.setType(2);
-				doc.setRevision(remoteDoc.getRevision());
-				successDocList.add(doc);
 			}
 			else
 			{
