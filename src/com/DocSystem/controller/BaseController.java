@@ -1528,6 +1528,14 @@ public class BaseController  extends BaseFunction{
 			return null;
 		}
 		
+		if(isFileInSuccessDocList(successDocList) == false)
+		{
+			docSysErrorLog("当前版本文件 " + doc.getPath() + doc.getName() + " 不存在",rt);
+			docSysDebugLog("revertDocHistory verReposCheckOut Failed parentPath:" + doc.getPath() + " entryName:" + doc.getName() + " localParentPath:" + localParentPath + " targetName:" + doc.getName(),rt);			
+			return null;
+		}
+		
+		
 		//Do commit to verRepos		
 		String revision = verReposDocCommit(repos, doc.getIsRealDoc(), doc, commitMsg, commitUser, rt, true, null, 2);
 		

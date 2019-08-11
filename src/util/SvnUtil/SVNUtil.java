@@ -1586,38 +1586,85 @@ public class SVNUtil  extends BaseController{
 				}
 			}
 			
-			if(getRemoteFile(remoteEntryPath, localParentPath, targetName, revision, force))
+			if(getRemoteFile(remoteEntryPath, localParentPath, targetName, revision, force) == false)
 			{
-				File localEntry = new File(localParentPath, targetName);
-				if(!localEntry.exists())
-				{
-					System.out.println("getEntry() Checkout Ok, but localEntry not exists"); 
-					return null;
-				}
-				
-				doc.setSize(localEntry.length());
-				doc.setLatestEditTime(localEntry.lastModified());
-				doc.setCheckSum("");
-				doc.setType(1);
-		        doc.setRevision(remoteDoc.getRevision());
-		        successDocList.add(doc);
-				return successDocList;
+				System.out.println("getEntry() getRemoteFile Failed:" + remoteEntryPath); 
+				return null;
 			}
+			
+			File localEntry = new File(localParentPath, targetName);
+			if(!localEntry.exists())
+			{
+				System.out.println("getEntry() Checkout Ok, but localEntry not exists"); 
+				return null;
+			}
+				
+			doc.setSize(localEntry.length());
+			doc.setLatestEditTime(localEntry.lastModified());
+			doc.setCheckSum("");
+			doc.setType(1);
+		    doc.setRevision(remoteDoc.getRevision());
+		    successDocList.add(doc);
+		    return successDocList;
 		}
 		
 		//远程节点存在，如果是目录的话（且不是根目录），则先新建本地目录，然后在CheckOut子目录，如果是根目录则直接CheckOut子目录，因为本地根目录必须存在
 		if(remoteDoc.getType() == 2) 
 		{
-        	//Get the subEntries and call svnGetEntry
-			if(getRemoteDir(localParentPath, targetName, force) == false)
-        	{
-				return null;
-        	}
-        	//Add to success Checkout list	
-        	doc.setType(2);
-			doc.setRevision(remoteDoc.getRevision());
-			successDocList.add(doc);
-        	
+			//CheckOut Directory
+			File localEntry = new File(localParentPath + targetName);
+			if(force == false)
+			{
+				if(localEntry.exists())
+				{
+					System.out.println("getEntry() " + localParentPath + targetName + " 已存在"); 					
+					return null;
+				}
+				
+				if(localEntry.mkdir() == false)
+				{
+					System.out.println("getEntry() mkdir failed:" + localParentPath + targetName); 					
+					return null;
+				}
+				
+		        //Add to success Doc to Checkout list	
+		        doc.setType(2);
+				doc.setRevision(remoteDoc.getRevision());
+				successDocList.add(doc);
+			}
+			else
+			{
+				if(localEntry.exists() == false)
+				{
+					if(localEntry.mkdir() == false)
+					{
+						return null;
+					}
+					//Add to success Checkout list	
+					doc.setType(2);
+					doc.setRevision(remoteDoc.getRevision());
+					successDocList.add(doc);
+				}
+				else
+				{
+					if(localEntry.isFile())
+					{	
+						if(delFileOrDir(localParentPath+targetName) == false)
+						{
+							return null;
+						}
+						if(localEntry.mkdir() == false)
+						{
+							return null;
+						}
+						//Add to success Checkout list	
+						doc.setType(2);
+						doc.setRevision(remoteDoc.getRevision());
+						successDocList.add(doc);
+					}
+				}		
+			}
+			
 			//To Get SubDocs
 			if(downloadList != null && downloadList.size() == 0)
 			{
