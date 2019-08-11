@@ -1521,31 +1521,31 @@ public class BaseController  extends BaseFunction{
 		
 		//Do checkout the entry to
 		List<Doc> successDocList = verReposCheckOut(repos, doc, localParentPath, doc.getName(), commitId, false, true, downloadList);	//不取本地已存在的 
-		if(successDocList == null)
+		if(successDocList == null || successDocList.size() == 0)
 		{
-			docSysErrorLog("当前版本文件 " + doc.getPath() + doc.getName() + " 不存在",rt);
-			docSysDebugLog("revertDocHistory verReposCheckOut Failed parentPath:" + doc.getPath() + " entryName:" + doc.getName() + " localParentPath:" + localParentPath + " targetName:" + doc.getName(),rt);
+			docSysErrorLog("未找到需要恢复的文件（只恢复当前不存在的文件）！",rt);
 			return null;
 		}
 		
-		if(isFileInSuccessDocList(successDocList) == false)
-		{
-			docSysErrorLog("当前版本文件 " + doc.getPath() + doc.getName() + " 不存在",rt);
-			docSysDebugLog("revertDocHistory verReposCheckOut Failed parentPath:" + doc.getPath() + " entryName:" + doc.getName() + " localParentPath:" + localParentPath + " targetName:" + doc.getName(),rt);			
-			return null;
-		}
-		
+		printObject("revertDocHistory checkOut successDocList:", successDocList);
 		
 		//Do commit to verRepos		
 		String revision = verReposDocCommit(repos, doc.getIsRealDoc(), doc, commitMsg, commitUser, rt, true, null, 2);
+		if(revision == null)
+		{			
+			docSysDebugLog("revertDocHistory()  verReposAutoCommit 失败", rt);
+			return null;
+		}
 		
 		if(doc.getIsRealDoc())
 		{
 			//Force update docInfo
-			printObject("revertDocHistory() successDocList:", successDocList);
+			//printObject("revertDocHistory() successDocList:", successDocList);
 			for(int i=0; i< successDocList.size(); i++)
 			{
 				Doc successDoc = successDocList.get(i);
+				System.out.println("revertDocHistory() " + successDoc.getDocId() + " [" + doc.getPath() + doc.getName() + "] 恢复成功");
+					
 				successDoc.setRevision(revision);
 				successDoc.setCreator(login_user.getId());
 				successDoc.setLatestEditor(login_user.getId());
@@ -1553,12 +1553,6 @@ public class BaseController  extends BaseFunction{
 				dbCheckAddUpdateParentDoc(repos, successDoc, null);
 			}
 		}
-		
-		if(revision == null)
-		{			
-			docSysDebugLog("revertDocHistory()  verReposAutoCommit 失败", rt);
-		}
-		
 		return revision;
 	}
 	

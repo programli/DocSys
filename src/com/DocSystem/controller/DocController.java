@@ -1995,9 +1995,11 @@ public class DocController extends BaseController{
 		String userTmpDir = getReposUserTmpPath(repos,login_user);
 
 		//checkout the entry to local
+		List <Doc> successDocList = null;
 		if(isRealDoc)
 		{
-			if(verReposCheckOut(repos, doc, userTmpDir, targetName, commitId, true, true, downloadList) == null)
+			successDocList = verReposCheckOut(repos, doc, userTmpDir, targetName, commitId, true, true, downloadList) ;
+			if(successDocList == null)
 			{
 				docSysErrorLog("当前版本文件 " + doc.getPath() + doc.getName() + " 不存在",rt);
 				docSysDebugLog("verReposCheckOut Failed path:" + doc.getPath() + " name:" + doc.getName() + " userTmpDir:" + userTmpDir + " targetName:" + targetName, rt);
@@ -2007,7 +2009,8 @@ public class DocController extends BaseController{
 		}
 		else
 		{
-			if(verReposCheckOut(repos, vDoc, userTmpDir, targetName, commitId, true, true, downloadList) == null)
+			successDocList = verReposCheckOut(repos, vDoc, userTmpDir, targetName, commitId, true, true, downloadList);
+			if(successDocList == null)
 			{
 				docSysErrorLog("当前版本文件 " + vDoc.getPath() + vDoc.getName() + " 不存在",rt);
 				docSysDebugLog("verReposCheckOut Failed path:" + vDoc.getPath() + " name:" + vDoc.getName() + " userTmpDir:" + userTmpDir + " targetName:" + targetName, rt);
@@ -2015,6 +2018,8 @@ public class DocController extends BaseController{
 				return;
 			}			
 		}
+		
+		printObject("downloadHistoryDocPrepare checkOut successDocList:", successDocList);
 		
 		File localEntry = new File(userTmpDir,targetName);
 		if(false == localEntry.exists())
