@@ -1613,20 +1613,14 @@
                 name: node.name,
             },
             success : function (ret) {
-                if( "ok" == ret.status ){
-                	console.log("getAndShowDoc ret",ret);
+            	console.log("getAndShowDoc ret",ret);
+
+            	if( "ok" == ret.status ){
                 	$('#filetitle').html(ret.data.name);
                     gDocId = ret.data.docId;
-                    if(!ret.data.content || ret.data.content == "null")
-                    {
-                    	gDocContent = "";	//Convert it to empty String
-                    }
-                    else
-                    {	
-                    	gDocContent = JSON.parse(ret.data.content);
-                    }
                     
-					gTmpSavedContent = ret.msgData;                    
+                    gDocContent = parseDocContent(ret.data.content);
+                    gTmpSavedContent = parseDocContent(ret.msgData);                    
                     
 					if(gShowType == 1)	//显示预览
 					{
@@ -1645,10 +1639,24 @@
             },
             error : function () {
                 showErrorMessage("获取文件信息失败：服务器异常");
-                $btn.button('reset');
+                //$btn.button('reset');
             }
         });
     }
+	
+	function parseDocContent(content)
+	{
+        if(!content || content == "")
+        {
+        	docContent = "";	//Convert it to empty String
+        }
+        else
+        {	
+        	docContent = JSON.parse(content);
+        }
+        
+        return docContent;
+	}
 	
 	function showVirtualDoc(edit)
 	{
