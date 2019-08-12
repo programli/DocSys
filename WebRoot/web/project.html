@@ -1580,15 +1580,13 @@
 	}
     
 	//读取文件信息
-    function showVirtualDoc(node,edit) {
-		
-		console.log("showVirtualDoc() edit:" + edit + " node:", node);
+    function getAndShowDoc(node,edit) 
+	{
+		console.log("getAndShowDoc() edit:" + edit + " node:", node);
       	if(!node || node == null)	//undefine do clean the info of rightDiv
       	{
-      		//Clean FileName
+    		console.log("getAndShowDoc() 文件不存在，清空内容显示区（文件名、文件内容）");
           	$('#filetitle').html("");
-          		
-          	//Clean the display content
           	DocEdit.stopAutoTmpSaver();
           	debounce.clear();
           	gDocContent = "";
@@ -1614,10 +1612,14 @@
             },
             success : function (ret) {
                 if( "ok" == ret.status ){
-                	console.log("showVirtualDoc ret",ret);
-                	$('#filetitle').html(ret.data.name);
-                    gDocId = ret.data.docId;
-                    if(!ret.data.content || ret.data.content == "null")
+                	console.log("getAndShowDoc ret",ret);
+                	$('#filetitle').html(ret.data.name);	//更新文件名显示
+                	
+                    gDocId = ret.data.docId;	//设置gDocId未获取成功的docId(失败的话呢????????)
+                    
+                    //格式化VDOC的内容
+					gTmpSavedContent = ret.msgData; //获取临时保存的文件内容，为空表示没有未保存的修改                   
+                    if(!ret.data.content || ret.data.content == "")
                     {
                     	gDocContent = "";	//Convert it to empty String
                     }
@@ -1626,47 +1628,15 @@
                     	gDocContent = JSON.parse(ret.data.content);
                     }
                     
-					gTmpSavedContent = ret.msgData;                    
-                    
 					if(gShowType == 1)	//显示预览
 					{
-						console.log("showVirtualDoc() showType is for file Content");
-				      	return;
+						console.log("getAndShowDoc() showType is for file Content");
+						$("#doc").hide();
 					}
 					else	//显示备注
 					{
-						DocEdit.loadmd(gDocContent,edit);
-	                    
-	                    WikiEditBtnCtrl(edit);		
-						
-	                    //we need to clear debounce when a new doc was loaded
-						debounce.clear();
-						if(edit)
-						{
-							//start the autoTmpSaver
-							DocEdit.startAutoTmpSaver();
-						
-							if(gTmpSavedContent && gTmpSavedContent != "")
-							{
-								bootstrapQ.confirm({
-									id: "loadContentConfirm",
-									title: "加载确认",
-									msg : "上次有未保存的编辑内容，是否加载？",
-									},function () {
-								    	//alert("点击了确定");
-								        DocEdit.loadmd(gTmpSavedContent,edit);
-								        gTmpSavedContent = "";
-								    	return true;   
-								 	},function (){
-								        gTmpSavedContent = "";
-								        return true;
-								 	});
-							}
-						}
-						else
-						{
-							DocEdit.stopAutoTmpSaver();
-						}
+						$("#doc").show();
+						showVirtualDoc(gDocContent, gTmpSavedContent, edit);
 					}
                 }
                 else
@@ -1680,6 +1650,42 @@
             }
         });
     }
+	
+	function showVirtualContent(gDocContent, gTmpSavedContent, edit)
+	{
+		DocEdit.loadmd(gDocContent,edit); //总是先加载DocConent
+        
+        WikiEditBtnCtrl(edit); //更加edit的状态显示按键		
+		
+        //we need to clear debounce when a new doc was loaded
+		debounce.clear();
+		if(edit)
+		{
+			//start the autoTmpSaver
+			DocEdit.startAutoTmpSaver();
+		
+			if(gTmpSavedContent && gTmpSavedContent != "")
+			{
+				bootstrapQ.confirm({
+					id: "loadContentConfirm",
+					title: "加载确认",
+					msg : "上次有未保存的编辑内容，是否加载？",
+					},function () {
+				    	//alert("点击了确定");
+				        DocEdit.loadmd(gTmpSavedContent,edit);
+				        gTmpSavedContent = "";
+				    	return true;   
+				 	},function (){
+				        gTmpSavedContent = "";
+				        return true;
+				 	});
+			}
+		}
+		else
+		{
+			DocEdit.stopAutoTmpSaver();
+		}
+	}
 	
 	function showDocHistory(node, historyType)
 	{
@@ -1911,7 +1917,7 @@
         if(newDocId)
         {
         	var edit = false;
-        	showVirtualDoc(newDocId,edit);	//
+        	getAndShowDoc(newDocId,edit);	//
         }
         else
         {
@@ -2581,7 +2587,7 @@ function CompareObj(objA, objB, flag) {
           {
         	 if(gEdit)
              {
-              	//exitEdit then showVirtualDoc
+              	//exitEdit then getAndShowDoc
               	exitEdit(gDocId,treeNode.id);
              }
              else
@@ -2593,7 +2599,7 @@ function CompareObj(objA, objB, flag) {
               	 showDocList(parentNode);
            	     
               	 //显示预览或备注
-             	 showVirtualDoc(treeNode,false);
+             	 getAndShowDoc(treeNode,false);
              }
           }
       }
@@ -3044,7 +3050,7 @@ function CompareObj(objA, objB, flag) {
 		 	}
 		
 			//显示预览或备注
-			showVirtualDoc(treeNode,false);
+			getAndShowDoc(treeNode,false);
 		}		
   	}
  	
@@ -3193,7 +3199,7 @@ function CompareObj(objA, objB, flag) {
 				showDocList(parentNode);
 			 
 				//获取DocContent并显示
-				showVirtualDoc(node,gEdit);
+				getAndShowDoc(node,gEdit);
 			 }
 			 else
 			 {
@@ -3301,7 +3307,7 @@ function CompareObj(objA, objB, flag) {
 		updateUrl(gReposId,gDocId);
 
 		//Update doc preview zone
-		showVirtualDoc(parentNode,false);
+		getAndShowDoc(parentNode,false);
 		return;
    	}         
 	
@@ -3448,6 +3454,8 @@ function CompareObj(objA, objB, flag) {
 	      	$("#btnEditWiki").hide();
 	      	$("#btnSwitchShow").text("显示备注");
 	      	//隐藏备注内容
+	      	$("#doc").hide();
+	
 	      	//显示预览内容
 	     }
 	     else
@@ -3458,6 +3466,10 @@ function CompareObj(objA, objB, flag) {
 		     $("#btnEditWiki").show();
 		     $("#btnSwitchShow").text("显示预览");
 		     //显示备注内容
+		     $("#doc").show();
+		     gEdit = false;
+		     showVirtualDoc(gDocContent, gTmpSavedContent, gEdit);
+		     
 		     //隐藏预览内容
 		     
 	     }
@@ -4107,7 +4119,7 @@ function CompareObj(objA, objB, flag) {
 //					e.preventDefault();
 //					var docId = curRightClickedTreeNode.id;
 //					var docName = curRightClickedTreeNode.name;
-//		 			showVirtualDoc(docId,false);
+//		 			getAndShowDoc(docId,false);
 //		 			showRightDiv();
 //				}
 //			},
@@ -4277,7 +4289,7 @@ function CompareObj(objA, objB, flag) {
 						{divider: true},
 						{text: '备注', action: function(e){
 								e.preventDefault();
-					 			showVirtualDoc(curRightClickedDocListNode,false);
+					 			getAndShowDoc(curRightClickedDocListNode,false);
 					 			showRightDiv();
 							}
 						},
