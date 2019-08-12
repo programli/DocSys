@@ -1669,21 +1669,25 @@ public class DocController extends BaseController{
 		String vDocName = getVDocName(doc);
 		String reposVPath = getReposVirtualPath(repos);
 		String content = readVirtualDocContent(reposVPath, vDocName);
-        if(content == null)
-        {
-        	content = "";
-        }
- 		doc.setContent(JSONObject.toJSONString(content));
+		doc.setContent(content);
+		
+		//if(content == null)
+        //{
+        //	content = "";
+        //}
+ 		//doc.setContent(JSONObject.toJSONString(content));
 		rt.setData(doc);
 		
 		//Try to read tmpSavedContent
 		String userTmpDir = getReposUserTmpPath(repos,login_user);
 		String tmpSavedContent = readVirtualDocContent(userTmpDir, vDocName);
-		if(tmpSavedContent == null)
-		{
-			tmpSavedContent = "";
-		}
-		rt.setMsgData(JSONObject.toJSONString(tmpSavedContent));
+		rt.setMsgData(tmpSavedContent);
+
+		//if(tmpSavedContent == null)
+		//{
+		//	tmpSavedContent = "";
+		//}
+		//rt.setMsgData(JSONObject.toJSONString(tmpSavedContent));
 		
 		writeJson(rt, response);
 	}
