@@ -236,7 +236,7 @@
          		<div class="back" onclick="showCenterDiv();"> 
          			<i class="backicon glyphicon glyphicon-arrow-left"></i>
          		</div>
-        		<div class="filetitle" id="filetitle"></div>
+        		<div class="filetitle" id="docName"></div>
         		<div style="position:absolute; right:5px; top:10px">
 	                    <button id="btnExitEdit" class="btn btn-default" type="button" onclick="exitEdit()" style="display:none">退出编辑
 	                   	</button>
@@ -248,8 +248,8 @@
 	                   	</button>
         		</div>
          	</div>
-            <div class="manual-article">
-                <div class="article-body editor-content"  id="doc" style="min-height: 650px">
+            <div class="manual-article" id="docContent">
+                <div class="article-body editor-content"  id="docNote" style="min-height: 650px">
                 </div>
             </div>
         </div>
@@ -1586,7 +1586,7 @@
       	if(!node || node == null)	//undefine do clean the info of rightDiv
       	{
     		console.log("getAndShowDoc() 文件不存在，清空内容显示区（文件名、文件内容）");
-          	$('#filetitle').html("");
+          	$('#docName').html("");
           	DocEdit.stopAutoTmpSaver();
           	debounce.clear();
           	gDocContent = "";
@@ -1613,7 +1613,7 @@
             success : function (ret) {
                 if( "ok" == ret.status ){
                 	console.log("getAndShowDoc ret",ret);
-                	$('#filetitle').html(ret.data.name);	//更新文件名显示
+                	$('#docName').html(ret.data.name);	//更新文件名显示
                 	
                     gDocId = ret.data.docId;	//设置gDocId未获取成功的docId(失败的话呢????????)
                     
@@ -1628,14 +1628,15 @@
                     	gDocContent = JSON.parse(ret.data.content);
                     }
                     
+                    
 					if(gShowType == 1)	//显示预览
 					{
 						console.log("getAndShowDoc() showType is for file Content");
-						$("#doc").hide();
+						$("#docNote").hide();
 					}
 					else	//显示备注
 					{
-						$("#doc").show();
+						$("#docNote").show();
 						showVirtualDoc(gDocContent, gTmpSavedContent, edit);
 					}
                 }
@@ -1651,8 +1652,20 @@
         });
     }
 	
-	function showVirtualContent(gDocContent, gTmpSavedContent, edit)
+	//该函数只可以被调用一次
+	function formatDocContent(content)
 	{
+		console.log("formatDocContent() [ " + content +"]");
+		if(content)
+        {
+			//content = JSON.parse(content);
+			return content;
+        }
+		return "";
+	}
+	
+	function showVirtualDoc(gDocContent, gTmpSavedContent, edit)
+	{		
 		DocEdit.loadmd(gDocContent,edit); //总是先加载DocConent
         
         WikiEditBtnCtrl(edit); //更加edit的状态显示按键		
@@ -3454,9 +3467,10 @@ function CompareObj(objA, objB, flag) {
 	      	$("#btnEditWiki").hide();
 	      	$("#btnSwitchShow").text("显示备注");
 	      	//隐藏备注内容
-	      	$("#doc").hide();
+	      	$("#docNote").hide();
 	
 	      	//显示预览内容
+		    // $("#docPreview").show();
 	     }
 	     else
 	     {
@@ -3466,11 +3480,12 @@ function CompareObj(objA, objB, flag) {
 		     $("#btnEditWiki").show();
 		     $("#btnSwitchShow").text("显示预览");
 		     //显示备注内容
-		     $("#doc").show();
+		     $("#docNote").show();
 		     gEdit = false;
 		     showVirtualDoc(gDocContent, gTmpSavedContent, gEdit);
 		     
 		     //隐藏预览内容
+		     //$("#docPreview").hide();
 		     
 	     }
 	}
@@ -3927,7 +3942,7 @@ function CompareObj(objA, objB, flag) {
         };
         
         //文件预览区的拖拽上传
-        var docZone =  document.getElementById("doc");  
+        var docZone =  document.getElementById("docContent");  
         docZone.ondragenter = function(e){  
             e.preventDefault();  
         };  
