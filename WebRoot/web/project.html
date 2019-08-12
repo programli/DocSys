@@ -236,7 +236,7 @@
          		<div class="back" onclick="showCenterDiv();"> 
          			<i class="backicon glyphicon glyphicon-arrow-left"></i>
          		</div>
-        		<div class="filetitle" id="docName"></div>
+        		<div class="filetitle" id="filetitle"></div>
         		<div style="position:absolute; right:5px; top:10px">
 	                    <button id="btnExitEdit" class="btn btn-default" type="button" onclick="exitEdit()" style="display:none">退出编辑
 	                   	</button>
@@ -248,8 +248,8 @@
 	                   	</button>
         		</div>
          	</div>
-            <div class="manual-article" id="docContent">
-                <div class="article-body editor-content"  id="docNote" style="min-height: 650px">
+            <div class="manual-article">
+                <div class="article-body editor-content"  id="doc" style="min-height: 650px">
                 </div>
             </div>
         </div>
@@ -1580,13 +1580,15 @@
 	}
     
 	//读取文件信息
-    function getAndShowDoc(node,edit) 
-	{
+    function getAndShowDoc(node,edit) {
+		
 		console.log("getAndShowDoc() edit:" + edit + " node:", node);
       	if(!node || node == null)	//undefine do clean the info of rightDiv
       	{
-    		console.log("getAndShowDoc() 文件不存在，清空内容显示区（文件名、文件内容）");
-          	$('#docName').html("");
+      		//Clean FileName
+          	$('#filetitle').html("");
+          		
+          	//Clean the display content
           	DocEdit.stopAutoTmpSaver();
           	debounce.clear();
           	gDocContent = "";
@@ -1613,13 +1615,9 @@
             success : function (ret) {
                 if( "ok" == ret.status ){
                 	console.log("getAndShowDoc ret",ret);
-                	$('#docName').html(ret.data.name);	//更新文件名显示
-                	
-                    gDocId = ret.data.docId;	//设置gDocId未获取成功的docId(失败的话呢????????)
-                    
-                    //格式化VDOC的内容
-					gTmpSavedContent = ret.msgData; //获取临时保存的文件内容，为空表示没有未保存的修改                   
-                    if(!ret.data.content || ret.data.content == "")
+                	$('#filetitle').html(ret.data.name);
+                    gDocId = ret.data.docId;
+                    if(!ret.data.content || ret.data.content == "null")
                     {
                     	gDocContent = "";	//Convert it to empty String
                     }
@@ -1628,16 +1626,47 @@
                     	gDocContent = JSON.parse(ret.data.content);
                     }
                     
+					gTmpSavedContent = ret.msgData;                    
                     
 					if(gShowType == 1)	//显示预览
 					{
 						console.log("getAndShowDoc() showType is for file Content");
-						$("#docNote").hide();
+				      	return;
 					}
 					else	//显示备注
 					{
-						$("#docNote").show();
-						showVirtualDoc(gDocContent, gTmpSavedContent, edit);
+						DocEdit.loadmd(gDocContent,edit);
+	                    
+	                    WikiEditBtnCtrl(edit);		
+						
+	                    //we need to clear debounce when a new doc was loaded
+						debounce.clear();
+						if(edit)
+						{
+							//start the autoTmpSaver
+							DocEdit.startAutoTmpSaver();
+						
+							if(gTmpSavedContent && gTmpSavedContent != "")
+							{
+								bootstrapQ.confirm({
+									id: "loadContentConfirm",
+									title: "加载确认",
+									msg : "上次有未保存的编辑内容，是否加载？",
+									},function () {
+								    	//alert("点击了确定");
+								        DocEdit.loadmd(gTmpSavedContent,edit);
+								        gTmpSavedContent = "";
+								    	return true;   
+								 	},function (){
+								        gTmpSavedContent = "";
+								        return true;
+								 	});
+							}
+						}
+						else
+						{
+							DocEdit.stopAutoTmpSaver();
+						}
 					}
                 }
                 else
@@ -1651,54 +1680,6 @@
             }
         });
     }
-	
-	//该函数只可以被调用一次
-	function formatDocContent(content)
-	{
-		console.log("formatDocContent() [ " + content +"]");
-		if(content)
-        {
-			//content = JSON.parse(content);
-			return content;
-        }
-		return "";
-	}
-	
-	function showVirtualDoc(gDocContent, gTmpSavedContent, edit)
-	{		
-		DocEdit.loadmd(gDocContent,edit); //总是先加载DocConent
-        
-        WikiEditBtnCtrl(edit); //更加edit的状态显示按键		
-		
-        //we need to clear debounce when a new doc was loaded
-		debounce.clear();
-		if(edit)
-		{
-			//start the autoTmpSaver
-			DocEdit.startAutoTmpSaver();
-		
-			if(gTmpSavedContent && gTmpSavedContent != "")
-			{
-				bootstrapQ.confirm({
-					id: "loadContentConfirm",
-					title: "加载确认",
-					msg : "上次有未保存的编辑内容，是否加载？",
-					},function () {
-				    	//alert("点击了确定");
-				        DocEdit.loadmd(gTmpSavedContent,edit);
-				        gTmpSavedContent = "";
-				    	return true;   
-				 	},function (){
-				        gTmpSavedContent = "";
-				        return true;
-				 	});
-			}
-		}
-		else
-		{
-			DocEdit.stopAutoTmpSaver();
-		}
-	}
 	
 	function showDocHistory(node, historyType)
 	{
@@ -3467,10 +3448,7 @@ function CompareObj(objA, objB, flag) {
 	      	$("#btnEditWiki").hide();
 	      	$("#btnSwitchShow").text("显示备注");
 	      	//隐藏备注内容
-	      	$("#docNote").hide();
-	
 	      	//显示预览内容
-		    // $("#docPreview").show();
 	     }
 	     else
 	     {
@@ -3480,12 +3458,7 @@ function CompareObj(objA, objB, flag) {
 		     $("#btnEditWiki").show();
 		     $("#btnSwitchShow").text("显示预览");
 		     //显示备注内容
-		     $("#docNote").show();
-		     gEdit = false;
-		     showVirtualDoc(gDocContent, gTmpSavedContent, gEdit);
-		     
 		     //隐藏预览内容
-		     //$("#docPreview").hide();
 		     
 	     }
 	}
@@ -3942,7 +3915,7 @@ function CompareObj(objA, objB, flag) {
         };
         
         //文件预览区的拖拽上传
-        var docZone =  document.getElementById("docContent");  
+        var docZone =  document.getElementById("doc");  
         docZone.ondragenter = function(e){  
             e.preventDefault();  
         };  
