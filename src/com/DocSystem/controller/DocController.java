@@ -1669,6 +1669,9 @@ public class DocController extends BaseController{
 		String vDocName = getVDocName(doc);
 		String reposVPath = getReposVirtualPath(repos);
 		String content = readVirtualDocContent(reposVPath, vDocName);
+        if( null !=content){
+        	content = content.replaceAll("\t","");
+        }
 		doc.setContent(content);
 		
 		//if(content == null)
@@ -1681,6 +1684,9 @@ public class DocController extends BaseController{
 		//Try to read tmpSavedContent
 		String userTmpDir = getReposUserTmpPath(repos,login_user);
 		String tmpSavedContent = readVirtualDocContent(userTmpDir, vDocName);
+        if( null !=tmpSavedContent){
+        	tmpSavedContent = content.replaceAll("\t","");
+        }
 		rt.setMsgData(tmpSavedContent);
 
 		//if(tmpSavedContent == null)
