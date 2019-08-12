@@ -4976,7 +4976,7 @@ public class BaseController  extends BaseFunction{
 			}
 			
 			int fileSize = (int) file.length();
-			System.out.println("fileSize:[" + fileSize + "]");
+			//System.out.println("fileSize:[" + fileSize + "]");
 
 			byte buffer[] = new byte[fileSize];
 	
@@ -4986,7 +4986,7 @@ public class BaseController  extends BaseFunction{
 			in.close();	
 							
 			String content = new String(buffer);
-			System.out.println("content:[" + content + "]");
+			//System.out.println("content:[" + content + "]");
 			return content;
 		} catch (Exception e) {
 			e.printStackTrace();

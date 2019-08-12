@@ -1669,11 +1669,11 @@ public class DocController extends BaseController{
 		String vDocName = getVDocName(doc);
 		String reposVPath = getReposVirtualPath(repos);
 		String content = readVirtualDocContent(reposVPath, vDocName);
-        //if( null !=content)
-        //{
-        //	content = content.replaceAll("\t","");
-        //}
-		doc.setContent(JSONObject.toJSONString(content));
+        if(content == null)
+        {
+        	content = "";
+        }
+ 		doc.setContent(JSONObject.toJSONString(content));
 		rt.setData(doc);
 		
 		//Try to read tmpSavedContent
