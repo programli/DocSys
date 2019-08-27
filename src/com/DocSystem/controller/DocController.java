@@ -1060,7 +1060,7 @@ public class DocController extends BaseController{
 		
 		delFileOrDir(vDocPath);
 	}
-
+	
 	//this interface is for auto save of the virtual doc edit
 	@RequestMapping("/tmpSaveDocContent.do")
 	public void tmpSaveVirtualDocContent(Integer reposId, Long docId, Long pid, String path, String name,  Integer level, Integer type,
@@ -1096,6 +1096,37 @@ public class DocController extends BaseController{
 		{
 			docSysErrorLog("saveVirtualDocContent Error!", rt);
 		}
+		writeJson(rt, response);
+	}
+	
+	@RequestMapping("/deleteTmpSavedDocContent.do")
+	public void deleteTmpSavedDocContent(Integer reposId, Long docId, Long pid, String path, String name,  Integer level, Integer type,
+			HttpSession session,HttpServletRequest request,HttpServletResponse response)
+	{
+		System.out.println("deleteTmpSavedDocContent  reposId:" + reposId + " docId:" + docId + " pid:" + pid + " path:" + path + " name:" + name  + " level:" + level + " type:" + type);
+		
+		ReturnAjax rt = new ReturnAjax();
+		User login_user = (User) session.getAttribute("login_user");
+		if(login_user == null)
+		{
+			docSysErrorLog("用户未登录，请先登录！", rt);
+			writeJson(rt, response);			
+			return;
+		}
+				
+		Repos repos = reposService.getRepos(reposId);
+		if(repos == null)
+		{
+			docSysErrorLog("仓库 " + reposId + " 不存在！", rt);
+			writeJson(rt, response);			
+			return;
+		}
+		
+		String localRootPath = getReposRealPath(repos);
+		String userTmpDir = getReposUserTmpPath(repos,login_user);
+		Doc doc = buildBasicDoc(reposId, docId, pid, path, name, level, type, true,localRootPath, userTmpDir, null, null);
+		
+		deleteTmpVirtualDocContent(repos, doc, login_user);
 		writeJson(rt, response);
 	}
 	

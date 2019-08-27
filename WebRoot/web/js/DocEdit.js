@@ -132,7 +132,7 @@
 		    		}
 		    	},20000);
 		    }
-		}     
+		}
 	
 		function stopAutoTmpSaver(){
 			console.log("DocEdit.stopAutoTmpSaver timerState:" + timerState);
@@ -142,6 +142,119 @@
 				clearInterval(autoSaveTimer);
 			}
 		}
+		
+	    //文件临时保存操作
+	    function tmpSaveDoc(docId, content){
+			console.log("tmpSaveDoc: docId:" + docId);
+			
+			var node = getNodeById(docId);
+			if(node && node == null)
+			{
+	            console.log("临时保存失败 :" , (new Date()).toLocaleDateString());
+	            bootstrapQ.msg({
+					msg : "临时保存失败 : 文件不存在",
+					type : 'danger',
+					time : 1000,
+				});	
+	            return;
+			}
+			
+	        $.ajax({
+	            url : "/DocSystem/Doc/tmpSaveDocContent.do",
+	            type : "post",
+	            dataType : "json",
+	            data : {
+	            	reposId: gReposId,
+	                docId : docId,
+	                pid: node.pid,
+	                path: node.path,
+	                name: node.name,
+	                content : content,
+	            },
+	            success : function (ret) {
+	                if( "ok" == ret.status ){
+	                    console.log("临时保存成功 :" , (new Date()).toLocaleDateString());
+	                    bootstrapQ.msg({
+									msg : "临时保存成功 :" + (new Date()).toLocaleDateString(),
+									type : 'success',
+									time : 1000,
+						});
+	                }else {
+	                    //bootstrapQ.alert("临时保存失败:"+ret.msgInfo);
+	                    bootstrapQ.msg({
+							msg : "临时保存失败 :" + +ret.msgInfo,
+							type : 'danger',
+							time : 1000,
+						});
+	                }
+	            },
+	            error : function () {
+	                //bootstrapQ.alert("临时保存异常");
+	                bootstrapQ.msg({
+						msg : "临时保存失败 :服务器异常",
+						type : 'danger',
+						time : 1000,
+					});
+	            }
+	        });
+
+	    }
+	    
+	    //文件临时Delete操作
+	    function deleteTmpSavedContent(docId){
+			console.log("deleteTmpSavedDocContent: docId:" + docId);
+			
+			var node = getNodeById(docId);
+			if(node && node == null)
+			{
+	            console.log("删除临时保存内容失败 :" , (new Date()).toLocaleDateString());
+	            bootstrapQ.msg({
+					msg : "删除临时保存内容失败 : 文件不存在",
+					type : 'danger',
+					time : 1000,
+				});	
+	            return;
+			}
+			
+	        $.ajax({
+	            url : "/DocSystem/Doc/deleteTmpSavedDocContent.do",
+	            type : "post",
+	            dataType : "json",
+	            data : {
+	            	reposId: gReposId,
+	                docId : docId,
+	                pid: node.pid,
+	                path: node.path,
+	                name: node.name,
+	            },
+	            success : function (ret) {
+	                if( "ok" == ret.status ){
+	                    console.log("删除临时保存内容成功 :" , (new Date()).toLocaleDateString());
+	                    bootstrapQ.msg({
+									msg : "删除临时保存内容成功 :" + (new Date()).toLocaleDateString(),
+									type : 'success',
+									time : 1000,
+						});
+	                }else {
+	                    //bootstrapQ.alert("临时保存失败:"+ret.msgInfo);
+	                    bootstrapQ.msg({
+							msg : "删除临时保存内容失败 :" + +ret.msgInfo,
+							type : 'danger',
+							time : 1000,
+						});
+	                }
+	            },
+	            error : function () {
+	                //bootstrapQ.alert("临时保存异常");
+	                bootstrapQ.msg({
+						msg : "删除临时保存内容失败 :服务器异常",
+						type : 'danger',
+						time : 1000,
+					});
+	            }
+	        });
+
+	    }
 
 		//开放给外部的调用接口
         return {
@@ -156,6 +269,10 @@
             },
             stopAutoTmpSaver: function(){
             	stopAutoTmpSaver();
+            },
+            
+            deleteTmpSavedContent: function(docId){
+            	deleteTmpSavedContent(docId);
             },
             
         };

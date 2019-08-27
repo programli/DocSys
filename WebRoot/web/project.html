@@ -1482,64 +1482,6 @@
                 bootstrapQ.alert("保存失败:服务器异常");
             }
         });
-
-    }
-    
-    //文件临时保存操作
-    function tmpSaveDoc(docId, content){
-		console.log("tmpSaveDoc: docId:" + docId);
-		
-		var node = getNodeById(docId);
-		if(node && node == null)
-		{
-            console.log("临时保存失败 :" , (new Date()).toLocaleDateString());
-            bootstrapQ.msg({
-				msg : "临时保存失败 : 文件不存在",
-				type : 'danger',
-				time : 1000,
-			});	
-            return;
-		}
-		
-        $.ajax({
-            url : "/DocSystem/Doc/tmpSaveDocContent.do",
-            type : "post",
-            dataType : "json",
-            data : {
-            	reposId: gReposId,
-                docId : docId,
-                pid: node.pid,
-                path: node.path,
-                name: node.name,
-                content : content,
-            },
-            success : function (ret) {
-                if( "ok" == ret.status ){
-                    console.log("临时保存成功 :" , (new Date()).toLocaleDateString());
-                    bootstrapQ.msg({
-								msg : "临时保存成功 :" + (new Date()).toLocaleDateString(),
-								type : 'success',
-								time : 1000,
-					});
-                }else {
-                    //bootstrapQ.alert("临时保存失败:"+ret.msgInfo);
-                    bootstrapQ.msg({
-						msg : "临时保存失败 :" + +ret.msgInfo,
-						type : 'danger',
-						time : 1000,
-					});
-                }
-            },
-            error : function () {
-                //bootstrapQ.alert("临时保存异常");
-                bootstrapQ.msg({
-					msg : "临时保存失败 :服务器异常",
-					type : 'danger',
-					time : 1000,
-				});
-            }
-        });
-
     }
     
     function updateUrl(reposId,docId,edit)
@@ -1684,7 +1626,9 @@
 				        gTmpSavedContent = "";
 				    	return true;   
 				 	},function (){
+				 		//alert("点击了取消");
 				        gTmpSavedContent = "";
+				        DocEdit.deleteTmpSavedContent(gDocId);
 				        return true;
 				 	});
 			}
@@ -2073,7 +2017,9 @@
 			        gTmpSavedContent = "";
 			    	return true;   
 			 	},function (){
+			 		//alert("点击了取消");
 			        gTmpSavedContent = "";
+			        DocEdit.deleteTmpSavedContent(gDocId);
 			        return true;
 			 	});
 		}
