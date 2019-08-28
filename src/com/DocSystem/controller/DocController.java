@@ -1163,17 +1163,19 @@ public class DocController extends BaseController{
 		if(docType != null && docType == 2)
 		{
 			vDoc = buildVDoc(doc);
-			//TODO: download VDOC
+			downloadVDocPrepare_FS(repos, vDoc, login_user, rt);
 		}
-		
-		switch(repos.getType())
+		else
 		{
-		case 1:
-		case 2:
-		case 3:
-		case 4:
-			downloadDocPrepare_FS(repos, doc, login_user, rt);
-			break;
+			switch(repos.getType())
+			{
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+				downloadDocPrepare_FS(repos, doc, login_user, rt);
+				break;
+			}
 		}
 		writeJson(rt, response);
 	}
@@ -1287,6 +1289,37 @@ public class DocController extends BaseController{
 		}
 		
 		docSysErrorLog("本地未知文件类型:" + localEntry.getType(), rt);
+		return;		
+	}
+	
+	public void downloadVDocPrepare_FS(Repos repos, Doc vDoc, User login_user, ReturnAjax rt) throws Exception
+	{	
+		String targetName = vDoc.getName() +".zip";
+		if(vDoc.getName().isEmpty())
+		{
+			targetName = repos.getName() + "_备注_.zip";	;					
+		}
+				
+		File localEntry = new File(vDoc.getLocalRootPath() + vDoc.getPath(),targetName);
+		if(false == localEntry.exists())
+		{
+			docSysErrorLog("文件 " + vDoc.getLocalRootPath() + vDoc.getPath() + targetName + " 不存在！", rt);
+			return;
+		}
+		
+		String targetPath = getReposUserTmpPath(repos,login_user);
+		
+		//doCompressDir and save the zip File under userTmpDir
+		if(doCompressDir(vDoc.getLocalRootPath() + vDoc.getPath(), vDoc.getName(), targetPath, targetName, rt) == false)
+		{
+			docSysErrorLog("压缩本地目录失败！", rt);
+			return;
+		}
+		
+		Doc downloadDoc = buildDownloadDocInfo(targetPath, targetName);
+		rt.setData(downloadDoc);
+		rt.setMsgData(1);	//下载完成后删除已下载的文件
+		docSysDebugLog("远程目录: 已压缩并存储在用户临时目录", rt);
 		return;		
 	}
 	
