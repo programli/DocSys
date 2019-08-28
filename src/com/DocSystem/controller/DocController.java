@@ -1136,7 +1136,7 @@ public class DocController extends BaseController{
 			Integer downloadType,
 			HttpServletResponse response,HttpServletRequest request,HttpSession session) throws Exception
 	{
-		System.out.println("downloadDocPrepare  reposId:" + reposId + " docId:" + docId + " pid:" + pid + " path:" + path + " name:" + name  + " level:" + level + " type:" + type + " donwloadType:" + donwloadType);
+		System.out.println("downloadDocPrepare  reposId:" + reposId + " docId:" + docId + " pid:" + pid + " path:" + path + " name:" + name  + " level:" + level + " type:" + type + " donwloadType:" + downloadType);
 		
 		ReturnAjax rt = new ReturnAjax();
 		
