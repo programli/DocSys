@@ -79,6 +79,11 @@
     			showErrorMessage("please call editorInit firstly");
        			return;
        		}
+    		
+    		if(!content)
+    		{
+    			content = "";
+    		}
        		
     		md.setMarkdown(content);
     		if(edit != gEdit)
