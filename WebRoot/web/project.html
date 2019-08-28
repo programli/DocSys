@@ -795,7 +795,7 @@
 	}
 	
 	//文件下载接口 
- 	function downloadDoc(treeNodes,needConfirm)
+ 	function downloadDoc(treeNodes,needConfirm,downloadType)
 	{
 		console.log("downloadDoc treeNodes:", treeNodes);
 		if(!treeNodes || treeNodes == null)
@@ -811,19 +811,24 @@
 	  	if(treeNodes.length > 1)
 	  	{
 	  		downloadDispInfo = downloadDispInfo + " 等" + treeNodes.length + "个文件";
-	  	}	
+	  	}
+	  	
+		if(downloadType && downloadType == 2)
+		{
+  			downloadDispInfo = downloadDispInfo + " 备注";		
+		}
 		
 		if(needConfirm)
 		{
-			if(confirm("是否下载文件：" + downloadDispInfo) == false)
+			if(confirm("是否下载：" + downloadDispInfo) == false)
 			{
 				return;
 			}
 		}
 		
-		DocDownload.downloadDocs(treeNodes, null, gReposId);
+		DocDownload.downloadDocs(treeNodes, null, gReposId,downloadType);
 	}
-	
+		
     /*文件上传实现*/
    	function uploadFilesEx()
     {
@@ -3072,7 +3077,7 @@ function CompareObj(objA, objB, flag) {
    		
    		var treeNodes = [];
    		treeNodes.push(node);
- 		downloadDoc(treeNodes,true);
+ 		downloadDoc(treeNodes,true,1);
  		event.stopPropagation();
  	}
  	
@@ -3675,7 +3680,7 @@ function CompareObj(objA, objB, flag) {
 					$("[dataId='"+ docId +"']").children("div:first-child").css("color","red");
 				    var treeNodes = [];
 				    treeNodes.push(node);
-					downloadDoc(treeNodes,false);
+					downloadDoc(treeNodes,false,1);
 				    return;
  				}
 				else
@@ -4014,7 +4019,13 @@ function CompareObj(objA, objB, flag) {
 			{text: '下载', action: function(e){
 						e.preventDefault();
 						var treeNodes = getSelectedNodes();
-						downloadDoc(treeNodes,true);
+						downloadDoc(treeNodes,true,1);
+					}
+			},
+			{text: '下载备注', action: function(e){
+						e.preventDefault();
+						var treeNodes = getSelectedNodes();
+						downloadDoc(treeNodes,true,2);
 					}
 			},
 			{divider: true},
@@ -4168,7 +4179,14 @@ function CompareObj(objA, objB, flag) {
 					e.preventDefault();
 					var treeNodes = [];
 					treeNodes.push(curRightClickedDocListNode);
-					downloadDoc(treeNodes,true);
+					downloadDoc(treeNodes,true,1);
+				}
+			},
+			{text: '下载备注', action: function(e){
+					e.preventDefault();
+					var treeNodes = [];
+					treeNodes.push(curRightClickedDocListNode);
+					downloadDoc(treeNodes,true,2);
 				}
 			},
 			{divider: true},

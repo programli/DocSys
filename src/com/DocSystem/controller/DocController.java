@@ -1133,10 +1133,10 @@ public class DocController extends BaseController{
 	/**************** downloadDocPrepare ******************/
 	@RequestMapping("/downloadDocPrepare.do")
 	public void downloadDocCheck(Integer reposId, Long docId, Long pid, String path, String name,  Integer level, Integer type,
-			Integer docType,
+			Integer downloadType,
 			HttpServletResponse response,HttpServletRequest request,HttpSession session) throws Exception
 	{
-		System.out.println("downloadDocPrepare  reposId:" + reposId + " docId:" + docId + " pid:" + pid + " path:" + path + " name:" + name  + " level:" + level + " type:" + type);
+		System.out.println("downloadDocPrepare  reposId:" + reposId + " docId:" + docId + " pid:" + pid + " path:" + path + " name:" + name  + " level:" + level + " type:" + type + " donwloadType:" + donwloadType);
 		
 		ReturnAjax rt = new ReturnAjax();
 		
@@ -1160,7 +1160,7 @@ public class DocController extends BaseController{
 		
 		Doc doc = buildBasicDoc(reposId, docId, pid, path, name, level, type, true,localRootPath, localVRootPath, null, null);
 		Doc vDoc = null;
-		if(docType != null && docType == 2)
+		if(downloadType != null && downloadType == 2)
 		{
 			vDoc = buildVDoc(doc);
 			downloadVDocPrepare_FS(repos, vDoc, login_user, rt);

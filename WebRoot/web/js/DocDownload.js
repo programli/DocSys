@@ -61,7 +61,7 @@
 		}
 		
       	//初始化DocDownload
-      	function DocDownloadInit(treeNodes,dstParentNode,dstPath,dstPid,dstLevel,vid)	//多文件下载函数
+      	function DocDownloadInit(treeNodes,dstParentNode,dstPath,dstPid,dstLevel,vid, downloadType)	//多文件下载函数
 		{
 			console.log("DocDownloadInit()");
 			var fileNum = treeNodes.length;
@@ -82,6 +82,7 @@
 			Batch.num = fileNum;
 			Batch.index = 0;
 			Batch.state = 0;
+			Batch.downloadType = downloadType;	//1: realDoc 2: VDoc
 			
 			//add to Content
 			Content.BatchList = [];
@@ -111,7 +112,7 @@
       	}
       	
       	//增加下载文件
-      	function DocDownloadAppend(treeNodes, dstParentNode, dstPath, dstPid, dstLevel, vid)	//多文件下载函数
+      	function DocDownloadAppend(treeNodes, dstParentNode, dstPath, dstPid, dstLevel, vid, downloadType)	//多文件下载函数
 		{
 			console.log("DocDownloadAppend()");
 			if(!treeNodes)
@@ -134,6 +135,7 @@
 			Batch.num = fileNum;
 			Batch.index = 0;
 			Batch.state = 0;
+			Batch.downloadType = downloadType;	//1: realDoc 2: VDoc
 
 			//Append to Content
 			Content.batchList.push(Batch);
@@ -175,6 +177,7 @@
       		var vid = Batch.vid;
       		var index = Batch.index;
       		var fileNum =  Batch.num;
+      		var downloadType = Batch.downloadType;
       		console.log("buildSubContextList() Batch index:" + index + " fileNum:" + fileNum );
       		
       		var count = 0;
@@ -206,6 +209,7 @@
     	   		   	SubContext.type = treeNode.isParent == true? 2: 1;	
 		    	   	SubContext.size = treeNode.size;
     	   		   	SubContext.lastestEditTime = treeNode.latestEditTime;
+    	   		    SubContext.downloadType = downloadType;
 			    	
     	   		   	//dst ParentNode Info
     	   		   	SubContext.dstParentNode = dstParentNode;
@@ -264,6 +268,7 @@
                     pid: SubContext.pid,
                     path: SubContext.path,
                     name: SubContext.name,
+                    downloadType: SubContext.downloadType,
                 },
                 success : function (ret) {
                    if( "ok" == ret.status )
@@ -415,8 +420,8 @@
 		
 		//开放给外部的调用接口
         return {
-            downloadDocs: function(treeNodes,dstParentNode,vid){
-            	downloadDocs(treeNodes,dstParentNode,vid);
+            downloadDocs: function(treeNodes,dstParentNode,vid,downloadType){
+            	downloadDocs(treeNodes,dstParentNode,vid,downloadType);
             },
         };
     })();
