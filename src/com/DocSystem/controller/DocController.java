@@ -1136,7 +1136,7 @@ public class DocController extends BaseController{
 			Integer downloadType,
 			HttpServletResponse response,HttpServletRequest request,HttpSession session) throws Exception
 	{
-		System.out.println("downloadDocPrepare  reposId:" + reposId + " docId:" + docId + " pid:" + pid + " path:" + path + " name:" + name  + " level:" + level + " type:" + type + " donwloadType:" + downloadType);
+		System.out.println("downloadDocPrepare  reposId:" + reposId + " docId:" + docId + " pid:" + pid + " path:" + path + " name:" + name  + " level:" + level + " type:" + type + " downloadType:" + downloadType);
 		
 		ReturnAjax rt = new ReturnAjax();
 		
@@ -1159,11 +1159,9 @@ public class DocController extends BaseController{
 		String localVRootPath = getReposVirtualPath(repos);
 		
 		Doc doc = buildBasicDoc(reposId, docId, pid, path, name, level, type, true,localRootPath, localVRootPath, null, null);
-		Doc vDoc = null;
 		if(downloadType != null && downloadType == 2)
 		{
-			vDoc = buildVDoc(doc);
-			downloadVDocPrepare_FS(repos, vDoc, login_user, rt);
+			downloadVDocPrepare_FS(repos, doc, login_user, rt);
 		}
 		else
 		{
@@ -1292,23 +1290,32 @@ public class DocController extends BaseController{
 		return;		
 	}
 	
-	public void downloadVDocPrepare_FS(Repos repos, Doc vDoc, User login_user, ReturnAjax rt) throws Exception
+	public void downloadVDocPrepare_FS(Repos repos, Doc doc, User login_user, ReturnAjax rt) throws Exception
 	{	
+		Doc vDoc = buildVDoc(doc);
+
 		String targetName = vDoc.getName() +".zip";
 		if(vDoc.getName().isEmpty())
 		{
-			targetName = repos.getName() + "_备注_.zip";	;					
+			targetName = repos.getName() + "_备注_.zip";	
+			
+			if(isEmptyDir(vDoc.getLocalRootPath()))
+			{
+				docSysErrorLog("空目录无法下载！", rt);
+				return;				
+			}
 		}
-				
-		File localEntry = new File(vDoc.getLocalRootPath() + vDoc.getPath(),targetName);
-		if(false == localEntry.exists())
+		else
 		{
-			docSysErrorLog("文件 " + vDoc.getLocalRootPath() + vDoc.getPath() + targetName + " 不存在！", rt);
-			return;
+			File localEntry = new File(vDoc.getLocalRootPath() + vDoc.getPath(),targetName);
+			if(false == localEntry.exists())
+			{
+				docSysErrorLog("文件 " + doc.getName() + " 没有备注！", rt);
+				return;
+			}
 		}
 		
 		String targetPath = getReposUserTmpPath(repos,login_user);
-		
 		//doCompressDir and save the zip File under userTmpDir
 		if(doCompressDir(vDoc.getLocalRootPath() + vDoc.getPath(), vDoc.getName(), targetPath, targetName, rt) == false)
 		{

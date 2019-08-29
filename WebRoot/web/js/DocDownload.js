@@ -23,9 +23,9 @@
  		var SubContextList = []; //文件下载上下文List，用于记录单个文件的下载情况，在开始下载的时候初始化
  		
 		//提供给外部的多文件download接口
-		function downloadDocs(treeNodes, dstParentNode, vid)	//多文件下载函数
+		function downloadDocs(treeNodes, dstParentNode, vid, downloadType)	//多文件下载函数
 		{
-			console.log("downloadDocs reposId:" + vid + " treeNodes:", treeNodes);
+			console.log("downloadDocs reposId:" + vid + " downloadType:" + downloadType + " treeNodes:", treeNodes);
 			if(!treeNodes || treeNodes.length <= 0)
 			{
 				showErrorMessage("请选择需要下载的文件!");
@@ -51,11 +51,11 @@
 
 			if(isDownloading == true)
 			{
-				DocDownloadAppend(treeNodes, dstParentNode, dstPath, dstPid, dstLevel, vid);
+				DocDownloadAppend(treeNodes, dstParentNode, dstPath, dstPid, dstLevel, vid, downloadType);
 			}
 			else
 			{
-				DocDownloadInit(treeNodes, dstParentNode, dstPath, dstPid, dstLevel, vid);
+				DocDownloadInit(treeNodes, dstParentNode, dstPath, dstPid, dstLevel, vid, downloadType);
 				downloadDoc();
 			}			
 		}
@@ -63,7 +63,7 @@
       	//初始化DocDownload
       	function DocDownloadInit(treeNodes,dstParentNode,dstPath,dstPid,dstLevel,vid, downloadType)	//多文件下载函数
 		{
-			console.log("DocDownloadInit()");
+			console.log("DocDownloadInit() downloadType:" + downloadType);
 			var fileNum = treeNodes.length;
 			console.log("DocDownloadInit() fileNum:" + fileNum);				
 
@@ -114,7 +114,8 @@
       	//增加下载文件
       	function DocDownloadAppend(treeNodes, dstParentNode, dstPath, dstPid, dstLevel, vid, downloadType)	//多文件下载函数
 		{
-			console.log("DocDownloadAppend()");
+			console.log("DocDownloadAppend() downloadType:" + downloadType);
+
 			if(!treeNodes)
 			{
 				console.log("DocDownloadAppend() treeNodes is null");
