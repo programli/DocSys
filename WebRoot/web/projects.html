@@ -120,8 +120,8 @@
             	<option value="4">GIT前置</option>   
             </select>
             <div name="realDocPathDiv">
-		        <label>文件存储目录</label>
-				<input class="form-control" type="text" name="realDocPath"  placeholder="请选择文件存储目录！"  value="" style="width: 100%"/>
+		        <label>文件存储位置</label>
+				<input class="form-control" type="text" name="realDocPath"  placeholder="如使用默认位置，请留空！"  value="" style="width: 100%"/>
 			</div>
 			<div name="verCtrlDiv">
 	            <label>版本管理 <span name="isRemoteSetting" style="margin-left:20px"><input type="checkbox" name="isRemote" value="0" checked="checked" onclick="doSelectVerCtrl()">自动创建</span></label>
@@ -393,7 +393,7 @@
 			$("#dialog-new-repos select[name='verCtrl1']").get(0).selectedIndex=0;
 			$("#dialog-new-repos div[name='virtualDocVerCtrlDiv']").show();
 
-			$("#dialog-new-repos div[name='realDocPathDiv']").hide();
+			//$("#dialog-new-repos div[name='realDocPathDiv']").hide();
 		}
 		if(type == 2) //Hide RealDoc and VirtualDoc VerCtrl and Set VerCtrl = 无
 		{
@@ -401,7 +401,7 @@
 			$("#dialog-new-repos select[name='verCtrl']").get(0).selectedIndex=0;
 			$("#dialog-new-repos select[name='verCtrl1']").get(0).selectedIndex=0;
 
-			$("#dialog-new-repos div[name='realDocPathDiv']").show();
+			//$("#dialog-new-repos div[name='realDocPathDiv']").show();
 		}
 		else if(type == 3)	//Hide VirtualDoc VerCtl and Set verCtr = SVN isRemote = 1
 		{
@@ -413,7 +413,7 @@
 			$("#dialog-new-repos select[name='verCtrl1']").get(0).selectedIndex=0;
 			$("#dialog-new-repos div[name='virtualDocVerCtrlDiv']").hide();
 
-			$("#dialog-new-repos div[name='realDocPathDiv']").hide();
+			//$("#dialog-new-repos div[name='realDocPathDiv']").hide();
 		}
 		else if(type == 4)	//Hide VirtualDoc VerCtl and Set verCtr = GIT isRemote = 1
 		{
@@ -425,7 +425,7 @@
 			$("#dialog-new-repos select[name='verCtrl1']").get(0).selectedIndex=0;
 			$("#dialog-new-repos div[name='virtualDocVerCtrlDiv']").hide();
 
-			$("#dialog-new-repos div[name='realDocPathDiv']").hide();
+			//$("#dialog-new-repos div[name='realDocPathDiv']").hide();
 		}
 		doSelectVerCtrl();
 		doSelectVerCtrl1();			

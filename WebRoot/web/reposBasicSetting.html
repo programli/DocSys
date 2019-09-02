@@ -15,8 +15,8 @@
             	<option value="4">GIT前置</option>   
             </select>
             <div id="RBSrealDocPathDiv">
-		        <label>文件存储目录</label>
-				<input class="form-control" type="text" id="RBSrealDocPath"  placeholder="请选择文件存储目录！"  value="" style="width: 100%"/>
+		        <label>文件存储位置</label>
+				<input class="form-control" type="text" id="RBSrealDocPath"  placeholder="如使用默认位置，请留空！"  value="" style="width: 100%"/>
 			</div>
             <div id="RBSverCtrlDiv">
 	            <div id="RBSrealDocVerCtrlDiv">
@@ -96,14 +96,14 @@
 			//$("#RBSverCtrl1").get(0).selectedIndex=0;
 			//$("#RBSvirtualDocVerCtrlDiv").show();
 
-			$("#RBSrealDocPathDiv").hide();
+			//$("#RBSrealDocPathDiv").hide();
 		}
 		if(type == 2) //Hide RealDoc and VirtualDoc VerCtrl and Set VerCtrl = 无
 		{
 			$("#RBSverCtrlDiv").hide();
 			$("#RBSverCtrl").get(0).selectedIndex=0;
 			$("#RBSverCtrl1").get(0).selectedIndex=0;
-			$("#RBSrealDocPathDiv").show();
+			//$("#RBSrealDocPathDiv").show();
 		}
 		else if(type == 3)	//Hide VirtualDoc VerCtl and Set verCtr = SVN isRemote = 1
 		{
@@ -115,7 +115,7 @@
 			$("#RBSverCtrl1").get(0).selectedIndex=0;
 			$("#RBSvirtualDocVerCtrlDiv").hide();
 
-			$("#RBSrealDocPathDiv").hide();
+			//$("#RBSrealDocPathDiv").hide();
 		}
 		else if(type == 4)	//Hide VirtualDoc VerCtl and Set verCtr = GIT isRemote = 1
 		{
@@ -127,7 +127,7 @@
 			$("#RBSverCtrl1").get(0).selectedIndex=0;
 			$("#RBSvirtualDocVerCtrlDiv").hide();
 
-			$("#RBSrealDocPathDiv").hide();
+			//$("#RBSrealDocPathDiv").hide();
 		}
 		doSelectVerCtrl();
 		doSelectVerCtrl1();
