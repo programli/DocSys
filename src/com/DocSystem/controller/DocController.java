@@ -1294,6 +1294,7 @@ public class DocController extends BaseController{
 	{	
 		Doc vDoc = buildVDoc(doc);
 
+		printObject("downloadVDocPrepare_FS vDoc:",vDoc);
 		String targetName = vDoc.getName() +".zip";
 		if(vDoc.getName().isEmpty())
 		{
@@ -1307,7 +1308,7 @@ public class DocController extends BaseController{
 		}
 		else
 		{
-			File localEntry = new File(vDoc.getLocalRootPath() + vDoc.getPath(),targetName);
+			File localEntry = new File(vDoc.getLocalRootPath() + vDoc.getPath() + vDoc.getName());
 			if(false == localEntry.exists())
 			{
 				docSysErrorLog("文件 " + doc.getName() + " 没有备注！", rt);
