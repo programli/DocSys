@@ -74,10 +74,7 @@ public class BaseController  extends BaseFunction{
 			printObject("getAccessableSubDocList() docList:", docList);
 		}
 		
-		if(repos.getType() == 1)
-		{
-			addDocToSyncUpList(actionList, repos, doc);
-		}
+		addDocToSyncUpList(actionList, repos, doc);
 		
 		return docList;
 	}
@@ -439,6 +436,11 @@ public class BaseController  extends BaseFunction{
 	}
 	
 	protected void addDocToSyncUpList(List<CommonAction> actionList, Repos repos, Doc doc) {
+		if(repos.getType() != 1)
+		{
+			return;
+		}
+
 		User autoSync = new User();
 		autoSync.setId(0);
 		autoSync.setName("AutoSync");

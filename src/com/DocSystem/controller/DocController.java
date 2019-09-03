@@ -1132,7 +1132,7 @@ public class DocController extends BaseController{
 	
 	/**************** downloadDocPrepare ******************/
 	@RequestMapping("/downloadDocPrepare.do")
-	public void downloadDocCheck(Integer reposId, Long docId, Long pid, String path, String name,  Integer level, Integer type,
+	public void downloadDocPrepare(Integer reposId, Long docId, Long pid, String path, String name,  Integer level, Integer type,
 			Integer downloadType,
 			HttpServletResponse response,HttpServletRequest request,HttpSession session) throws Exception
 	{
