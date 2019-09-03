@@ -599,7 +599,12 @@ public class GITUtil  extends BaseController{
 	//get the subEntryList under remoteEntryPath,only useful for Directory
 	public List<Doc> getDocList(Repos repos, Doc doc, String revision)
 	{
-		String entryPath = doc.getPath() + doc.getName();
+		String docName =  doc.getName();
+		if(doc.getDocId() == 0)
+		{
+			docName = "";
+		}
+		String entryPath = doc.getPath() + docName;
 		
 		if(OpenRepos() == false)
 		{
@@ -628,10 +633,10 @@ public class GITUtil  extends BaseController{
         	return null;
         }    
 
-        String subDocParentPath = doc.getPath() + doc.getName() + "/";
-		if(doc.getDocId() == 0)
+        String subDocParentPath = doc.getPath() + docName + "/";
+		if(docName.isEmpty())
 		{
-			subDocParentPath = "";
+			subDocParentPath = doc.getPath();
 		}
 		
 		int subDocLevel = doc.getLevel() + 1;            

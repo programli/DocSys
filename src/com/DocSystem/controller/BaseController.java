@@ -160,21 +160,28 @@ public class BaseController  extends BaseFunction{
     	
 		String localRootPath = getReposRealPath(repos);
 		String localVRootPath = getReposVirtualPath(repos);
-		File dir = new File(localRootPath + doc.getPath() + doc.getName());
+		
+		String docName = doc.getName();
+		if(doc.getDocId() == 0)
+		{
+			docName = "";
+		}
+
+		File dir = new File(localRootPath + doc.getPath() + docName);
     	if(false == dir.exists())
     	{
-    		System.out.println("getLocalEntryList() " + doc.getPath() + doc.getName() + " 不存在！");
+    		System.out.println("getLocalEntryList() " + doc.getPath() + docName + " 不存在！");
     		return null;
     	}
     	
     	if(dir.isFile())
     	{
-    		System.out.println("getLocalEntryList() " + doc.getPath() + doc.getName() + " 不是目录！");
+    		System.out.println("getLocalEntryList() " + doc.getPath() + docName + " 不是目录！");
     		return null;
     	}
 
-		String subDocParentPath = doc.getPath() + doc.getName() + "/";
-		if(doc.getName().isEmpty())
+		String subDocParentPath = doc.getPath() + docName + "/";
+		if(docName.isEmpty())
 		{
 			subDocParentPath = doc.getPath();
 		}
