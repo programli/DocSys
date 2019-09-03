@@ -2679,8 +2679,14 @@ public class BaseController  extends BaseFunction{
 		return false;
 	}
 
-	private int getRemoteChangeType(Doc dbDoc, Doc remoteEntry) 
+	private int getRemoteChangeType(Repos repos, Doc dbDoc, Doc remoteEntry) 
 	{
+		if(repos.getVerCtrl() == null || repos.getVerCtrl() == 0)
+		{
+			System.out.println("getRemoteChangeType() no verCtrl");
+			return 0;
+		}
+		
 		if(dbDoc == null)
 		{
 			if(remoteEntry != null)
