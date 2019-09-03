@@ -2132,7 +2132,7 @@ public class BaseController  extends BaseFunction{
 		printObject("syncupForDocChange_NoFS() dbDoc: ", dbDoc);
 
 		
-		int remoteChangeType = getRemoteChangeType(dbDoc, remoteEntry);
+		int remoteChangeType = getRemoteChangeType(repos, dbDoc, remoteEntry);
 		if(remoteChangeType != 0)
 		{
 			//LockDoc
@@ -2354,7 +2354,7 @@ public class BaseController  extends BaseFunction{
 		//dbDoc存在，localDoc不存在
 		if(localEntry == null)
 		{
-			int remoteChangeType = getRemoteChangeType(dbDoc, remoteEntry);
+			int remoteChangeType = getRemoteChangeType(repos, dbDoc, remoteEntry);
 			if(remoteChangeType == 0)
 			{
 				//本地文件/目录删除
