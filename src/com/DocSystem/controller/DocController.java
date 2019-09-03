@@ -112,20 +112,7 @@ public class DocController extends BaseController{
 			return;
 		}
 
-		Doc tmpDoc = null;
-		switch(repos.getType())
-		{
-		case 1:
-			tmpDoc = dbGetDoc(repos, doc, false);
-			break;
-		case 2:
-			tmpDoc = fsGetDoc(repos, doc);
-			break;
-		case 3:
-		case 4:
-			tmpDoc = verReposGetDoc(repos, doc, null);
-			break;
-		}	
+		Doc tmpDoc = docSysGetDoc(repos, doc);
 		if(tmpDoc != null && tmpDoc.getType() != 0)
 		{
 			docSysErrorLog(doc.getName() + " 已存在", rt);
@@ -356,8 +343,8 @@ public class DocController extends BaseController{
 		Doc srcDoc = buildBasicDoc(reposId, docId, pid, path, name, level, type, true, localRootPath, localVRootPath, null, null);
 		Doc dstDoc = buildBasicDoc(reposId, null, pid, path, dstName, level, type, true, localRootPath, localVRootPath, null, null);
 		
-		Doc srcDbDoc = dbGetDoc(repos, srcDoc, false);
-		if(srcDbDoc == null)
+		Doc srcDbDoc = docSysGetDoc(repos, srcDoc);
+		if(srcDbDoc == null || srcDbDoc.getType() == 0)
 		{
 			docSysErrorLog("文件 " + srcDoc.getName() + " 不存在！", rt);
 			writeJson(rt, response);			
@@ -372,6 +359,22 @@ public class DocController extends BaseController{
 		{
 			executeCommonActionList(actionList, rt);
 		}
+	}
+
+	private Doc docSysGetDoc(Repos repos, Doc doc) 
+	{
+		switch(repos.getType())
+		{
+		case 1:
+			return dbGetDoc(repos, doc, false);
+		case 2:
+			return fsGetDoc(repos, doc);
+		case 3:
+		case 4:
+			return verReposGetDoc(repos, doc, null);
+		}
+		
+		return null;
 	}
 
 	/****************   move a Document ******************/
@@ -437,8 +440,8 @@ public class DocController extends BaseController{
 		Doc srcDoc = buildBasicDoc(reposId, docId, srcPid, srcPath, srcName, srcLevel, type, true, localRootPath, localVRootPath, null, null);
 		Doc dstDoc = buildBasicDoc(reposId, null, dstPid, dstPath, dstName, dstLevel, type, true, localRootPath, localVRootPath, null, null);
 		
-		Doc srcDbDoc = dbGetDoc(repos, srcDoc, false);
-		if(srcDbDoc == null)
+		Doc srcDbDoc = docSysGetDoc(repos, srcDoc);
+		if(srcDbDoc == null || srcDbDoc.getType() == 0)
 		{
 			docSysErrorLog("文件 " + srcDoc.getName() + " 不存在！", rt);
 			writeJson(rt, response);			
@@ -505,8 +508,8 @@ public class DocController extends BaseController{
 		Doc srcDoc = buildBasicDoc(reposId, docId, srcPid, srcPath, srcName, srcLevel, type, true, localRootPath, localVRootPath, null, null);
 		Doc dstDoc = buildBasicDoc(reposId, null, dstPid, dstPath, dstName, dstLevel, type, true, localRootPath, localVRootPath, null, null);
 		
-		Doc srcDbDoc = dbGetDoc(repos, srcDoc, false);
-		if(srcDbDoc == null)
+		Doc srcDbDoc = docSysGetDoc(repos, srcDoc);
+		if(srcDbDoc == null || srcDbDoc.getType() == 0)
 		{
 			docSysErrorLog("文件 " + srcDoc.getName() + " 不存在！", rt);
 			writeJson(rt, response);			
@@ -598,8 +601,8 @@ public class DocController extends BaseController{
 		//检查文件是否已存在 
 		Doc doc = buildBasicDoc(reposId, docId, pid, path, name, level, type, true,localRootPath, localVRootPath, size, checkSum);
 
-		Doc dbDoc = dbGetDoc(repos, doc, false);
-		if(dbDoc != null)
+		Doc dbDoc = docSysGetDoc(repos, doc);
+		if(dbDoc != null && dbDoc.getType() != 0)
 		{
 			rt.setData(dbDoc);
 			rt.setMsgData("0");
@@ -619,39 +622,43 @@ public class DocController extends BaseController{
 		}
 		else
 		{
-			if(size > 50*1024*1024)	//Only For 50M File to balance the Upload and SameDocSearch 
+			//对于文件管理系统类型的仓库，对于大于50M的文件尝试寻找checkSum相同的文件进行复制来避免上传
+			if(repos.getType() == 1)
 			{
-				//Try to find the same Doc in the repos
-				Doc sameDoc = getSameDoc(size,checkSum,reposId);
-				if(null != sameDoc)
+				if(size > 50*1024*1024)	//Only For 50M File to balance the Upload and SameDocSearch 
 				{
-					System.out.println("checkDocInfo() " + sameDoc.getName() + " has same checkSum " + checkSum + " try to copy from it");
-					
-					if(commitMsg == null)
+					//Try to find the same Doc in the repos
+					Doc sameDoc = getSameDoc(size,checkSum,reposId);
+					if(null != sameDoc)
 					{
-						commitMsg = "上传 " + path + name;
-					}
-					String commitUser = login_user.getName();
-					List<CommonAction> actionList = new ArrayList<CommonAction>();
-					boolean ret = copyDoc(repos, sameDoc, doc, commitMsg, commitUser, login_user,rt,actionList);
-					if(ret == true)
-					{
-						dbDoc = dbGetDoc(repos, doc, true);
-						rt.setData(dbDoc);
-						rt.setMsgData("1");
-						docSysDebugLog("checkDocInfo() " + sameDoc.getName() + " was copied ok！", rt);
-						writeJson(rt, response);
+						System.out.println("checkDocInfo() " + sameDoc.getName() + " has same checkSum " + checkSum + " try to copy from it");
 						
-						executeCommonActionList(actionList, rt);
-						return;
-					}
-					else
-					{
-						rt.setStatus("ok");
-						rt.setMsgData("3");
-						docSysDebugLog("checkDocInfo() " + sameDoc.getName() + " was copied failed！", rt);
-						writeJson(rt, response);
-						return;
+						if(commitMsg == null)
+						{
+							commitMsg = "上传 " + path + name;
+						}
+						String commitUser = login_user.getName();
+						List<CommonAction> actionList = new ArrayList<CommonAction>();
+						boolean ret = copyDoc(repos, sameDoc, doc, commitMsg, commitUser, login_user,rt,actionList);
+						if(ret == true)
+						{
+							dbDoc = dbGetDoc(repos, doc, true);
+							rt.setData(dbDoc);
+							rt.setMsgData("1");
+							docSysDebugLog("checkDocInfo() " + sameDoc.getName() + " was copied ok！", rt);
+							writeJson(rt, response);
+							
+							executeCommonActionList(actionList, rt);
+							return;
+						}
+						else
+						{
+							rt.setStatus("ok");
+							rt.setMsgData("3");
+							docSysDebugLog("checkDocInfo() " + sameDoc.getName() + " was copied failed！", rt);
+							writeJson(rt, response);
+							return;
+						}
 					}
 				}
 			}
@@ -757,9 +764,8 @@ public class DocController extends BaseController{
 				
 				Doc doc = buildBasicDoc(reposId, docId, pid, path, name, level, type, true,localRootPath, localVRootPath, size, checkSum);
 				
-				Doc dbDoc = dbGetDoc(repos, doc, false);
-				
-				if(dbDoc == null)
+				Doc dbDoc = docSysGetDoc(repos, doc);
+				if(dbDoc == null || dbDoc.getType() == 0)
 				{
 					boolean ret = addDoc(repos, doc,
 								null,
@@ -832,8 +838,8 @@ public class DocController extends BaseController{
 		
 		Doc doc = buildBasicDoc(reposId, docId, pid, path, name, level, 1, true, localRootPath, localVRootPath, size, checkSum);
 		
-		Doc dbDoc = dbGetDoc(repos, doc, false);
-		if(dbDoc == null)	//0: add  1: update
+		Doc dbDoc = docSysGetDoc(repos, doc);
+		if(dbDoc == null || dbDoc.getType() == 0)	//0: add  1: update
 		{
 			Doc parentDoc = buildBasicDoc(reposId, doc.getPid(), null, path, "", null, 2, true, localRootPath, localVRootPath, null, null);
 			if(checkUserAddRight(repos,login_user.getId(), parentDoc, rt) == false)
@@ -1024,8 +1030,8 @@ public class DocController extends BaseController{
 		String localVRootPath = getReposVirtualPath(repos);
 
 		Doc doc = buildBasicDoc(reposId, docId, pid, path, name, level, type, true, localRootPath, localVRootPath, null, null);
-		Doc dbDoc = dbGetDoc(repos, doc, false);
-		if(dbDoc == null)
+		Doc dbDoc = docSysGetDoc(repos, doc);
+		if(dbDoc == null || dbDoc.getType() == 0)
 		{
 			docSysErrorLog("文件 " + path + name + " 不存在！", rt);
 			writeJson(rt, response);			
@@ -1743,8 +1749,8 @@ public class DocController extends BaseController{
 			return;
 		}
 
-		Doc dbDoc = dbGetDoc(repos, doc, false);
-		if(dbDoc == null)
+		Doc dbDoc = docSysGetDoc(repos, doc);
+		if(dbDoc == null || dbDoc.getType() == 0)
 		{
 			docSysErrorLog("文件 " + path+name + " 不存在！", rt);
 			writeJson(rt, response);			
