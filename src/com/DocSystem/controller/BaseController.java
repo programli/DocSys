@@ -5149,7 +5149,8 @@ public class BaseController  extends BaseFunction{
 			doc = buildVDoc(doc);
 			verCtrl = repos.getVerCtrl1();
 		}
-		
+
+		System.out.println("verReposDocCommit verCtrl:"+verCtrl);
 		if(verCtrl == 1)
 		{
 			commitMsg = commitMsgFormat(repos, doc.getIsRealDoc(), commitMsg, commitUser);
@@ -5159,7 +5160,8 @@ public class BaseController  extends BaseFunction{
 		{
 			return gitDocCommit(repos, doc, commitMsg, commitUser, rt, modifyEnable, commitHashMap, subDocCommitFlag);
 		}
-		return null;
+		
+		return "";
 	}
 	
 	protected String svnDocCommit(Repos repos, Doc doc, String commitMsg, String commitUser, ReturnAjax rt, boolean modifyEnable, HashMap<Long, Doc> commitHashMap, int subDocCommitFlag)
