@@ -1158,54 +1158,17 @@ public class GITUtil  extends BaseController{
 		
 		System.out.println("doAutoCommit()" + " parentPath:" + doc.getPath() +" entryName:" + doc.getName() +" localRootPath:" + localRootPath + " commitMsg:" + commitMsg +" modifyEnable:" + modifyEnable + " localRefRootPath:" + localRefRootPath);
     	
-    	File localParentDir = new File(localRootPath+doc.getPath());
-		if(!localParentDir.exists())
-		{
-			System.out.println("doAutoCommit() localParentPath " + localRootPath+doc.getPath() + " not exists");
-			return null;
-		}
-		if(!localParentDir.isDirectory())
-		{
-			System.out.println("doAutoCommit() localParentPath " + localRootPath+doc.getPath()  + " is not directory");
-			return null;
-		}
-		
-		//If remote parentPath not exists, need to set the autoCommit entry to parentPath
-		Integer type = checkPath(doc.getPath(), null);
-		if(type == null)
-		{
-			System.out.println("doAutoCommit() checkPath for " + doc.getPath() + " 异常");
-			return null;
-		}
-
-		String entryPath = doc.getPath() + doc.getName();			
-		File localEntry = new File(localRootPath + entryPath);
-
-		//注意：这里检查的是远程的parentDoc是否存在和下面的type是不一样的
-		if(type == 0)
-		{
-			if(!localEntry.exists())
-			{
-				System.out.println("doAutoCommit() remoteEnry " + entryPath + " not exists");
-		        return getLatestRevision(doc);		
-			}
-				
-			if(!doc.getPath().isEmpty())
-			{
-				System.out.println("doAutoCommit() parent entry " + doc.getPath() + " not exists, do commit parent");
-				return doAutoCommitParent(doc, commitMsg, commitUser, modifyEnable);
-			}
-		}	
-
 		
 		List <CommitAction> commitActionList = new ArrayList<CommitAction>();
 		
+		String entryPath = doc.getPath() + doc.getName();			
+		File localEntry = new File(localRootPath + entryPath);
 		
 		//LocalEntry does not exist
 		if(!localEntry.exists())	//Delete Commit
 		{
 			System.out.println("doAutoCommit() localEntry " + localRootPath + entryPath + " not exists");
-			type = checkPath(entryPath, null);
+			Integer type = checkPath(entryPath, null);
 		    if(type == null)
 		    {
 		    	return null;
@@ -1220,7 +1183,43 @@ public class GITUtil  extends BaseController{
     		insertDeleteAction(commitActionList,doc);
 		}
 		else
-		{
+		{		
+	    	File localParentDir = new File(localRootPath+doc.getPath());
+			if(!localParentDir.exists())
+			{
+				System.out.println("doAutoCommit() localParentPath " + localRootPath+doc.getPath() + " not exists");
+				return null;
+			}
+			if(!localParentDir.isDirectory())
+			{
+				System.out.println("doAutoCommit() localParentPath " + localRootPath+doc.getPath()  + " is not directory");
+				return null;
+			}
+			
+			//If remote parentPath not exists, need to set the autoCommit entry to parentPath
+			Integer type = checkPath(doc.getPath(), null);
+			if(type == null)
+			{
+				System.out.println("doAutoCommit() checkPath for " + doc.getPath() + " 异常");
+				return null;
+			}
+	
+			//注意：这里检查的是远程的parentDoc是否存在和下面的type是不一样的
+			if(type == 0)
+			{
+				if(!localEntry.exists())
+				{
+					System.out.println("doAutoCommit() remoteEnry " + entryPath + " not exists");
+			        return getLatestRevision(doc);		
+				}
+					
+				if(!doc.getPath().isEmpty())
+				{
+					System.out.println("doAutoCommit() parent entry " + doc.getPath() + " not exists, do commit parent");
+					return doAutoCommitParent(doc, commitMsg, commitUser, modifyEnable);
+				}
+			}	
+	
 			//LocalEntry is File
 			if(localEntry.isFile())
 			{
