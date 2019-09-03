@@ -74,7 +74,10 @@ public class BaseController  extends BaseFunction{
 			printObject("getAccessableSubDocList() docList:", docList);
 		}
 		
-		addDocToSyncUpList(actionList, repos, doc);
+		if(repos.getType() == 1)
+		{
+			addDocToSyncUpList(actionList, repos, doc);
+		}
 		
 		return docList;
 	}
