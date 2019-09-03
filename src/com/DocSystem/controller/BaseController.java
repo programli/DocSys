@@ -114,12 +114,27 @@ public class BaseController  extends BaseFunction{
 	protected List<Doc> getAuthedSubDocList(Repos repos, Doc doc, DocAuth pDocAuth, HashMap<Long, DocAuth> docAuthHashMap, ReturnAjax rt, List<CommonAction> actionList)
 	{
 		List<Doc> docList = new ArrayList<Doc>();
-		List<Doc> dbDocList = getDBEntryList(repos, doc);
-		if(dbDocList != null)
+		List<Doc> tmpDocList = null;
+		switch(repos.getType())
+		{
+		case 1:
+			tmpDocList = getDBEntryList(repos, doc);			
+			break;
+		case 2:
+			tmpDocList = getLocalEntryList(repos, doc);
+			break;
+		case 3:
+		case 4:
+			tmpDocList = getRemoteEntryList(repos, doc);
+			break;
+		default:
+			return null;
+		}
+		if(tmpDocList != null)
     	{
-	    	for(int i=0;i<dbDocList.size();i++)
+	    	for(int i=0;i<tmpDocList.size();i++)
 	    	{
-	    		Doc dbDoc = dbDocList.get(i);
+	    		Doc dbDoc = tmpDocList.get(i);
 	    		
 	    		DocAuth docAuth = getDocAuthFromHashMap(dbDoc.getDocId(), pDocAuth,docAuthHashMap);
 				if(docAuth != null && docAuth.getAccess()!=null && docAuth.getAccess() == 1)
