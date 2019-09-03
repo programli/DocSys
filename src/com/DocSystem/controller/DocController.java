@@ -2167,10 +2167,10 @@ public class DocController extends BaseController{
 	}
 	
 	/****************   revert Document History *****************
+	 *
 	 * 
 	 *  注意：revert只恢复不存在的文件，已存在的文件将不进行恢复
-	 * /
-	
+	 */	
 	@RequestMapping("/revertDocHistory.do")
 	public void revertDocHistory(Integer reposId, Long docId, Long pid, String path, String name,  Integer level, Integer type,
 			String commitId,
