@@ -111,13 +111,26 @@ public class DocController extends BaseController{
 			writeJson(rt, response);	
 			return;
 		}
-		
-		Doc dbDoc = dbGetDoc(repos, doc, false);
-		if(dbDoc != null)
+
+		Doc tmpDoc = null;
+		switch(repos.getType())
+		{
+		case 1:
+			tmpDoc = dbGetDoc(repos, doc, false);
+			break;
+		case 2:
+			tmpDoc = fsGetDoc(repos, doc);
+			break;
+		case 3:
+		case 4:
+			tmpDoc = verReposGetDoc(repos, doc, null);
+			break;
+		}	
+		if(tmpDoc != null && tmpDoc.getType() != 0)
 		{
 			docSysErrorLog(doc.getName() + " 已存在", rt);
 			rt.setMsgData(1);
-			rt.setData(dbDoc);
+			rt.setData(tmpDoc);
 			writeJson(rt, response);
 			return;
 		}

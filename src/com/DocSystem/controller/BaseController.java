@@ -1801,7 +1801,7 @@ public class BaseController  extends BaseFunction{
 		{
 			//由于前台是根据docId和pid来组织目录结构的，所以前台可以删除docId=0的节点，表示数据库中存在一个docId=0的非法节点，直接删除掉
 			docSysDebugLog("deleteDoc_FS() 这是一个非法节点docId = 0", rt);
-			dbDeleteDoc(doc, false);
+			dbDeleteDoc(repos, doc, false);
 			return null;
 		}
 		
@@ -2269,7 +2269,7 @@ public class BaseController  extends BaseFunction{
 			return dbAddDoc(repos, remoteEntry, false, false);
 		case 2:
 			System.out.println("syncUpForRemoteChange_NoFS() remote Type Changed: " + doc.getPath()+doc.getName());
-			dbDeleteDoc(doc,true);
+			dbDeleteDoc(repos, doc,true);
 			return dbAddDoc(repos, remoteEntry, true, false);
 		case 3:
 			System.out.println("syncUpForRemoteChange_NoFS() remote File Changed: " + doc.getPath()+doc.getName());
@@ -2278,7 +2278,7 @@ public class BaseController  extends BaseFunction{
 		case 4:
 			//Remote Deleted
 			System.out.println("syncUpForRemoteChange_NoFS() remote Deleted: " + doc.getPath()+doc.getName());
-			return dbDeleteDoc(doc, true);
+			return dbDeleteDoc(repos, doc, true);
 		}
 		
 		return true;
@@ -2662,7 +2662,7 @@ public class BaseController  extends BaseFunction{
 			System.out.println("syncUpRemoteChange_FS() local and remote deleted: " + doc.getPath()+doc.getName());
 			if(deleteRealDoc(repos, doc, rt) == true)
 			{
-				dbDeleteDoc(doc,true);
+				dbDeleteDoc(repos, doc,true);
 			}	
 			return true;
 		case 23: //Remote File Changed
@@ -2685,7 +2685,7 @@ public class BaseController  extends BaseFunction{
 			System.out.println("syncUpRemoteChange_FS() remote Type Changed: " + doc.getPath()+doc.getName());
 			if(deleteRealDoc(repos, doc, rt) == true)
 			{
-				dbDeleteDoc(doc,true);
+				dbDeleteDoc(repos, doc,true);
 				
 				//checkOut
 				localParentPath = getReposRealPath(repos) + remoteEntry.getPath();
@@ -2888,7 +2888,7 @@ public class BaseController  extends BaseFunction{
 				System.out.println("dbGetDoc() 数据库存在多个DOC记录(" + doc.getName() + ")，自动清理"); 
 				for(int i=0; i <list.size(); i++)
 				{
-					dbDeleteDoc(list.get(i), true);
+					dbDeleteDoc(repos, list.get(i), true);
 				}
 				return null;
 			}
@@ -2899,7 +2899,12 @@ public class BaseController  extends BaseFunction{
 	}
 
 	private boolean dbAddDoc(Repos repos, Doc doc, boolean addSubDocs, boolean parentDocCheck) 
-	{			
+	{
+		if(repos.getType() != 1)
+		{
+			return true;
+		}
+		
 		String reposRPath = getReposRealPath(repos);
 		String docPath = reposRPath + doc.getPath() + doc.getName();
 		File localEntry = new File(docPath);
@@ -2943,7 +2948,12 @@ public class BaseController  extends BaseFunction{
 		return true;
 	}
 	
-	private boolean dbDeleteDoc(Doc doc, boolean deleteSubDocs) {
+	private boolean dbDeleteDoc(Repos repos, Doc doc, boolean deleteSubDocs) 
+	{
+		if(repos.getType() != 1)
+		{
+			return true;
+		}
 
 		if(deleteSubDocs)
 		{
@@ -2968,7 +2978,7 @@ public class BaseController  extends BaseFunction{
 						printObject("dbDeleteDoc() subDoc:", subDoc);
 						continue;
 					}
-					dbDeleteDoc(subDoc, true);
+					dbDeleteDoc(repos, subDoc, true);
 				}
 			}
 		}
@@ -2987,7 +2997,12 @@ public class BaseController  extends BaseFunction{
 
 	//autoDetect: 自动检测是新增还是更新
 	private boolean dbUpdateDoc(Repos repos, Doc doc, boolean autoDetect) 
-	{		
+	{	
+		if(repos.getType() != 1)
+		{
+			return true;
+		}
+
 		if(autoDetect == false)
 		{
 			if(reposService.updateDoc(doc) == 0)
@@ -3008,7 +3023,7 @@ public class BaseController  extends BaseFunction{
 		{
 			//这次commit是一个删除操作
 			System.out.println("dbUpdateDoc() 本地文件/目录删除:" + doc.getDocId() + " " + doc.getPath() + doc.getName()); 
-			return dbDeleteDoc(doc, true);
+			return dbDeleteDoc(repos, doc, true);
 		}
 		
 		//根据localEntry来设置文件类型
@@ -3030,7 +3045,7 @@ public class BaseController  extends BaseFunction{
 		if(dbDoc.getType() != localEntry.getType())
 		{
 			System.out.println("dbUpdateDoc() 本地文件/目录类型改变:" + doc.getDocId() + " " + doc.getPath() + doc.getName()); 
-			if(dbDeleteDoc(dbDoc, true) == false)
+			if(dbDeleteDoc(repos, dbDoc, true) == false)
 			{
 				System.out.println("dbUpdateDoc() 删除dbDoc失败:" + doc.getDocId() + " " + doc.getPath() + doc.getName()); 
 				return false;
@@ -3058,15 +3073,30 @@ public class BaseController  extends BaseFunction{
 
 	private boolean dbMoveDoc(Repos repos, Doc srcDoc, Doc dstDoc) 
 	{
-		dbDeleteDoc(srcDoc,true);
+		if(repos.getType() != 1)
+		{
+			return true;
+		}
+		
+		dbDeleteDoc(repos, srcDoc,true);
 		return dbAddDoc(repos, dstDoc, true, false);
 	}
 	
 	private boolean dbCopyDoc(Repos repos, Doc srcDoc, Doc dstDoc, User login_user, ReturnAjax rt) {
+		if(repos.getType() != 1)
+		{
+			return true;
+		}
+
 		return dbAddDoc(repos, dstDoc, true, false);
 	}
 	
-	private boolean dbDeleteDocEx(List<CommonAction> actionList, Repos repos, Doc doc, boolean deleteSubDocs, String commitMsg, String commitUser) {
+	private boolean dbDeleteDocEx(List<CommonAction> actionList, Repos repos, Doc doc, boolean deleteSubDocs, String commitMsg, String commitUser) 
+	{
+		if(repos.getType() != 1)
+		{
+			return true;
+		}
 
 		if(deleteSubDocs)
 		{
@@ -3111,7 +3141,7 @@ public class BaseController  extends BaseFunction{
 		case 1:	//Add Doc
 			return dbAddDoc(repos, doc, false, true);
 		case 2: //Delete Doc
-			return dbDeleteDoc(doc, true);
+			return dbDeleteDoc(repos, doc, true);
 		case 3: //Update Doc
 			return dbUpdateDoc(repos, doc, true);
 		}
