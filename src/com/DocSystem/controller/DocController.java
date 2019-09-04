@@ -1632,13 +1632,230 @@ public class DocController extends BaseController{
 		switch(repos.getType())
 		{
 		case 1:
+			DocToPDF_FSM(repos, doc, response, request, session);
+			break;
 		case 2:
+			DocToPDF_FSP(repos, doc, response, request, session);
 		case 3:
 		case 4:
-			DocToPDF_FSM(repos, doc, response, request, session);
+			DocToPDF_VRP(repos, doc, response, request, session);
 			break;
 		}
 	}
+	
+	public void DocToPDF_VRP(Repos repos, Doc doc, HttpServletResponse response,HttpServletRequest request,HttpSession session) throws Exception
+	{
+		ReturnAjax rt = new ReturnAjax();
+		User login_user = (User) session.getAttribute("login_user");
+		if(login_user == null)
+		{
+			docSysErrorLog("用户未登录，请先登录！", rt);
+			writeJson(rt, response);			
+			return;
+		}
+		
+		String fileSuffix = getFileSuffix(doc.getName());
+		if(fileSuffix == null)
+		{
+			docSysErrorLog("未知文件类型", rt);
+			writeJson(rt, response);
+			return;
+		}
+		
+		//检查用户是否有文件读取权限
+		if(checkUseAccessRight(repos, login_user.getId(), doc, rt) == false)
+		{
+			System.out.println("DocToPDF() you have no access right on doc:" + doc.getName());
+			writeJson(rt, response);	
+			return;
+		}
+			
+		Doc localEntry = docSysGetDoc(repos, doc);
+		if(localEntry == null)
+		{
+			docSysErrorLog("文件不存在！", rt);
+			writeJson(rt, response);
+			return;
+		}
+		
+		if(localEntry.getType() == 2)
+		{
+			docSysErrorLog("目录无法预览", rt);
+			writeJson(rt, response);
+			return;
+		}
+		
+		//Do checkout to local
+		if(verReposCheckOut(repos, doc, doc.getLocalRootPath() + doc.getPath(), doc.getName(), null, true, true, null) == null)
+		{
+			docSysErrorLog("远程下载失败", rt);
+			docSysDebugLog("DocToPDF() verReposCheckOut Failed path:" + doc.getPath() + " name:" + doc.getName() + " targetPath:" + doc.getLocalRootPath() + doc.getPath() + " targetName:" + doc.getName(), rt);
+			return;
+		}
+
+		String webTmpPath = getWebTmpPath();
+		String dstName = repos.getId() + "_" + doc.getDocId() + ".pdf";
+		String dstPath = webTmpPath + "preview/" + dstName;
+		System.out.println("DocToPDF() dstPath:" + dstPath);
+
+		String fileLink = "/DocSystem/tmp/preview/" + dstName;
+		
+		File previewDir = new File(webTmpPath,"preview");
+		if(!previewDir.exists())
+		{
+			previewDir.mkdirs();
+		}
+		
+		//Do convert
+		String localEntryPath = getReposRealPath(repos) + doc.getPath() + doc.getName();
+		switch(fileSuffix)
+		{
+		case "pdf":
+			if(copyFile(localEntryPath, dstPath,true) == false)
+			{
+				docSysErrorLog("预览失败", rt);
+				docSysDebugLog("Failed to copy " + localEntryPath + " to " + dstPath, rt);
+				writeJson(rt, response);
+				return;					
+			}
+			break;
+		case "doc":
+		case "docx":
+		case "xls":
+		case "xlsx":
+		case "ppt":
+		case "pptx":
+		case "txt":
+		case "log":	
+		case "md":
+		case "html":	
+		case "jpg":
+		case "jpeg":
+		case "png":
+		case "gif":
+		case "bmp":
+		case "py":
+			if(Office2PDF.openOfficeToPDF(localEntryPath,dstPath,rt) == false)
+			{
+				docSysDebugLog("Failed execute openOfficeToPDF " + localEntryPath + " to " + dstPath, rt);
+				writeJson(rt, response);
+				return;
+			}
+			break;
+		default:
+			docSysErrorLog("该文件类型不支持预览", rt);
+			docSysDebugLog("srcPath:"+localEntryPath, rt);
+			writeJson(rt, response);
+			return;
+		}
+	
+		rt.setData(fileLink);
+		writeJson(rt, response);
+	}
+	
+	public void DocToPDF_FSP(Repos repos, Doc doc, HttpServletResponse response,HttpServletRequest request,HttpSession session) throws Exception
+	{
+		ReturnAjax rt = new ReturnAjax();
+		User login_user = (User) session.getAttribute("login_user");
+		if(login_user == null)
+		{
+			docSysErrorLog("用户未登录，请先登录！", rt);
+			writeJson(rt, response);			
+			return;
+		}
+		
+		String fileSuffix = getFileSuffix(doc.getName());
+		if(fileSuffix == null)
+		{
+			docSysErrorLog("未知文件类型", rt);
+			writeJson(rt, response);
+			return;
+		}
+		
+		//检查用户是否有文件读取权限
+		if(checkUseAccessRight(repos, login_user.getId(), doc, rt) == false)
+		{
+			System.out.println("DocToPDF() you have no access right on doc:" + doc.getName());
+			writeJson(rt, response);	
+			return;
+		}
+			
+		Doc localEntry = fsGetDoc(repos, doc);
+		if(localEntry == null)
+		{
+			docSysErrorLog("文件不存在！", rt);
+			writeJson(rt, response);
+			return;
+		}
+		
+		if(localEntry.getType() == 2)
+		{
+			docSysErrorLog("目录无法预览", rt);
+			writeJson(rt, response);
+			return;
+		}
+		
+
+		String webTmpPath = getWebTmpPath();
+		String dstName = repos.getId() + "_" + doc.getDocId() + ".pdf";
+		String dstPath = webTmpPath + "preview/" + dstName;
+		System.out.println("DocToPDF() dstPath:" + dstPath);
+
+		String fileLink = "/DocSystem/tmp/preview/" + dstName;
+		
+		File previewDir = new File(webTmpPath,"preview");
+		if(!previewDir.exists())
+		{
+			previewDir.mkdirs();
+		}
+		
+		//Do convert
+		String localEntryPath = getReposRealPath(repos) + doc.getPath() + doc.getName();
+		switch(fileSuffix)
+		{
+		case "pdf":
+			if(copyFile(localEntryPath, dstPath,true) == false)
+			{
+				docSysErrorLog("预览失败", rt);
+				docSysDebugLog("Failed to copy " + localEntryPath + " to " + dstPath, rt);
+				writeJson(rt, response);
+				return;					
+			}
+			break;
+		case "doc":
+		case "docx":
+		case "xls":
+		case "xlsx":
+		case "ppt":
+		case "pptx":
+		case "txt":
+		case "log":	
+		case "md":
+		case "html":	
+		case "jpg":
+		case "jpeg":
+		case "png":
+		case "gif":
+		case "bmp":
+		case "py":
+			if(Office2PDF.openOfficeToPDF(localEntryPath,dstPath,rt) == false)
+			{
+				docSysDebugLog("Failed execute openOfficeToPDF " + localEntryPath + " to " + dstPath, rt);
+				writeJson(rt, response);
+				return;
+			}
+			break;
+		default:
+			docSysErrorLog("该文件类型不支持预览", rt);
+			docSysDebugLog("srcPath:"+localEntryPath, rt);
+			writeJson(rt, response);
+			return;
+		}
+	
+		rt.setData(fileLink);
+		writeJson(rt, response);
+	}
+
 
 	public void DocToPDF_FSM(Repos repos, Doc doc, HttpServletResponse response,HttpServletRequest request,HttpSession session) throws Exception
 	{
