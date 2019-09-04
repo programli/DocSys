@@ -1180,29 +1180,136 @@ public class DocController extends BaseController{
 		Doc doc = buildBasicDoc(reposId, docId, pid, path, name, level, type, true,localRootPath, localVRootPath, null, null);
 		if(downloadType != null && downloadType == 2)
 		{
-			downloadVDocPrepare_FS(repos, doc, login_user, rt);
+			downloadVDocPrepare_FSM(repos, doc, login_user, rt);
 		}
 		else
 		{
 			switch(repos.getType())
 			{
 			case 1:
+				downloadDocPrepare_FSM(repos, doc, login_user, rt);
 			case 2:
+				downloadDocPrepare_FSP(repos, doc, login_user, rt);				
 			case 3:
 			case 4:
-				downloadDocPrepare_FS(repos, doc, login_user, rt);
+				downloadDocPrepare_VRP(repos, doc, login_user, rt);				
 				break;
 			}
 		}
 		writeJson(rt, response);
 	}
 
-	public void downloadDocPrepare_FS(Repos repos, Doc doc, User login_user, ReturnAjax rt) throws Exception
+	public void downloadDocPrepare_VRP(Repos repos, Doc doc, User login_user, ReturnAjax rt) throws Exception
+	{	
+		Doc dbDoc = docSysGetDoc(repos, doc);
+		if(dbDoc == null || dbDoc.getType() == 0)
+		{
+			System.out.println("downloadDocPrepare_FSM() Doc " +doc.getPath() + doc.getName() + " 不存在");
+			docSysErrorLog("文件 " + doc.getPath() + doc.getName() + "不存在！", rt);
+			return;
+		}
+				
+		String targetName = doc.getName();
+		String targetPath = getReposUserTmpPath(repos,login_user);
+				
+		//Do checkout to local
+		if(verReposCheckOut(repos, doc, targetPath, doc.getName(), null, true, true, null) == null)
+		{
+			docSysErrorLog("远程下载失败", rt);
+			docSysDebugLog("downloadDocPrepare_FSM() verReposCheckOut Failed path:" + doc.getPath() + " name:" + doc.getName() + " targetPath:" + targetPath + " targetName:" + doc.getName(), rt);
+			return;
+		}
+				
+		if(dbDoc.getType() == 1)
+		{
+			Doc downloadDoc = buildDownloadDocInfo(targetPath, targetName);
+			rt.setData(downloadDoc);
+			rt.setMsgData(1);	//下载完成后删除已下载的文件
+			docSysDebugLog("远程文件: 已下载并存储在用户临时目录", rt);
+			return;
+		}
+		else if(dbDoc.getType() == 2)
+		{
+			if(isEmptyDir(targetPath + doc.getName()))
+			{
+				docSysErrorLog("空目录无法下载！", rt);
+				return;				
+			}
+				
+			//doCompressDir and save the zip File under userTmpDir
+			targetName = doc.getName() + ".zip";		
+			if(doCompressDir(targetPath, doc.getName(), targetPath, targetName, rt) == false)
+			{
+				rt.setError("压缩远程目录失败！");
+				return;
+			}
+					
+			Doc downloadDoc = buildDownloadDocInfo(targetPath, targetName);
+			rt.setData(downloadDoc);
+			rt.setMsgData(1);	//下载完成后删除已下载的文件
+			docSysDebugLog("远程目录: 已压缩并存储在用户临时目录", rt);
+			return;
+		}
+	
+		docSysErrorLog("本地未知文件类型:" + dbDoc.getType(), rt);
+		return;		
+	}
+
+	public void downloadDocPrepare_FSP(Repos repos, Doc doc, User login_user, ReturnAjax rt) throws Exception
+	{	
+		Doc dbDoc = docSysGetDoc(repos, doc);
+		if(dbDoc == null)
+		{
+			System.out.println("downloadDocPrepare_FSM() Doc " +doc.getPath() + doc.getName() + " 不存在");
+			docSysErrorLog("文件 " + doc.getPath() + doc.getName() + "不存在！", rt);
+			return;
+		}
+		
+		String targetName = doc.getName();
+		String targetPath = doc.getLocalRootPath() + doc.getPath();
+		if(dbDoc.getType() == 1)
+		{
+			Doc downloadDoc = buildDownloadDocInfo(targetPath, targetName);
+			rt.setData(downloadDoc);
+			rt.setMsgData(0);	//下载完成后不能删除下载的文件
+			docSysDebugLog("本地文件: 原始路径下载", rt);
+			return;
+		}
+
+		targetPath = getReposUserTmpPath(repos,login_user);
+		if(dbDoc.getType() == 2)
+		{	
+			if(isEmptyDir(doc.getLocalRootPath() + doc.getPath() + doc.getName()))
+			{
+				docSysErrorLog("空目录无法下载！", rt);
+				return;				
+			}
+			
+			//doCompressDir and save the zip File under userTmpDir
+			targetName = doc.getName() + ".zip";		
+			if(doCompressDir(doc.getLocalRootPath() + doc.getPath(), doc.getName(), targetPath, targetName, rt) == false)
+			{
+				docSysErrorLog("压缩本地目录失败！", rt);
+				return;
+			}
+			
+			Doc downloadDoc = buildDownloadDocInfo(targetPath, targetName);
+			rt.setData(downloadDoc);
+			rt.setMsgData(1);	//下载完成后删除已下载的文件
+			docSysDebugLog("本地目录: 已压缩并存储在用户临时目录", rt);
+			return;						
+		}
+
+		docSysErrorLog("本地未知文件类型:" + dbDoc.getType(), rt);
+		return;		
+	}
+	
+	public void downloadDocPrepare_FSM(Repos repos, Doc doc, User login_user, ReturnAjax rt) throws Exception
 	{	
 		Doc dbDoc = dbGetDoc(repos, doc, false);
 		if(dbDoc == null)
 		{
-			System.out.println("downloadDocPrepare_FS() Doc " +doc.getPath() + doc.getName() + " 不存在");
+			System.out.println("downloadDocPrepare_FSM() Doc " +doc.getPath() + doc.getName() + " 不存在");
 			docSysErrorLog("文件 " + doc.getPath() + doc.getName() + "不存在！", rt);
 			return;
 		}
@@ -1210,7 +1317,7 @@ public class DocController extends BaseController{
 		Doc localEntry = fsGetDoc(repos, doc);
 		if(localEntry == null)
 		{
-			System.out.println("downloadDocPrepare_FS() locaDoc " +doc.getPath() + doc.getName() + " 获取异常");
+			System.out.println("downloadDocPrepare_FSM() locaDoc " +doc.getPath() + doc.getName() + " 获取异常");
 			docSysErrorLog("本地文件 " + doc.getPath() + doc.getName() + "获取异常！", rt);
 			return;
 		}
@@ -1255,14 +1362,14 @@ public class DocController extends BaseController{
 			Doc remoteEntry = verReposGetDoc(repos, doc, null);
 			if(remoteEntry == null)
 			{
-				docSysDebugLog("downloadDocPrepare_FS() remoteDoc " +doc.getPath() + doc.getName() + " 获取异常", rt);
+				docSysDebugLog("downloadDocPrepare_FSM() remoteDoc " +doc.getPath() + doc.getName() + " 获取异常", rt);
 				docSysErrorLog("远程文件 " + doc.getPath() + doc.getName() + "获取异常！", rt);
 				return;
 			}
 				
 			if(remoteEntry.getType() == 0)
 			{
-				System.out.println("downloadDocPrepare_FS() Doc " +doc.getPath() + doc.getName() + " 不存在");
+				System.out.println("downloadDocPrepare_FSM() Doc " +doc.getPath() + doc.getName() + " 不存在");
 				docSysErrorLog("文件 " + doc.getPath() + doc.getName() + "不存在！", rt);
 				return;	
 			}
@@ -1271,7 +1378,7 @@ public class DocController extends BaseController{
 			if(verReposCheckOut(repos, doc, targetPath, doc.getName(), null, true, true, null) == null)
 			{
 				docSysErrorLog("远程下载失败", rt);
-				docSysDebugLog("downloadDocPrepare_FS() verReposCheckOut Failed path:" + doc.getPath() + " name:" + doc.getName() + " targetPath:" + targetPath + " targetName:" + doc.getName(), rt);
+				docSysDebugLog("downloadDocPrepare_FSM() verReposCheckOut Failed path:" + doc.getPath() + " name:" + doc.getName() + " targetPath:" + targetPath + " targetName:" + doc.getName(), rt);
 				return;
 			}
 				
@@ -1309,11 +1416,11 @@ public class DocController extends BaseController{
 		return;		
 	}
 	
-	public void downloadVDocPrepare_FS(Repos repos, Doc doc, User login_user, ReturnAjax rt) throws Exception
+	public void downloadVDocPrepare_FSM(Repos repos, Doc doc, User login_user, ReturnAjax rt) throws Exception
 	{	
 		Doc vDoc = buildVDoc(doc);
 
-		printObject("downloadVDocPrepare_FS vDoc:",vDoc);
+		printObject("downloadVDocPrepare_FSM vDoc:",vDoc);
 		String targetName = vDoc.getName() +".zip";
 		if(vDoc.getName().isEmpty())
 		{
@@ -1528,12 +1635,12 @@ public class DocController extends BaseController{
 		case 2:
 		case 3:
 		case 4:
-			DocToPDF_FS(repos, doc, response, request, session);
+			DocToPDF_FSM(repos, doc, response, request, session);
 			break;
 		}
 	}
 
-	public void DocToPDF_FS(Repos repos, Doc doc, HttpServletResponse response,HttpServletRequest request,HttpSession session) throws Exception
+	public void DocToPDF_FSM(Repos repos, Doc doc, HttpServletResponse response,HttpServletRequest request,HttpSession session) throws Exception
 	{
 		ReturnAjax rt = new ReturnAjax();
 		User login_user = (User) session.getAttribute("login_user");
