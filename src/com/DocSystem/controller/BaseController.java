@@ -1597,7 +1597,7 @@ public class BaseController  extends BaseFunction{
 		case 2:
 		case 3:
 		case 4:
-			return addDoc_FS(repos, doc,	//Add a empty file
+			return addDoc_FSM(repos, doc,	//Add a empty file
 					uploadFile, //For upload
 					chunkNum, chunkSize, chunkParentPath, //For chunked upload combination
 					commitMsg, commitUser, login_user, rt, actionList);
@@ -1606,12 +1606,12 @@ public class BaseController  extends BaseFunction{
 		return false;
 	}
 
-	protected boolean addDoc_FS(Repos repos, Doc doc,	//Add a empty file
+	protected boolean addDoc_FSM(Repos repos, Doc doc,	//Add a empty file
 			MultipartFile uploadFile, //For upload
 			Integer chunkNum, Integer chunkSize, String chunkParentPath, //For chunked upload combination
 			String commitMsg,String commitUser,User login_user, ReturnAjax rt, List<CommonAction> actionList) 
 	{
-		System.out.println("addDoc_FS()  docId:" + doc.getDocId() + " pid:" + doc.getPid() + " parentPath:" + doc.getPath() + " docName:" + doc.getName() + " type:" + doc.getType());
+		System.out.println("addDoc_FSM()  docId:" + doc.getDocId() + " pid:" + doc.getPid() + " parentPath:" + doc.getPath() + " docName:" + doc.getName() + " type:" + doc.getType());
 		
 		//add doc detail info
 		doc.setCreator(login_user.getId());
@@ -1789,18 +1789,18 @@ public class BaseController  extends BaseFunction{
 		case 2:
 		case 3:
 		case 4:
-			return deleteDoc_FS(repos, doc, commitMsg, commitUser, login_user,  rt, actionList);			
+			return deleteDoc_FSM(repos, doc, commitMsg, commitUser, login_user,  rt, actionList);			
 		}
 		return null;
 	}
 
-	protected String deleteDoc_FS(Repos repos, Doc doc,	String commitMsg,String commitUser,User login_user, ReturnAjax rt, List<CommonAction> actionList) 
+	protected String deleteDoc_FSM(Repos repos, Doc doc,	String commitMsg,String commitUser,User login_user, ReturnAjax rt, List<CommonAction> actionList) 
 	{
 		Long docId = doc.getDocId();
 		if(docId == 0)
 		{
 			//由于前台是根据docId和pid来组织目录结构的，所以前台可以删除docId=0的节点，表示数据库中存在一个docId=0的非法节点，直接删除掉
-			docSysDebugLog("deleteDoc_FS() 这是一个非法节点docId = 0", rt);
+			docSysDebugLog("deleteDoc_FSM() 这是一个非法节点docId = 0", rt);
 			dbDeleteDoc(repos, doc, false);
 			return null;
 		}
@@ -1813,19 +1813,19 @@ public class BaseController  extends BaseFunction{
 			if(docLock == null)
 			{
 				unlock(); //线程锁
-				docSysDebugLog("deleteDoc_FS() Failed to lock Doc: " + docId, rt);
+				docSysDebugLog("deleteDoc_FSM() Failed to lock Doc: " + docId, rt);
 				return null;			
 			}
 			unlock(); //线程锁
 		}
-		System.out.println("deleteDoc_FS() " + docId + " " + doc.getName() + " Lock OK");
+		System.out.println("deleteDoc_FSM() " + docId + " " + doc.getName() + " Lock OK");
 				
 		//get RealDoc Full ParentPath
 		if(deleteRealDoc(repos,doc,rt) == false)
 		{
 			unlockDoc(doc,login_user,docLock);
 			
-			docSysDebugLog("deleteDoc_FS() deleteRealDoc Failed", rt);
+			docSysDebugLog("deleteDoc_FSM() deleteRealDoc Failed", rt);
 			docSysErrorLog(doc.getName() + " 删除失败！", rt);
 			return null;
 		}
@@ -1834,7 +1834,7 @@ public class BaseController  extends BaseFunction{
 		String revision = verReposDocCommit(repos, true, doc, commitMsg,commitUser,rt, true, null, 2);
 		if(revision == null)
 		{
-			docSysDebugLog("deleteDoc_FS() verReposRealDocDelete Failed", rt);
+			docSysDebugLog("deleteDoc_FSM() verReposRealDocDelete Failed", rt);
 			docSysWarningLog("verReposRealDocDelete Failed", rt);
 		}
 		else
@@ -2093,8 +2093,8 @@ public class BaseController  extends BaseFunction{
 		
 		//文件管理系统
 		HashMap<Long, Doc> commitHashMap = new HashMap<Long, Doc>();
-		boolean ret = SyncUpSubDocs_FS(repos, doc, login_user, rt, commitHashMap, 1);
-		System.out.println("syncupForDocChange() SyncUpSubDocs_FS ret:" + ret);
+		boolean ret = SyncUpSubDocs_FSM(repos, doc, login_user, rt, commitHashMap, 1);
+		System.out.println("syncupForDocChange() SyncUpSubDocs_FSM ret:" + ret);
 		if(commitHashMap.size() == 0)
 		{
 			System.out.println("**************************** 结束自动同步 syncupForDocChange() 本地没有改动");
@@ -2220,7 +2220,7 @@ public class BaseController  extends BaseFunction{
     	}
 	    
 	    List<Doc> remoteEntryList = getRemoteEntryList(repos, doc);
-	    //printObject("SyncUpSubDocs_FS() remoteEntryList:", remoteEntryList);
+	    //printObject("SyncUpSubDocs_FSM() remoteEntryList:", remoteEntryList);
 	    if(remoteEntryList != null)
     	{
 	    	for(int i=0;i<remoteEntryList.size();i++)
@@ -2284,14 +2284,14 @@ public class BaseController  extends BaseFunction{
 		return true;
 	}
 	
-	private boolean syncupForDocChange_FS(Repos repos, Doc doc, HashMap<Long, Doc> dbDocHashMap, HashMap<Long, Doc> localDocHashMap, HashMap<Long, Doc> remoteDocHashMap, User login_user, ReturnAjax rt, HashMap<Long,Doc> commitHashMap, int subDocSyncFlag) 
+	private boolean syncupForDocChange_FSM(Repos repos, Doc doc, HashMap<Long, Doc> dbDocHashMap, HashMap<Long, Doc> localDocHashMap, HashMap<Long, Doc> remoteDocHashMap, User login_user, ReturnAjax rt, HashMap<Long,Doc> commitHashMap, int subDocSyncFlag) 
 	{
-		//printObject("syncupForDocChange_FS() " + doc.getDocId() + " " + doc.getPath() + doc.getName() + " ", doc);
+		//printObject("syncupForDocChange_FSM() " + doc.getDocId() + " " + doc.getPath() + doc.getName() + " ", doc);
 
 		if(doc.getDocId() == 0)	//For root dir, go syncUpSubDocs
 		{
-			System.out.println("syncupForDocChange_FS() it is root doc");			
-			return SyncUpSubDocs_FS(repos, doc, login_user, rt, commitHashMap, subDocSyncFlag);
+			System.out.println("syncupForDocChange_FSM() it is root doc");			
+			return SyncUpSubDocs_FSM(repos, doc, login_user, rt, commitHashMap, subDocSyncFlag);
 		}
 		
 		Doc dbDoc = null;
@@ -2299,16 +2299,16 @@ public class BaseController  extends BaseFunction{
 		Doc remoteEntry = null;
 		
 		dbDoc = getDocFromList(doc, dbDocHashMap);
-		//printObject("syncupForDocChange_FS() dbDoc: ", dbDoc);
+		//printObject("syncupForDocChange_FSM() dbDoc: ", dbDoc);
 
 		localEntry = getDocFromList(doc, localDocHashMap);
-		//printObject("syncupForDocChange_FS() localEntry: ", localEntry);
+		//printObject("syncupForDocChange_FSM() localEntry: ", localEntry);
 		
 		remoteEntry = getDocFromList(doc, remoteDocHashMap);
-		//printObject("syncupForDocChange_FS() remoteEntry: ", remoteEntry);
+		//printObject("syncupForDocChange_FSM() remoteEntry: ", remoteEntry);
 		
-		int docChangeType = getDocChangeType_FS(repos, doc, dbDoc, localEntry, remoteEntry);
-		//System.out.println("syncupForDocChange_FS() docChangeType: " + docChangeType);
+		int docChangeType = getDocChangeType_FSM(repos, doc, dbDoc, localEntry, remoteEntry);
+		//System.out.println("syncupForDocChange_FSM() docChangeType: " + docChangeType);
 
 		switch(docChangeType)
 		{
@@ -2340,7 +2340,7 @@ public class BaseController  extends BaseFunction{
 				}
 				unlock(); //线程锁
 			}
-			boolean ret = syncUpRemoteChange_FS(repos, dbDoc, remoteEntry, login_user, rt, docChangeType);
+			boolean ret = syncUpRemoteChange_FSM(repos, dbDoc, remoteEntry, login_user, rt, docChangeType);
 			unlockDoc(doc, login_user, docLock);
 			return ret;
 		case 0:		//no change
@@ -2352,29 +2352,29 @@ public class BaseController  extends BaseFunction{
 		return true;
 	}
 	
-	private int getDocChangeType_FS(Repos repos,Doc doc, Doc dbDoc, Doc localEntry, Doc remoteEntry) 
+	private int getDocChangeType_FSM(Repos repos,Doc doc, Doc dbDoc, Doc localEntry, Doc remoteEntry) 
 	{						
 		//dbDoc不存在，localDoc存在
 		if(dbDoc == null)
 		{
-			System.out.println("getDocChangeType_FS() dbDoc 不存在");
+			System.out.println("getDocChangeType_FSM() dbDoc 不存在");
 
 			if(localEntry != null)
 			{
 				//本地新增文件/目录
-				System.out.println("getDocChangeType_FS() 本地新增:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
+				System.out.println("getDocChangeType_FSM() 本地新增:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
 				return 11;
 			}
 			
 			if(remoteEntry != null)
 			{
 				//远程文件/目录新增
-				System.out.println("getDocChangeType_FS() 远程新增:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
+				System.out.println("getDocChangeType_FSM() 远程新增:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
 				return 21;
 			}
 			
 			//未变更
-			//System.out.println("getDocChangeType_FS() 未变更(dbDoc不存在/localDoc不存在/remoteDoc不存在):" + doc.getDocId() + " " + doc.getPath() + doc.getName());
+			//System.out.println("getDocChangeType_FSM() 未变更(dbDoc不存在/localDoc不存在/remoteDoc不存在):" + doc.getDocId() + " " + doc.getPath() + doc.getName());
 			return 0;
 		}
 		
@@ -2385,12 +2385,12 @@ public class BaseController  extends BaseFunction{
 			if(remoteChangeType == 0)
 			{
 				//本地文件/目录删除
-				System.out.println("getDocChangeType_FS() 本地删除:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
+				System.out.println("getDocChangeType_FSM() 本地删除:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
 				return 12;
 			}
 			
 			//远程文件/目录 类型变化、内容修改、删除
-			System.out.println("getDocChangeType_FS() 远程类型变化/内容修改/删除:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
+			System.out.println("getDocChangeType_FSM() 远程类型变化/内容修改/删除:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
 			return remoteChangeType;
 		}
 		
@@ -2400,40 +2400,40 @@ public class BaseController  extends BaseFunction{
 			if(dbDoc.getType() == 2)
 			{
 				//本地目录 类型变化 （目录删除后新增同名文件）
-				System.out.println("getDocChangeType_FS() 本地类型变化（目录->文件）:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
+				System.out.println("getDocChangeType_FSM() 本地类型变化（目录->文件）:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
 				return 14;
 			}
 			
 			if(isDocLocalChanged(dbDoc, localEntry))
 			{
 				//本地文件 内容修改
-				System.out.println("getDocChangeType_FS() 本地内容修改:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
+				System.out.println("getDocChangeType_FSM() 本地内容修改:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
 				return 13;
 			}
 			
 			if(remoteEntry == null)
 			{
 				//远程删除
-				System.out.println("getDocChangeType_FS() 远程删除:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
+				System.out.println("getDocChangeType_FSM() 远程删除:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
 				return 22;
 			}
 			
 			if(remoteEntry.getType() == 2)
 			{
 				//远程文件 类型变化（文件被删除并增加了同名目录）
-				System.out.println("getDocChangeType_FS() 远程类型改变（文件->目录）:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
+				System.out.println("getDocChangeType_FSM() 远程类型改变（文件->目录）:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
 				return 25;
 			}
 			
 			if(isDocRemoteChanged(dbDoc, remoteEntry))
 			{
 				//远程文件 内容修改
-				System.out.println("getDocChangeType_FS() 远程内容修改:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
+				System.out.println("getDocChangeType_FSM() 远程内容修改:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
 				return 23;
 			}
 			
 			//未变更
-			//System.out.println("getDocChangeType_FS() 未变更(dbDoc存在/localDoc是文件/remoteDoc是文件):" + doc.getDocId() + " " + doc.getPath() + doc.getName());
+			//System.out.println("getDocChangeType_FSM() 未变更(dbDoc存在/localDoc是文件/remoteDoc是文件):" + doc.getDocId() + " " + doc.getPath() + doc.getName());
 			return 0;
 		}
 		
@@ -2443,7 +2443,7 @@ public class BaseController  extends BaseFunction{
 			if(dbDoc.getType() == 1)
 			{
 				//本地文件 类型变化 （文件删除后新增同名文件）
-				System.out.println("getDocChangeType_FS() 本地类型改变（文件->目录）:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
+				System.out.println("getDocChangeType_FSM() 本地类型改变（文件->目录）:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
 				return 15;
 			}
 			
@@ -2452,7 +2452,7 @@ public class BaseController  extends BaseFunction{
 				if(isDirLocalChanged(repos, dbDoc))
 				{
 					//远程删除，但同时本地目录有修改
-					System.out.println("getDocChangeType_FS() 远程删除，但本地目录有改动:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
+					System.out.println("getDocChangeType_FSM() 远程删除，但本地目录有改动:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
 					return 13;
 				}
 				
@@ -2460,11 +2460,11 @@ public class BaseController  extends BaseFunction{
 				if(repos.getVerCtrl() == 2)	//For Git Repos
 				{
 					//远程删除
-					System.out.println("getDocChangeType_FS() 远程删除(因GIT无法识别空目录，对于目录的远程删除不处理):" + doc.getDocId() + " " + doc.getPath() + doc.getName());
+					System.out.println("getDocChangeType_FSM() 远程删除(因GIT无法识别空目录，对于目录的远程删除不处理):" + doc.getDocId() + " " + doc.getPath() + doc.getName());
 					return 0;
 				}
 				//远程删除
-				System.out.println("getDocChangeType_FS() 远程删除:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
+				System.out.println("getDocChangeType_FSM() 远程删除:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
 				return 22;
 			}
 			
@@ -2473,22 +2473,22 @@ public class BaseController  extends BaseFunction{
 				if(isDirLocalChanged(repos, dbDoc))
 				{
 					//远程目录 类型变化（目录被删除并增加了同名文件），但同时本地目录有修改
-					System.out.println("getDocChangeType_FS() 远程类型改变（目录->文件），但本地目录有改动:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
+					System.out.println("getDocChangeType_FSM() 远程类型改变（目录->文件），但本地目录有改动:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
 					return 13;
 				}
 				
 				//远程目录 类型变化（目录被删除并增加了同名文件）
-				System.out.println("getDocChangeType_FS() 远程类型改变（目录->文件）:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
+				System.out.println("getDocChangeType_FSM() 远程类型改变（目录->文件）:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
 				return 24;
 			}
 			
 			//未变更
-			//System.out.println("getDocChangeType_FS() 未变更(dbDoc存在/localDoc是目录/remoteDoc是目录):" + doc.getDocId() + " " + doc.getPath() + doc.getName());
+			//System.out.println("getDocChangeType_FSM() 未变更(dbDoc存在/localDoc是目录/remoteDoc是目录):" + doc.getDocId() + " " + doc.getPath() + doc.getName());
 			return 0;
 		}
 		
 		//未知文件类型(localDoc.type !=1/2)
-		System.out.println("getDocChangeType_FS() 本地未知文件类型(" + localEntry.getType()+ "):" + doc.getDocId() + " " + doc.getPath() + doc.getName());
+		System.out.println("getDocChangeType_FSM() 本地未知文件类型(" + localEntry.getType()+ "):" + doc.getDocId() + " " + doc.getPath() + doc.getName());
 		return -1;
 	}
 
@@ -2502,9 +2502,9 @@ public class BaseController  extends BaseFunction{
 		return dbDocHashMap.get(doc.getDocId());
 	}
 
-	private boolean SyncUpSubDocs_FS(Repos repos, Doc doc, User login_user, ReturnAjax rt, HashMap<Long, Doc> commitHashMap, int subDocSyncFlag) 
+	private boolean SyncUpSubDocs_FSM(Repos repos, Doc doc, User login_user, ReturnAjax rt, HashMap<Long, Doc> commitHashMap, int subDocSyncFlag) 
 	{
-		//System.out.println("************************ SyncUpSubDocs_FS()  " + doc.getDocId() + " " + doc.getPath() + doc.getName() + " subDocSyncFlag:" + subDocSyncFlag);
+		//System.out.println("************************ SyncUpSubDocs_FSM()  " + doc.getDocId() + " " + doc.getPath() + doc.getName() + " subDocSyncFlag:" + subDocSyncFlag);
 
 		//子目录不递归
 		if(subDocSyncFlag == 0)
@@ -2524,15 +2524,15 @@ public class BaseController  extends BaseFunction{
 
 				
 		List<Doc> localEntryList = getLocalEntryList(repos, doc);
-		//printObject("SyncUpSubDocs_FS() localEntryList:", localEntryList);
+		//printObject("SyncUpSubDocs_FSM() localEntryList:", localEntryList);
     	if(localEntryList == null)
     	{
-    		System.out.println("SyncUpSubDocs_FS() localEntryList 获取异常:");
+    		System.out.println("SyncUpSubDocs_FSM() localEntryList 获取异常:");
         	return false;
     	}
 
 		List<Doc> dbDocList = getDBEntryList(repos, doc);
-		//printObject("SyncUpSubDocs_FS() dbEntryList:", dbDocList);
+		//printObject("SyncUpSubDocs_FSM() dbEntryList:", dbDocList);
 
 		List<Doc> remoteEntryList = null;
     	boolean isRemoteDocChanged = false;
@@ -2544,10 +2544,10 @@ public class BaseController  extends BaseFunction{
     	if(isRemoteDocChanged)
 		{
     		remoteEntryList = getRemoteEntryList(repos, doc);
-    	    //printObject("SyncUpSubDocs_FS() remoteEntryList:", remoteEntryList);
+    	    //printObject("SyncUpSubDocs_FSM() remoteEntryList:", remoteEntryList);
         	if(remoteEntryList == null)
         	{
-        		System.out.println("SyncUpSubDocs_FS() remoteEntryList 获取异常:");
+        		System.out.println("SyncUpSubDocs_FSM() remoteEntryList 获取异常:");
             	return false;
         	}        	
 		}
@@ -2574,7 +2574,7 @@ public class BaseController  extends BaseFunction{
 	    	for(int i=0;i<remoteEntryList.size();i++)
 		    {
 	    		subDoc = remoteEntryList.get(i);
-	    		//System.out.println("SyncUpSubDocs_FS() subDoc:" + subDoc.getDocId() + " " + subDoc.getPath() + subDoc.getName());
+	    		//System.out.println("SyncUpSubDocs_FSM() subDoc:" + subDoc.getDocId() + " " + subDoc.getPath() + subDoc.getName());
 	    		if(docHashMap.get(subDoc.getName()) != null)
 	    		{
 	    			//already syncuped
@@ -2582,7 +2582,7 @@ public class BaseController  extends BaseFunction{
 	    		}
 	    		
 	    		docHashMap.put(subDoc.getName(), subDoc);
-	    		if(syncupForDocChange_FS(repos, subDoc, dbDocHashMap, localDocHashMap, remoteDocHashMap, login_user, rt, commitHashMap, subDocSyncFlag) == false)
+	    		if(syncupForDocChange_FSM(repos, subDoc, dbDocHashMap, localDocHashMap, remoteDocHashMap, login_user, rt, commitHashMap, subDocSyncFlag) == false)
 	    		{
 	    			remoteSyncFlag = false;
 	    		}
@@ -2599,7 +2599,7 @@ public class BaseController  extends BaseFunction{
     	for(int i=0;i<localEntryList.size();i++)
     	{
     		subDoc = localEntryList.get(i);
-    		//System.out.println("SyncUpSubDocs_FS() subDoc:" + subDoc.getDocId() + " " + subDoc.getPath() + subDoc.getName());
+    		//System.out.println("SyncUpSubDocs_FSM() subDoc:" + subDoc.getDocId() + " " + subDoc.getPath() + subDoc.getName());
     		if(docHashMap.get(subDoc.getName()) != null)
     		{
     			//already syncuped
@@ -2607,7 +2607,7 @@ public class BaseController  extends BaseFunction{
     		}
     		
     		docHashMap.put(subDoc.getName(), subDoc);
-    		syncupForDocChange_FS(repos, subDoc, dbDocHashMap, localDocHashMap, remoteDocHashMap, login_user, rt, commitHashMap, subDocSyncFlag);
+    		syncupForDocChange_FSM(repos, subDoc, dbDocHashMap, localDocHashMap, remoteDocHashMap, login_user, rt, commitHashMap, subDocSyncFlag);
     	}
     	
 		if(dbDocList != null)
@@ -2616,7 +2616,7 @@ public class BaseController  extends BaseFunction{
 	    	{
 	    		subDoc = dbDocList.get(i);
 	    		docHashMap.put(subDoc.getName(), subDoc);
-	    		syncupForDocChange_FS(repos, subDoc, dbDocHashMap, localDocHashMap, remoteDocHashMap, login_user, rt, commitHashMap, subDocSyncFlag);
+	    		syncupForDocChange_FSM(repos, subDoc, dbDocHashMap, localDocHashMap, remoteDocHashMap, login_user, rt, commitHashMap, subDocSyncFlag);
 	    	}
     	}
     	
@@ -2640,7 +2640,7 @@ public class BaseController  extends BaseFunction{
 	}
 
 	//localEntry and dbDoc was same
-	private boolean syncUpRemoteChange_FS(Repos repos, Doc doc, Doc remoteEntry, User login_user, ReturnAjax rt, int remoteChangeType) 
+	private boolean syncUpRemoteChange_FSM(Repos repos, Doc doc, Doc remoteEntry, User login_user, ReturnAjax rt, int remoteChangeType) 
 	{	
 		
 		String localParentPath = null;
@@ -2649,7 +2649,7 @@ public class BaseController  extends BaseFunction{
 		switch(remoteChangeType)
 		{
 		case 21:		//Remote Added
-			System.out.println("syncUpRemoteChange_FS() remote Added: " + remoteEntry.getPath()+remoteEntry.getName());	
+			System.out.println("syncUpRemoteChange_FSM() remote Added: " + remoteEntry.getPath()+remoteEntry.getName());	
 			localParentPath = getReposRealPath(repos) + remoteEntry.getPath();
 			successDocList = verReposCheckOut(repos, remoteEntry, localParentPath, remoteEntry.getName(), null, true, false, null);
 			if(successDocList != null)
@@ -2659,14 +2659,14 @@ public class BaseController  extends BaseFunction{
 			}
 			return false;
 		case 22: //Remote Deleted
-			System.out.println("syncUpRemoteChange_FS() local and remote deleted: " + doc.getPath()+doc.getName());
+			System.out.println("syncUpRemoteChange_FSM() local and remote deleted: " + doc.getPath()+doc.getName());
 			if(deleteRealDoc(repos, doc, rt) == true)
 			{
 				dbDeleteDoc(repos, doc,true);
 			}	
 			return true;
 		case 23: //Remote File Changed
-			System.out.println("syncUpRemoteChange_FS() remote Changed: " + doc.getPath()+doc.getName());
+			System.out.println("syncUpRemoteChange_FSM() remote Changed: " + doc.getPath()+doc.getName());
 			
 			localParentPath = getReposRealPath(repos) + remoteEntry.getPath();
 			successDocList = verReposCheckOut(repos, remoteEntry, localParentPath, remoteEntry.getName(), null, true, false, null);
@@ -2682,7 +2682,7 @@ public class BaseController  extends BaseFunction{
 			return false;
 		case 24: //Remote Type Changed
 		case 25:
-			System.out.println("syncUpRemoteChange_FS() remote Type Changed: " + doc.getPath()+doc.getName());
+			System.out.println("syncUpRemoteChange_FSM() remote Type Changed: " + doc.getPath()+doc.getName());
 			if(deleteRealDoc(repos, doc, rt) == true)
 			{
 				dbDeleteDoc(repos, doc,true);
@@ -3332,7 +3332,7 @@ public class BaseController  extends BaseFunction{
 		case 2:
 		case 3:
 		case 4:
-			return updateDoc_FS(repos, doc,
+			return updateDoc_FSM(repos, doc,
 					uploadFile,
 					chunkNum, chunkSize, chunkParentPath, 
 					commitMsg, commitUser, login_user, rt, actionList);
@@ -3340,7 +3340,7 @@ public class BaseController  extends BaseFunction{
 		return false;
 	}
 
-	protected boolean updateDoc_FS(Repos repos, Doc doc,
+	protected boolean updateDoc_FSM(Repos repos, Doc doc,
 				MultipartFile uploadFile,
 				Integer chunkNum, Integer chunkSize, String chunkParentPath, 
 				String commitMsg,String commitUser,User login_user, ReturnAjax rt,
@@ -3414,7 +3414,7 @@ public class BaseController  extends BaseFunction{
 		case 2:
 		case 3:
 		case 4:
-			return 	moveDoc_FS(repos, srcDoc, dstDoc, commitMsg, commitUser, login_user, rt, actionList);
+			return 	moveDoc_FSM(repos, srcDoc, dstDoc, commitMsg, commitUser, login_user, rt, actionList);
 		}
 		return false;
 	}
@@ -3427,12 +3427,12 @@ public class BaseController  extends BaseFunction{
 		case 2:
 		case 3:
 		case 4:
-			return 	moveDoc_FS(repos, srcDoc, dstDoc, commitMsg, commitUser, login_user, rt, actionList);
+			return 	moveDoc_FSM(repos, srcDoc, dstDoc, commitMsg, commitUser, login_user, rt, actionList);
 		}
 		return false;
 	}
 
-	private boolean moveDoc_FS(Repos repos, Doc srcDoc, Doc dstDoc, String commitMsg, String commitUser, User login_user,
+	private boolean moveDoc_FSM(Repos repos, Doc srcDoc, Doc dstDoc, String commitMsg, String commitUser, User login_user,
 			ReturnAjax rt, List<CommonAction> actionList) 
 	{
 		DocLock srcDocLock = null;
@@ -3445,7 +3445,7 @@ public class BaseController  extends BaseFunction{
 			{
 				unlock(); //线程锁
 		
-				docSysDebugLog("moveDoc_FS() lock srcDoc " + srcDoc.getName() + " Failed", rt);
+				docSysDebugLog("moveDoc_FSM() lock srcDoc " + srcDoc.getName() + " Failed", rt);
 				return false;
 			}
 			
@@ -3453,7 +3453,7 @@ public class BaseController  extends BaseFunction{
 			if(dstDocLock == null)
 			{
 				unlock(); //线程锁
-				docSysDebugLog("moveDoc_FS() lock dstDoc " + dstDoc.getName() + " Failed", rt);
+				docSysDebugLog("moveDoc_FSM() lock dstDoc " + dstDoc.getName() + " Failed", rt);
 
 				unlockDoc(srcDoc, login_user, srcDocLock);
 				return false;
@@ -3467,21 +3467,21 @@ public class BaseController  extends BaseFunction{
 			unlockDoc(srcDoc, login_user, srcDocLock);
 			unlockDoc(dstDoc, login_user, dstDocLock);
 
-			docSysDebugLog("moveDoc_FS() moveRealDoc " + srcDoc.getName() + " to " + dstDoc.getName() + " 失败", rt);
+			docSysDebugLog("moveDoc_FSM() moveRealDoc " + srcDoc.getName() + " to " + dstDoc.getName() + " 失败", rt);
 			return false;
 		}
 		
 		String revision = verReposDocMove(repos, true, srcDoc, dstDoc,commitMsg, commitUser,rt);
 		if(revision == null)
 		{
-			docSysWarningLog("moveDoc_FS() verReposRealDocMove Failed", rt);
+			docSysWarningLog("moveDoc_FSM() verReposRealDocMove Failed", rt);
 		}
 		else
 		{
 			dstDoc.setRevision(revision);
 			if(dbMoveDoc(repos, srcDoc, dstDoc) == false)
 			{
-				docSysWarningLog("moveDoc_FS() dbMoveDoc failed", rt);			
+				docSysWarningLog("moveDoc_FSM() dbMoveDoc failed", rt);			
 			}
 			dbCheckAddUpdateParentDoc(repos, dstDoc, null);
 		}
@@ -3506,13 +3506,13 @@ public class BaseController  extends BaseFunction{
 		case 2:
 		case 3:
 		case 4:
-			return 	copyDoc_FS(repos, srcDoc, dstDoc,
+			return 	copyDoc_FSM(repos, srcDoc, dstDoc,
 					commitMsg, commitUser, login_user, rt, actionList);
 		}
 		return false;
 	}
 
-	protected boolean copyDoc_FS(Repos repos, Doc srcDoc, Doc dstDoc,
+	protected boolean copyDoc_FSM(Repos repos, Doc srcDoc, Doc dstDoc,
 			String commitMsg,String commitUser,User login_user, ReturnAjax rt, List<CommonAction> actionList)
 	{				
 		DocLock srcDocLock = null;
@@ -3599,7 +3599,7 @@ public class BaseController  extends BaseFunction{
 			unlock(); //线程锁
 		}
 		
-		updateDocContent_FS(repos, doc, commitMsg, commitUser, login_user, rt, actionList);
+		updateDocContent_FSM(repos, doc, commitMsg, commitUser, login_user, rt, actionList);
 		
 		//revert the lockStatus
 		unlockDoc(doc, login_user, docLock);
@@ -3607,7 +3607,7 @@ public class BaseController  extends BaseFunction{
 		return true;
 	}
 
-	private boolean updateDocContent_FS(Repos repos, Doc doc,
+	private boolean updateDocContent_FSM(Repos repos, Doc doc,
 			String commitMsg, String commitUser, User login_user, ReturnAjax rt, List<CommonAction> actionList) 
 	{
 		
