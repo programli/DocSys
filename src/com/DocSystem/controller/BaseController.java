@@ -114,22 +114,8 @@ public class BaseController  extends BaseFunction{
 	protected List<Doc> getAuthedSubDocList(Repos repos, Doc doc, DocAuth pDocAuth, HashMap<Long, DocAuth> docAuthHashMap, ReturnAjax rt, List<CommonAction> actionList)
 	{
 		List<Doc> docList = new ArrayList<Doc>();
-		List<Doc> tmpDocList = null;
-		switch(repos.getType())
-		{
-		case 1:
-			tmpDocList = getDBEntryList(repos, doc);			
-			break;
-		case 2:
-			tmpDocList = getLocalEntryList(repos, doc);
-			break;
-		case 3:
-		case 4:
-			tmpDocList = getRemoteEntryList(repos, doc);
-			break;
-		default:
-			return null;
-		}
+		List<Doc> tmpDocList = docSysGetSubDocList(repos, doc);
+
 		if(tmpDocList != null)
     	{
 	    	for(int i=0;i<tmpDocList.size();i++)
@@ -1824,7 +1810,13 @@ public class BaseController  extends BaseFunction{
 			unlock(); //线程锁
 		}
 		System.out.println("deleteDoc_FSM() " + docId + " " + doc.getName() + " Lock OK");
-				
+		
+		if(repos.getType() != 1)	//For FSM AsyncActionList will be created at dbDeleteDocEx
+		{
+			//Build ActionList for RDocIndex/VDoc/VDocIndex/VDocVerRepos delete
+			BuildMultiActionListForDocDelete(actionList, repos, doc, commitMsg, commitUser,true);
+		}
+		
 		//get RealDoc Full ParentPath
 		if(deleteRealDoc(repos,doc,rt) == false)
 		{
@@ -1845,7 +1837,7 @@ public class BaseController  extends BaseFunction{
 		else
 		{
 			//Delete DataBase Record and Build AsynActions For delete 
-			if(dbDeleteDocEx(actionList, repos, doc, true, commitMsg, commitUser) == false)
+			if(dbDeleteDocEx(actionList, repos, doc, commitMsg, commitUser, true) == false)
 			{	
 				docSysWarningLog("不可恢复系统错误：dbDeleteDoc Failed", rt);
 			}
@@ -1888,14 +1880,26 @@ public class BaseController  extends BaseFunction{
 		insertCommonAction(actionList, repos, doc, null, commitMsg, commitUser, 1, 1, 2, subActionList);			
 	}
 
-	protected void BuildMultiActionListForDocDelete(List<CommonAction> actionList, Repos repos, Doc doc, String commitMsg, String commitUser) 
+	protected void BuildMultiActionListForDocDelete(List<CommonAction> actionList, Repos repos, Doc doc, String commitMsg, String commitUser, boolean deleteSubDocs) 
 	{	
+		if(deleteSubDocs == true)
+		{
+			List<Doc> subDocList = docSysGetSubDocList(repos, doc);
+			if(subDocList != null)
+			{
+				for(int i=0; i<subDocList.size(); i++)
+				{
+					Doc subDoc = subDocList.get(i);
+					BuildMultiActionListForDocDelete(actionList, repos, subDoc, commitMsg, commitUser, deleteSubDocs);
+				}
+			}
+		}	
+
+		//Insert index add action for RDoc Name
 		if(repos.getType() != 1)
 		{
-			//Insert index add action for RDoc Name
 			insertCommonAction(actionList, repos, doc, null, commitMsg, commitUser, 4, 2, 0, null);
 		}
-		
 		//Insert index delete action for RDoc
 		insertCommonAction(actionList, repos, doc, null, commitMsg, commitUser, 4, 2, 1, null);
 
@@ -1907,6 +1911,22 @@ public class BaseController  extends BaseFunction{
 		insertCommonAction(actionList, repos, doc, null, commitMsg, commitUser, 2, 2, 2, null);
 	}
 	
+	private List<Doc> docSysGetSubDocList(Repos repos, Doc doc) 
+	{
+		switch(repos.getType())
+		{
+		case 1:
+			return getDBEntryList(repos, doc);			
+		case 2:
+			return getLocalEntryList(repos, doc);
+		case 3:
+		case 4:
+			return getRemoteEntryList(repos, doc);
+		}
+		
+		return null;
+	}
+
 	void BuildMultiActionListForDocUpdate(List<CommonAction> actionList, Repos repos, Doc doc, String reposRPath) 
 	{		
 		//Insert index update action for RDoc
@@ -3121,7 +3141,7 @@ public class BaseController  extends BaseFunction{
 		return dbAddDoc(repos, dstDoc, true, false);
 	}
 	
-	private boolean dbDeleteDocEx(List<CommonAction> actionList, Repos repos, Doc doc, boolean deleteSubDocs, String commitMsg, String commitUser) 
+	private boolean dbDeleteDocEx(List<CommonAction> actionList, Repos repos, Doc doc, String commitMsg, String commitUser, boolean deleteSubDocs) 
 	{
 		if(repos.getType() != 1)
 		{
@@ -3139,7 +3159,7 @@ public class BaseController  extends BaseFunction{
 				for(int i=0; i<subDocList.size(); i++)
 				{
 					Doc subDoc = subDocList.get(i);
-					dbDeleteDocEx(actionList, repos, subDoc, true, commitMsg, commitUser);
+					dbDeleteDocEx(actionList, repos, subDoc, commitMsg, commitUser, true);
 				}
 			}
 		}
@@ -3154,7 +3174,7 @@ public class BaseController  extends BaseFunction{
 		}
 		
 		//Build ActionList for RDocIndex/VDoc/VDocIndex/VDocVerRepos delete
-		BuildMultiActionListForDocDelete(actionList, repos, doc, commitMsg, commitUser);
+		BuildMultiActionListForDocDelete(actionList, repos, doc, commitMsg, commitUser, false);
 
 		return true;
 	}
