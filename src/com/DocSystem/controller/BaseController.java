@@ -343,8 +343,13 @@ public class BaseController  extends BaseFunction{
 		return true;
 	}
 	
-	private boolean isDocRemoteChanged(Doc doc, Doc remoteEntry) 
+	private boolean isDocRemoteChanged(Repos repos, Doc doc, Doc remoteEntry) 
 	{
+		if(repos.getVerCtrl() == 0)
+		{
+			return false;
+		}
+		
 		if(doc.getRevision() != null && !doc.getRevision().isEmpty() && doc.getRevision().equals(remoteEntry.getRevision()))
 		{
 			return false;
@@ -2425,7 +2430,7 @@ public class BaseController  extends BaseFunction{
 				return 25;
 			}
 			
-			if(isDocRemoteChanged(dbDoc, remoteEntry))
+			if(isDocRemoteChanged(repos, dbDoc, remoteEntry))
 			{
 				//远程文件 内容修改
 				System.out.println("getDocChangeType_FSM() 远程内容修改:" + doc.getDocId() + " " + doc.getPath() + doc.getName());
@@ -2740,7 +2745,7 @@ public class BaseController  extends BaseFunction{
 				return 24; //local Type Changed
 			}
 			
-			if(isDocRemoteChanged(dbDoc, remoteEntry))
+			if(isDocRemoteChanged(repos, dbDoc, remoteEntry))
 			{
 				System.out.println("getRemoteChangeType() 远程文件内容修改:"+remoteEntry.getName());
 				return 23;
