@@ -1861,9 +1861,11 @@ public class BaseController  extends BaseFunction{
 	
 	private void BuildMultiActionListForDocAdd(List<CommonAction> actionList, Repos repos, Doc doc, String commitMsg, String commitUser) 
 	{
-		//Insert index add action for RDoc Name
-		insertCommonAction(actionList, repos, doc, null, commitMsg, commitUser, 4, 1, 0, null);
-
+		if(repos.getType() != 1)
+		{
+			//Insert index add action for RDoc Name
+			insertCommonAction(actionList, repos, doc, null, commitMsg, commitUser, 4, 1, 0, null);
+		}	
 		//Insert index add action for RDoc
 		insertCommonAction(actionList, repos, doc, null, commitMsg, commitUser, 4, 1, 1, null);
 		
@@ -1888,9 +1890,12 @@ public class BaseController  extends BaseFunction{
 
 	protected void BuildMultiActionListForDocDelete(List<CommonAction> actionList, Repos repos, Doc doc, String commitMsg, String commitUser) 
 	{	
-		//Insert index add action for RDoc Name
-		insertCommonAction(actionList, repos, doc, null, commitMsg, commitUser, 4, 2, 0, null);
-
+		if(repos.getType() != 1)
+		{
+			//Insert index add action for RDoc Name
+			insertCommonAction(actionList, repos, doc, null, commitMsg, commitUser, 4, 2, 0, null);
+		}
+		
 		//Insert index delete action for RDoc
 		insertCommonAction(actionList, repos, doc, null, commitMsg, commitUser, 4, 2, 1, null);
 
@@ -1930,16 +1935,21 @@ public class BaseController  extends BaseFunction{
 			//ActionId 1:FS 2:VerRepos 3:DB 4:Index  5:AutoSyncUp
 			//ActionType 1:add 2:delete 3:update 4:move 5:copy
 		    //DocType 0:DocName 1:RealDoc 2:VirtualDoc   AutoSyncUp(1: localDocChanged  2: remoteDocChanged)
-			if(isMove)
+			
+			//Insert IndexAction For RealDoc Name Copy or Move (对于目录则会进行递归)
+			if(repos.getType() != 1)
 			{
-				insertCommonAction(actionList, repos, srcDoc, dstDoc, commitMsg, commitUser, 4, 3, 0, null);
-			}
-			else	//对于copy操作则新增对该docName的索引
-			{
-				insertCommonAction(actionList, repos, dstDoc, null, commitMsg, commitUser, 4, 1, 0, null);				
+				if(isMove)
+				{
+					insertCommonAction(actionList, repos, srcDoc, dstDoc, commitMsg, commitUser, 4, 3, 0, null);
+				}
+				else	//对于copy操作则新增对该docName的索引
+				{
+					insertCommonAction(actionList, repos, dstDoc, null, commitMsg, commitUser, 4, 1, 0, null);				
+				}
 			}
 			
-			//Insert Move Action For RealDoc Index Copy (对于目录则会进行递归)
+			//Insert IndexAction For RealDoc Copy or Move (对于目录则会进行递归)
 			insertCommonAction(actionList, repos, srcDoc, dstDoc, commitMsg, commitUser, 4, ActionType, 1, null);
 			//Copy VDoc (包括VDoc VerRepos and Index)
 			insertCommonAction(actionList, repos, srcDoc, dstDoc, commitMsg, commitUser, 1, ActionType, 2, null);
