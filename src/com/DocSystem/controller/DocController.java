@@ -889,7 +889,7 @@ public class DocController extends BaseController{
 			String commitUser = login_user.getName();
 			String chunkParentPath = getReposUserTmpPath(repos,login_user);
 			List<CommonAction> actionList = new ArrayList<CommonAction>();
-			if(dbDoc == null)
+			if(dbDoc == null || dbDoc.getType() == 0)
 			{
 				boolean ret = addDoc(repos, doc, 
 						uploadFile,
