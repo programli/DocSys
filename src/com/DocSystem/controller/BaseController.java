@@ -2103,7 +2103,7 @@ public class BaseController  extends BaseFunction{
 		if(commitHashMap.size() == 0)
 		{
 			System.out.println("**************************** 结束自动同步 syncupForDocChange() 本地没有改动");
-			return false;
+			return true;
 		}
 		
 		//本地有改动需要提交
