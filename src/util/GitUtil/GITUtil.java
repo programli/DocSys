@@ -1209,15 +1209,9 @@ public class GITUtil  extends BaseController{
 				return null;
 			}
 	
-			//注意：这里检查的是远程的parentDoc是否存在和下面的type是不一样的
+			//如果远程的父节点不存在且不是根节点，那么调用doAutoCommitParent
 			if(type == 0)
-			{
-				if(!localEntry.exists())
-				{
-					System.out.println("doAutoCommit() remoteEnry " + entryPath + " not exists");
-			        return getLatestRevision(doc);		
-				}
-					
+			{					
 				if(!doc.getPath().isEmpty())
 				{
 					System.out.println("doAutoCommit() parent entry " + doc.getPath() + " not exists, do commit parent");
@@ -1764,7 +1758,7 @@ public class GITUtil  extends BaseController{
 		int subDocLevel = doc.getLevel() + 1;
 
 		//遍历仓库所有子目录
-		TreeWalk treeWalk = getSubEntries(doc.getPath(), "HEAD");
+		TreeWalk treeWalk = getSubEntries(subDocParentPath, null);
 		if(treeWalk != null)
 		{
 	        try {

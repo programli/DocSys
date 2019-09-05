@@ -586,16 +586,13 @@ public class SVNUtil  extends BaseController{
 				return null;
 			}
 	
-			//注意这里的type是指远程的parentDoc是否存在，和下面的type不一样
+			//如果远程的父节点不存在且不是根节点，那么调用doAutoCommitParent
 			if(type == 0)
 			{
-				if(!localEntry.exists())
+				if(!doc.getPath().isEmpty())
 				{
-					System.out.println("doAutoCommit() remoteEnry " + entryPath + " not exists");
-			        return getLatestRevision(doc);		
+					return doAutoCommitParent(doc, commitMsg, commitUser, modifyEnable);
 				}
-				
-				return doAutoCommitParent(doc, commitMsg, commitUser, modifyEnable);
 			}	
 						
 			//LocalEntry is File
@@ -1048,7 +1045,7 @@ public class SVNUtil  extends BaseController{
 		int subDocLevel = doc.getLevel() + 1;
 
 		//遍历仓库所有子目录
-		Collection<SVNDirEntry> entries = getSubEntries(doc.getPath() + doc.getName(), -1L);
+		Collection<SVNDirEntry> entries = getSubEntries(subDocParentPath, -1L);
         if(entries != null)
         {
 			Iterator<SVNDirEntry> iterator = entries.iterator();
