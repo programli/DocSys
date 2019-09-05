@@ -993,7 +993,7 @@ public class DocController extends BaseController{
 		
 		String encTargetName = base64Encode(fileName);
 		String encTargetPath = base64Encode(localParentPath);
-		res.put("url", "/DocSystem/Doc/downloadDoc.do?targetPath="+encTargetPath+"&targetName="+encTargetName+"deleteFlag=0");
+		res.put("url", "/DocSystem/Doc/downloadDoc.do?targetPath="+encTargetPath+"&targetName="+encTargetName);
 		res.put("success", 1);
 		res.put("message", "upload success!");
 		writeJson(res,response);
