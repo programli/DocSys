@@ -5180,11 +5180,17 @@ public class BaseController  extends BaseFunction{
 	
 	/*************** DocSys verRepos操作接口 *********************/
 	protected List<LogEntry> verReposGetHistory(Repos repos,boolean isRealDoc, String entryPath, int maxLogNum) {
-		if(repos.getVerCtrl() == 1)
+		int verCtrl = repos.getVerCtrl();
+		if(isRealDoc == false)
+		{
+			verCtrl = repos.getVerCtrl1();
+		}
+		
+		if(verCtrl == 1)
 		{
 			return svnGetHistory(repos, isRealDoc, entryPath, maxLogNum);
 		}
-		else if(repos.getVerCtrl() == 2)
+		else if(verCtrl == 2)
 		{
 			return gitGetHistory(repos, isRealDoc, entryPath, maxLogNum);
 		}
