@@ -991,8 +991,9 @@ public class DocController extends BaseController{
 			return;
 		}
 		
-		//res.put("url", "/DocSystem/tmp/markdownImg/"+fileName);
-		res.put("url", "/DocSystem/Doc/getVDocRes.do?docId="+docId+"&fileName="+fileName);
+		String encTargetName = base64Encode(fileName);
+		String encTargetPath = base64Encode(localParentPath);
+		res.put("url", "/DocSystem/Doc/downloadDoc.do?targetPath="+encTargetPath+"&targetName="+encTargetName+"deleteFlag=0");
 		res.put("success", 1);
 		res.put("message", "upload success!");
 		writeJson(res,response);
@@ -2100,7 +2101,7 @@ public class DocController extends BaseController{
 		String userTmpDir = getReposUserTmpPath(repos,login_user);
 		String tmpSavedContent = readVirtualDocContent(userTmpDir, vDocName);
         if( null !=tmpSavedContent){
-        	tmpSavedContent = content.replaceAll("\t","");
+        	tmpSavedContent = tmpSavedContent.replaceAll("\t","");
         }
 		rt.setMsgData(tmpSavedContent);
 
