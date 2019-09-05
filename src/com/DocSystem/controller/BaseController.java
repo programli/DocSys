@@ -1728,6 +1728,12 @@ public class BaseController  extends BaseFunction{
 	//该接口用于更新父节点的信息: 仓库有commit成功的操作时必须调用
 	private void dbCheckAddUpdateParentDoc(Repos repos, Doc doc, List<Doc> parentDocList) 
 	{
+		if(repos.getType() != 1)
+		{
+			//For Non FSM type repos, dbNode is not need
+			return;
+		}
+		
 		System.out.println("checkAddUpdateParentDoc " + doc.getDocId() + " " +doc.getPath() + doc.getName());
 		
 		if(doc.getDocId() == 0)
